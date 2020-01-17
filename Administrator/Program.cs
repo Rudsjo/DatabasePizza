@@ -7,7 +7,7 @@ namespace Administrator
         static void Main(string[] args)
         {
 
-            int nrOfChoices = PrintMenu(Menus.menuChoices[1]);
+            int nrOfChoices = PrintMenu(Menus.menuChoices[0]);
             char key = Console.ReadKey(true).KeyChar;
             UserChoice(key, nrOfChoices, Menus.menuChoices);
 
@@ -30,12 +30,31 @@ namespace Administrator
         {
             int userChoiceAsInt = userChoice - '0';
 
-            for(int i = 1; i <= nrOfChoices; i++)
+            for(int i = 1; i < nrOfChoices; i++)
             {
-                if(userChoiceAsInt == i)
+                if(userChoiceAsInt == i && userChoiceAsInt < nrOfChoices - 1)
                 {
                     Console.Clear();
-                    PrintMenu(menuChoice[i+1]);
+                    PrintMenu(menuChoice[i]);
+                }
+
+                else if(userChoiceAsInt == nrOfChoices - 1)
+                {
+                    Console.Clear();
+                    return;
+                    //PrintMenu(menuChoice[userChoiceAsInt - 1]);
+                }
+
+                else if(userChoiceAsInt >= nrOfChoices)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Ditt val är felaktigt. Försök igen.");
+                    System.Threading.Thread.Sleep(1500);
+                    Console.Clear();
+                    nrOfChoices = PrintMenu(menuChoice[0]);
+                    userChoice = Console.ReadKey().KeyChar;
+                    Console.Clear();
+                    UserChoice(userChoice, nrOfChoices, menuChoice);
                 }
             }
         }
