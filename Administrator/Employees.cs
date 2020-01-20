@@ -6,7 +6,7 @@ namespace Administrator
 {
     public class Employees
     {
-        public int ID { get; set; }
+        public int ID { get; }
 
         public string firstName { get; set; }
 

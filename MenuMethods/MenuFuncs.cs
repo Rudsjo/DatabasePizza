@@ -14,7 +14,7 @@ namespace MenuMethods
             string formerPositon = currentPosition;
             int choice = Console.ReadKey(true).KeyChar - '0';
 
-            while (true)
+            while(true)
             {
                 formerPositon = currentPosition;
                 currentPosition = UserChoice(choice, numberOfChoices, mainMenuChoice, currentPosition);
@@ -39,13 +39,18 @@ namespace MenuMethods
 
                 else
                 {
-                    Console.Clear();
-                    numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
-                    Console.Clear();
-                    currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
-                    choice = Console.ReadKey(true).KeyChar - '0';
-                }
+                   Console.Clear();
+                   numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
+                   Console.Clear();
+                   currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
+                   choice = Console.ReadKey(true).KeyChar - '0';
 
+                    if(currentPosition != "main" && choice < (numberOfChoices - 1))
+                    {
+                        break; // använd invoke för att anropa rätt typ av funktion härifrån
+                    }
+
+                }
             }
         }
 
@@ -77,22 +82,26 @@ namespace MenuMethods
                 if (userChoice == i && userChoice < (nrOfChoices - 1))
                 {
                     newPosition = menuChoice[i][0];
+                    break;
                 }
 
                 else if (userChoice == (nrOfChoices - 1) && currentPosition == "main")
                 {
                     // kontrollerar om vi befinner oss i huvudmenyn och således om vi ska logga ut, vid övriga går vi tillbaka till huvudmenyn
                     newPosition = "logout";
+                    break;
                 }
 
                 else if (userChoice == (nrOfChoices - 1))
                 {
                     newPosition = "main";
+                    break;
                 }
 
                 else if (userChoice >= nrOfChoices)
                 {
                     newPosition = "error";
+                    break;
                 }
             }
 
