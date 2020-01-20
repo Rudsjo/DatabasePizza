@@ -6,9 +6,13 @@ namespace Administrator
 {
     public class Extras
     {
-        public int ID { get; }
+        //Överensstämmer med databasen
 
-        public string name { get; set; }
+        public int ProductID { get; }
+
+        public string Type { get; set; }
+
+        public int Price { get; set; }
 
     }
 }

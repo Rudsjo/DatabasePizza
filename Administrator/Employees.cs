@@ -6,17 +6,13 @@ namespace Administrator
 {
     public class Employees
     {
-        public int ID { get; }
 
-        public string firstName { get; set; }
+        //Överensstämmer med databasen
+        public int UserID { get; }
 
-        public string lastName { get; set; }
+        public string Password { get; set; }
 
-        public string profession { get; set; }
-
-        public string username { get; set; }
-
-        public string password { get; set; }
+        public string Role { get; set; }
 
     }
 }

@@ -6,9 +6,13 @@ namespace Administrator
 {
     public class Condiments
     {
-        public int ID { get; }
+        //Överensstämmer med databasen
 
-        public string name { get; set; }
+        public int CondimentID { get; }
+
+        public string Type { get; set; }
+
+        public int Price { get; set; }
 
     }
 }
