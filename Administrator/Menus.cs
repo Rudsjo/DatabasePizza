@@ -40,7 +40,7 @@ namespace ArrayOfTuple
 
                 if (userName == "test" && password == "test")
                 {
-                    Program.RunMainMenu();
+                    Program.RunMainMenu(Menus.menuChoices);
                     break;
                 }
 

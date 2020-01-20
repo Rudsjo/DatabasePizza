@@ -12,18 +12,18 @@ namespace ArrayOfTuple
 
         }
 
-        public static void RunMainMenu()
+        public static void RunMainMenu(string[][] mainMenuChoice)
         {
-            int numberOfChoices = PrintMenu(Menus.menuChoices, "main").Item1;
+            int numberOfChoices = PrintMenu(mainMenuChoice, "main").Item1;
             Console.Clear();
-            string currentPosition = PrintMenu(Menus.menuChoices, "main").Item2;
+            string currentPosition = PrintMenu(mainMenuChoice, "main").Item2;
             string formerPositon = currentPosition;
             int choice = Console.ReadKey(true).KeyChar - '0';
 
             while (true)
             {
                 formerPositon = currentPosition;
-                currentPosition = UserChoice(choice, numberOfChoices, Menus.menuChoices, currentPosition);
+                currentPosition = UserChoice(choice, numberOfChoices, mainMenuChoice, currentPosition);
 
                 if (currentPosition == "error")
                 {
@@ -31,7 +31,7 @@ namespace ArrayOfTuple
                     Console.WriteLine("Ditt val är felaktigt.");
                     Thread.Sleep(1500);
                     Console.Clear();
-                    PrintMenu(Menus.menuChoices, formerPositon);
+                    PrintMenu(mainMenuChoice, formerPositon);
                     choice = Console.ReadKey(true).KeyChar - '0';
                 }
 
@@ -45,9 +45,9 @@ namespace ArrayOfTuple
                 else
                 {
                     Console.Clear();
-                    numberOfChoices = PrintMenu(Menus.menuChoices, currentPosition).Item1;
+                    numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
                     Console.Clear();
-                    currentPosition = PrintMenu(Menus.menuChoices, currentPosition).Item2;
+                    currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
                     choice = Console.ReadKey(true).KeyChar - '0';
                 }
 
