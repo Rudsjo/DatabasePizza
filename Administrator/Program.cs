@@ -8,7 +8,7 @@ namespace ArrayOfTuple
         static void Main(string[] args)
         {
 
-            Menus.logInn();
+            Menus.logIn();
 
         }
 
@@ -38,7 +38,7 @@ namespace ArrayOfTuple
                 else if (currentPosition == "logout")
                 {
                     Console.Clear();
-                    Menus.logInn();
+                    Menus.logIn();
                     break;
                 }
 
@@ -84,20 +84,15 @@ namespace ArrayOfTuple
                     newPosition = menuChoice[i][0];
                 }
 
-                else if (userChoice == nrOfChoices - 1)
+                else if (userChoice == (nrOfChoices - 1) && currentPosition == "main")
                 {
                     // kontrollerar om vi befinner oss i huvudmenyn och således om vi ska logga ut, vid övriga går vi tillbaka till huvudmenyn
-                    if (newPosition == "main")
-                    {
-                        newPosition = "logout";
-                        break;
-                    }
+                    newPosition = "logout";
+                }
 
-                    else
-                    {
-                        newPosition = "main";
-                    }
-
+                else if(userChoice == (nrOfChoices - 1))
+                {
+                    newPosition = "main";
                 }
 
                 else if (userChoice >= nrOfChoices)

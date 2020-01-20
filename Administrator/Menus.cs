@@ -29,7 +29,7 @@ namespace ArrayOfTuple
 
         };
 
-        public static void logInn()
+        public static void logIn()
         {
             while (true)
             {
