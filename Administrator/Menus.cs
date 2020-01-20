@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using MenuMethods;
 
-namespace ArrayOfTuple
+namespace Administrator
 {
     public class Menus
     {
@@ -40,7 +41,8 @@ namespace ArrayOfTuple
 
                 if (userName == "test" && password == "test")
                 {
-                    Program.RunMainMenu(Menus.menuChoices);
+                    Menus logInMenu = new Menus();
+                    MenuFuncs.RunMainMenu(Menus.menuChoices, logInMenu, "logIn");
                     break;
                 }
 
@@ -53,7 +55,6 @@ namespace ArrayOfTuple
                     continue;
                 }
             }
-
         }
 
     }

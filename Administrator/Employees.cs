@@ -14,5 +14,9 @@ namespace Administrator
 
         public string profession { get; set; }
 
+        public string username { get; set; }
+
+        public string password { get; set; }
+
     }
 }
