@@ -1,62 +1,112 @@
 ﻿using System;
+using System.Threading;
 
-namespace Administrator
+namespace ArrayOfTuple
 {
     class Program
     {
         static void Main(string[] args)
         {
 
-            int nrOfChoices = PrintMenu(Menus.menuChoices[0]);
-            char key = Console.ReadKey(true).KeyChar;
-            UserChoice(key, nrOfChoices, Menus.menuChoices);
+            Menus.logInn();
 
         }
 
-        public static int PrintMenu(string[] menuItems)
+        public static void RunMainMenu()
+        {
+            int numberOfChoices = PrintMenu(Menus.menuChoices, "main").Item1;
+            Console.Clear();
+            string currentPosition = PrintMenu(Menus.menuChoices, "main").Item2;
+            string formerPositon = currentPosition;
+            int choice = Console.ReadKey(true).KeyChar - '0';
+
+            while (true)
+            {
+                formerPositon = currentPosition;
+                currentPosition = UserChoice(choice, numberOfChoices, Menus.menuChoices, currentPosition);
+
+                if (currentPosition == "error")
+                {
+                    Console.Clear();
+                    Console.WriteLine("Ditt val är felaktigt.");
+                    Thread.Sleep(1500);
+                    Console.Clear();
+                    PrintMenu(Menus.menuChoices, formerPositon);
+                    choice = Console.ReadKey(true).KeyChar - '0';
+                }
+
+                else if (currentPosition == "logout")
+                {
+                    Console.Clear();
+                    Menus.logInn();
+                    break;
+                }
+
+                else
+                {
+                    Console.Clear();
+                    numberOfChoices = PrintMenu(Menus.menuChoices, currentPosition).Item1;
+                    Console.Clear();
+                    currentPosition = PrintMenu(Menus.menuChoices, currentPosition).Item2;
+                    choice = Console.ReadKey(true).KeyChar - '0';
+                }
+
+            }
+        }
+
+        public static (int, string) PrintMenu(string[][] menuChoice, string currentPosition)
         {
             int counter = 1;
 
-            for (int i = 0; i < menuItems.Length; i++)
+            for (int i = 0; i < menuChoice.Length; i++)
             {
-                Console.WriteLine(counter + ". " + menuItems[i]);
-                counter++;
+                if (menuChoice[i][0] == currentPosition)
+                {
+                    for (int menuItems = 1; menuItems < menuChoice[i].Length; menuItems++)
+                    {
+                        Console.WriteLine(counter + ". " + menuChoice[i][menuItems]);
+                        counter++;
+                    }
+                }
             }
 
-            return counter;
+            return (counter, currentPosition);
         }
 
-        public static void UserChoice(char userChoice, int nrOfChoices, string[][] menuChoice)
+        public static string UserChoice(int userChoice, int nrOfChoices, string[][] menuChoice, string currentPosition)
         {
-            int userChoiceAsInt = userChoice - '0';
+            string newPosition = currentPosition;
 
-            for(int i = 1; i < nrOfChoices; i++)
+            for (int i = 1; i < nrOfChoices; i++)
             {
-                if(userChoiceAsInt == i && userChoiceAsInt < nrOfChoices - 1)
+                if (userChoice == i && userChoice < (nrOfChoices - 1))
                 {
-                    Console.Clear();
-                    PrintMenu(menuChoice[i]);
+                    newPosition = menuChoice[i][0];
                 }
 
-                else if(userChoiceAsInt == nrOfChoices - 1)
+                else if (userChoice == nrOfChoices - 1)
                 {
-                    Console.Clear();
-                    return;
-                    //PrintMenu(menuChoice[userChoiceAsInt - 1]);
+                    // kontrollerar om vi befinner oss i huvudmenyn och således om vi ska logga ut, vid övriga går vi tillbaka till huvudmenyn
+                    if (newPosition == "main")
+                    {
+                        newPosition = "logout";
+                        break;
+                    }
+
+                    else
+                    {
+                        newPosition = "main";
+                    }
+
                 }
 
-                else if(userChoiceAsInt >= nrOfChoices)
+                else if (userChoice >= nrOfChoices)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Ditt val är felaktigt. Försök igen.");
-                    System.Threading.Thread.Sleep(1500);
-                    Console.Clear();
-                    nrOfChoices = PrintMenu(menuChoice[0]);
-                    userChoice = Console.ReadKey().KeyChar;
-                    Console.Clear();
-                    UserChoice(userChoice, nrOfChoices, menuChoice);
+                    newPosition = "error";
                 }
             }
+
+            return newPosition;
         }
     }
 }
