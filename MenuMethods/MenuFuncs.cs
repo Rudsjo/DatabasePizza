@@ -6,7 +6,7 @@ namespace MenuMethods
 {
     public static class MenuFuncs
     {
-        public static void RunMainMenu(string[][] mainMenuChoice, object logInMenu, string logInFunctionName)
+        public static string RunMainMenu(string[][] mainMenuChoice, object logInMenu, string logInFunctionName)
         {
             int numberOfChoices = PrintMenu(mainMenuChoice, "main").Item1;
             Console.Clear();
@@ -33,7 +33,8 @@ namespace MenuMethods
                 {
                     Console.Clear();
                     MethodInfo mi = logInMenu.GetType().GetMethod(logInFunctionName);
-                    mi.Invoke(logInMenu, null);
+                    object[] parametersForLogIn = new object[] { mainMenuChoice };
+                    mi.Invoke(logInMenu, parametersForLogIn);
                     break;
                 }
 
@@ -52,6 +53,8 @@ namespace MenuMethods
 
                 }
             }
+
+            return currentPosition;
         }
 
         public static (int, string) PrintMenu(string[][] menuChoice, string currentPosition)

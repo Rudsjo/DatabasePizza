@@ -29,33 +29,5 @@ namespace Administrator
             new string[] { "oldOrders", "Visa gamla ordrar", "Ta bort gamla ordrar", "Gå tillbaka" }
 
         };
-
-        public static void logIn()
-        {
-            while (true)
-            {
-                Console.Write("Användarnamn: ");
-                string userName = Console.ReadLine();
-                Console.Write("Lösenord: ");
-                string password = Console.ReadLine();
-
-                if (userName == "test" && password == "test")
-                {
-                    Menus logInMenu = new Menus();
-                    MenuFuncs.RunMainMenu(Menus.menuChoices, logInMenu, "logIn");
-                    break;
-                }
-
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine("Inloggning misslyckades. Försök igen.");
-                    Thread.Sleep(1500);
-                    Console.Clear();
-                    continue;
-                }
-            }
-        }
-
     }
 }
