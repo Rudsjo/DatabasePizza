@@ -2,7 +2,7 @@
 
 namespace PizzaClassLibrary
 {
-    public class Condiments
+    public class Condiments : ICondiments
     {
         //Överensstämmer med databasen
 
