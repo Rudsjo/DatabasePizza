@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
-using MenuMethods;
+using MenuFunctions;
+using MSSQLRepository;
 
 namespace Administrator
 {
@@ -8,24 +9,44 @@ namespace Administrator
     {
         static void Main(string[] args)
         {
-            
-            bool checkLogIn = Repository.logIn();
+            MenuFuncs menu = new MenuFuncs();
+            MSSQL rep = new MSSQL();
 
-            Repository rep = new Repository();
+            bool checkLogIn = Repository.logIn(menu, "RunMainMenu", Menus.menuChoices, rep, "logIn");
 
-            if(checkLogIn == true)
+
+
+            if (checkLogIn == true)
             {
-                string chosenPosition = MenuFuncs.RunMainMenu(Menus.menuChoices, rep, "logIn");
+                string chosenPosition = MenuFuncs.RunMainMenu(Menus.menuChoices, rep, "logIn").Item1;
+                //Console.Clear();
+                //int userChoice = MenuFuncs.RunMainMenu(Menus.menuChoices, rep, "logIn").Item2;
 
-                if(chosenPosition == "users")
+                if (chosenPosition == "users")
                 {
-                    int userChoice = Console.ReadKey(true).KeyChar - '0';
+                    //Console.Clear();
+                    //int userChoice = MenuFuncs.RunMainMenu(Menus.menuChoices, rep, "logIn").Item2;
 
+                    int userChoice = Console.ReadKey(true).KeyChar - '0';
                     switch (userChoice)
                     {
                         case 1:
-                            rep.AddEmployee("AddEmployee");
-                            break;
+                            {
+                                rep.AddEmployee("AddEmployee");                               
+                                break;
+                            }
+                        case 4:
+                            {                                
+                                Console.Clear();
+                                foreach (var employee in rep.ShowEmployees("ShowEmployees"))
+                                {
+                                    Console.WriteLine(employee);
+                                }
+                                Console.ReadKey();
+
+                                break;
+                            }
+
                     }
                 }
             }

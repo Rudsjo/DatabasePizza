@@ -1,7 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
@@ -11,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MenuFunctions\MenuFunctions.csproj" />
-    <ProjectReference Include="..\MSSQLRepository\MSSQLRepository.csproj" />
+    <ProjectReference Include="..\IDatabase\IDatabasePizza.csproj" />
+    <ProjectReference Include="..\PizzaClassLibrary\PizzaClassLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Reflection;
-//using ConnnectionConfig;
 
-namespace MenuMethods
+namespace MenuFunctions
 {
     public class MenuFuncs
     {
         
-        public static (string,int) RunMainMenu(string[][] mainMenuChoice, object logInMenu, string logInFunctionName, params object[] parametersNeededForLogin)
+        public static (string, int) RunMainMenu(string[][] mainMenuChoice, object logInMenu, string logInFunctionName, params object[] parametersNeededForLogin)
         {
             int numberOfChoices = PrintMenu(mainMenuChoice, "main").Item1;
             Console.Clear();
@@ -16,7 +15,7 @@ namespace MenuMethods
             string formerPositon = currentPosition;
             int choice = Console.ReadKey(true).KeyChar - '0';
 
-            while(true)
+            while (true)
             {
                 formerPositon = currentPosition;
                 currentPosition = UserChoice(choice, numberOfChoices, mainMenuChoice, currentPosition);
@@ -41,10 +40,10 @@ namespace MenuMethods
 
                 else
                 {
-                   Console.Clear();
-                   numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
-                   Console.Clear();
-                   currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
+                    Console.Clear();
+                    numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
+                    Console.Clear();
+                    currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
                     choice = Console.ReadKey(true).KeyChar - '0';
 
                     if (currentPosition != "main" && choice < (numberOfChoices - 1))
@@ -55,7 +54,7 @@ namespace MenuMethods
                 }
             }
 
-            return (currentPosition,choice);
+            return (currentPosition, choice);
         }
 
         public static (int, string) PrintMenu(string[][] menuChoice, string currentPosition)
