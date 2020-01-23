@@ -47,7 +47,7 @@ namespace MSSQLRepository
             await connection.QueryAsync<Employees>(storedProcedureToUpdateEmployee, new { UserID = employee.UserID, Password = employee.Password, Role = employee.Role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee)
+        public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee = "DeleteEmployee")
         {
             await connection.QueryAsync<Employees>(storedProcedureToDeleteEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure);
         }
@@ -85,7 +85,7 @@ namespace MSSQLRepository
             await connection.QueryAsync<Condiments>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Condiments>> ShowCondiment(string storedProcedureToShowCondiment)
+        public async Task<IEnumerable<Condiments>> ShowCondiments(string storedProcedureToShowCondiment = "ShowCondiments")
         {
             return (await connection.QueryAsync<Condiments>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
         }
@@ -100,7 +100,7 @@ namespace MSSQLRepository
             await connection.QueryAsync<Condiments>(storedProcedureToUpdateCondiment, new { CondimentID = condiment.CondimentID, Type = condiment.Type, Price = condiment.Price, }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteCondiment(int id, string storedProcedureToDeleteCondiment)
+        public async Task DeleteCondiment(int id, string storedProcedureToDeleteCondiment = "DeleteCondiment")
         {
             await connection.QueryAsync<Condiments>(storedProcedureToDeleteCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure);
         }

@@ -27,7 +27,7 @@ namespace IDatabasePizza
         //Condiment
         public Task AddCondiment(string type, float price, string storedProcedure = "AddCondiment");
         public Task UpdateCondiment(Condiments condiment, string storedProcedure = "UpdateCondimentByID");
-        public Task<IEnumerable<Condiments>> ShowCondiment(string storedProcedure = "ShowCondiments");
+        public Task<IEnumerable<Condiments>> ShowCondiments(string storedProcedure = "ShowCondiments");
         public Task<Condiments> ShowSingleCondiment(int ID, string storedProcedure = "ShowSingleCondiment");
         public Task DeleteCondiment(int ID, string storedProcedure = "DeleteCondimentByID");
 
