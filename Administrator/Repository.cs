@@ -9,6 +9,7 @@ using MenuFunctions;
 using System.Threading;
 using System.Linq;
 using System.Reflection;
+using PizzaClassLibrary;
 
 namespace Administrator
 {
@@ -25,6 +26,11 @@ namespace Administrator
             connection.Open();
         }
 
+
+
+
+
+
         public static bool logIn(object placementOfFunctionToRunAfterLogin, string functionToRunAfterLogIn, params object[] parametersNeededInFunction)
         {
             // DENNA FUNKTION KAN FLYTTAS TILL MENUMETHODS SENARE OM VI SKAPAR ETT GEMENSAMT KLASSBIBLIOTEK FÖR REPON FÖR ATT CONNECTA TILL DATABAS.
@@ -34,7 +40,7 @@ namespace Administrator
 
             while (true)
             {
-                
+
                 Console.Write("AnvändarID: ");
                 int id = int.Parse(Console.ReadLine());
                 Console.Write("Lösenord: ");
@@ -63,21 +69,31 @@ namespace Administrator
             return true;
         }
 
+
+
+
+
+
         public string CheckPassword(string storedProcedureToCheckPass, string storedProcedureToCheckRole, int id, string pass)
         {
             string passCheck = connection.Query<string>(storedProcedureToCheckPass, new { id = id, pass = pass }, commandType: CommandType.StoredProcedure).First();
 
             string role = "";
 
-            if(passCheck == "true")
+            if (passCheck == "true")
             {
                 var checkRole = connection.Query<Employees>(storedProcedureToCheckRole, new { id = id }, commandType: CommandType.StoredProcedure);
 
-                role = checkRole.First().Role; 
-            }            
+                role = checkRole.First().Role;
+            }
 
             return role;
         }
+
+
+
+
+
 
         //public void AddEmployee(string storedProcedureToAddEmployee)
         //{
@@ -103,6 +119,11 @@ namespace Administrator
         //    MenuFuncs.PrintMenu(Menus.menuChoices, "users");
 
         //}
+
+
+
+
+
 
 
         //public async Task<IEnumerable<Users>> ShowUsers()

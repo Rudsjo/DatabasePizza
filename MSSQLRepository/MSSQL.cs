@@ -32,6 +32,8 @@ namespace MSSQLRepository
 
         public async Task<IEnumerable<Employees>> ShowEmployee(string storedProcedureToShowEmployees)
         {
+            //IEnumerable<Employees> employees = (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
+            //return employees;
             return (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
         }
 
@@ -52,7 +54,7 @@ namespace MSSQLRepository
 
         //Pizzas
 
-        public async Task AddPizza(string storedProcedureToAddPizza, string type, float price, string pizzabase, string ingredients)
+        public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, string pizzabase, string ingredients)
         {
             await connection.QueryAsync<Pizzas>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = ingredients }, commandType: CommandType.StoredProcedure);
         }
@@ -67,7 +69,7 @@ namespace MSSQLRepository
             return (await connection.QueryAsync<Pizzas>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdatePizza(string storedProcedureToUpdatePizza, Pizzas pizza)
+        public async Task UpdatePizza(Pizzas pizza, string storedProcedureToUpdatePizza)
         {
             await connection.QueryAsync<Pizzas>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type ,Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.Ingredients}, commandType: CommandType.StoredProcedure);
         }
@@ -78,7 +80,7 @@ namespace MSSQLRepository
         }
 
         //Condiments
-        public async Task AddCondiment(string storedProcedureToAddCondiment, string type, float price)
+        public async Task AddCondiment(string storedProcedureToAddCondiment, float price, string type)
         {
             await connection.QueryAsync<Condiments>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         }
@@ -93,7 +95,7 @@ namespace MSSQLRepository
             return (await connection.QueryAsync<Condiments>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateCondiment(string storedProcedureToUpdateCondiment, Condiments condiment)
+        public async Task UpdateCondiment(Condiments condiment, string storedProcedureToUpdateCondiment)
         {
             await connection.QueryAsync<Condiments>(storedProcedureToUpdateCondiment, new { CondimentID = condiment.CondimentID, Type = condiment.Type, Price = condiment.Price, }, commandType: CommandType.StoredProcedure);
         }
@@ -104,12 +106,12 @@ namespace MSSQLRepository
         }
 
         //Extras
-        public async Task AddExtra(string storedProcedureToAddExtra, string type, float price)
+        public async Task AddExtra(string storedProcedureToAddExtra, float price, string type)
         {
             await connection.QueryAsync<Extras>(storedProcedureToAddExtra, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Extras>> ShowExtras(string storedProcedureToShowExtra)
+        public async Task<IEnumerable<Extras>> ShowExtra(string storedProcedureToShowExtra)
         {
             return (await connection.QueryAsync<Extras>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
         }
@@ -119,7 +121,7 @@ namespace MSSQLRepository
             return (await connection.QueryAsync<Extras>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateExtra(string storedProcedureToUpdateExtra, Extras extra)
+        public async Task UpdateExtra(Extras extra, string storedProcedureToUpdateExtra)
         {
             await connection.QueryAsync<Extras>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
         }
@@ -129,7 +131,7 @@ namespace MSSQLRepository
             await connection.QueryAsync<Extras>(storedProcedureToDeleteExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure);
         }
 
-        //Orders
+        //OldOrders
         public async Task<OldOrders> ShowSingleOldOrder(int id, string storedProcedureToShowSingleOldOrder)
         {
             return (await connection.QueryAsync<OldOrders>(storedProcedureToShowSingleOldOrder, new { OldOrderID = id }, commandType: CommandType.StoredProcedure)).First();
@@ -139,5 +141,9 @@ namespace MSSQLRepository
         {
             return (await connection.QueryAsync<OldOrders>(storedProcedureToShowOldOrders, commandType: CommandType.StoredProcedure));
         }
+
+        //Orders Måste fixas. Både interface och funktioner
+
+
     }
 }

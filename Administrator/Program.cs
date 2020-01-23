@@ -2,12 +2,13 @@
 using System.Threading;
 using MenuFunctions;
 using MSSQLRepository;
+using System.Threading.Tasks;
 
 namespace Administrator
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             MenuFuncs menu = new MenuFuncs();
             MSSQL rep = new MSSQL();
@@ -32,17 +33,18 @@ namespace Administrator
                     {
                         case 1:
                             {
-                                rep.AddEmployee("AddEmployee");                               
+                                //await rep.AddEmployee("AddEmployee", "admin", "admin");
+                                
                                 break;
                             }
                         case 4:
                             {                                
-                                Console.Clear();
-                                foreach (var employee in rep.ShowEmployees("ShowEmployees"))
-                                {
-                                    Console.WriteLine(employee);
-                                }
-                                Console.ReadKey();
+                                //Console.Clear();
+                                //foreach (var employee in rep.ShowEmployees("ShowEmployees"))
+                                //{
+                                //    Console.WriteLine(employee);
+                                //}
+                                //Console.ReadKey();
 
                                 break;
                             }
