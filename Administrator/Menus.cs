@@ -16,7 +16,7 @@ namespace Administrator
         public string[][] menuChoices =
         {
             // main menu (0)
-            new string[] { "Anställda", "Pizzor", "Pålägg", "Tillbehör", "Gamla ordrar", "Logga ut" },
+            new string[] { "Anställda", "Pizzor", "Ingredienser", "Tillbehör", "Gamla ordrar", "Logga ut" },
             // anställda (1)
             new string[] { "Lägg till anställd", "Uppdatera anställd", "Visa alla anställda", "Ta bort anställd", "Gå tillbaka" },
             // pizzor (2)

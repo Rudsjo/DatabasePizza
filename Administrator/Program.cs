@@ -52,9 +52,7 @@ namespace Administrator
                 //}
             }
 
-
-            // Denna kan tas bort när vi skapat funktioner för Postgre SQL
-            MSSQL rep = new MSSQL();
+            MSSQL rep = new MSSQL(); // Denna kan tas bort när vi skapat funktioner för Postgre SQL
             Menus menus = new Menus();
 
             while (ProgramState.Running)
@@ -414,113 +412,223 @@ namespace Administrator
                             }
                         }
                         break;
-
-                    case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
-                        {
-                            string pizzaName = "", pizzaBase = "", pizzaIngredients = "";
-                            bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
-                            float pizzaPrice;
-
-                            // kolla pizzans namn
+                        case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                             {
-                                while (correctPizzaName == false)
+                                string pizzaName = "", pizzaBase = "", pizzaIngredients = "";
+                                bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
+                                float pizzaPrice;
+
+                                // kolla pizzans namn
                                 {
-                                    Console.WriteLine("~~ LÄGG TILL PIZZA ~~");
-                                    Console.WriteLine("Klicka på backspace för att gå tillbaka.");
-
-
-                                    /**
-                                     * LÄGGA TILL GÅ TILLBAKA FUNKTION MEN I ANNAN THREAD SÅ ATT MAN KAN SKRIVA OCH GÅ TILLBAKA SAMTIDIGT?
-                                     **/
-
-                                    Console.WriteLine();
-                                    Console.Write("Pizzans namn: ");
-                                    pizzaName = Console.ReadLine();
-                                    if (pizzaName.Length > 1) { correctPizzaName = true; }
-                                }
-                            }
-                            // kolla pizzans botten
-                            {
-                                while (correctPizzaBase == false)
-                                {
-                                    Console.Write("Pizzans botten (Italiensk eller amerikansk): ");
-                                    pizzaBase = Console.ReadLine();
-                                    if (pizzaBase.ToLower() == "italiensk" || pizzaBase.ToLower() == "amerikansk")
+                                    while (correctPizzaName == false)
                                     {
-                                        correctPizzaBase = true;
+                                        Console.WriteLine("~~ LÄGG TILL PIZZA ~~");
+                                        Console.WriteLine("Klicka på backspace för att gå tillbaka.");
+
+
+                                        /**
+                                         * LÄGGA TILL GÅ TILLBAKA FUNKTION MEN I ANNAN THREAD SÅ ATT MAN KAN SKRIVA OCH GÅ TILLBAKA SAMTIDIGT?
+                                         **/
+
+                                        Console.WriteLine();
+                                        Console.Write("Pizzans namn: ");
+                                        pizzaName = Console.ReadLine();
+                                        if (pizzaName.Length > 1) { correctPizzaName = true; }
                                     }
                                 }
-                            }
-
-                            // kolla pizzans pris
-                            {
-                                while (correctPizzaPrice == false)
+                                // kolla pizzans botten
                                 {
-                                    Console.Write("Pizzans pris: ");
-                                    bool correctInput = float.TryParse(Console.ReadLine(), out float price);
-                                    if (correctInput == true)
+                                    while (correctPizzaBase == false)
                                     {
-                                        pizzaPrice = price;
-                                        correctPizzaPrice = true;
+                                        Console.Write("Pizzans botten (Italiensk eller amerikansk): ");
+                                        pizzaBase = Console.ReadLine();
+                                        if (pizzaBase.ToLower() == "italiensk" || pizzaBase.ToLower() == "amerikansk")
+                                        {
+                                            correctPizzaBase = true;
+                                        }
                                     }
                                 }
-                            }
 
-                            //kolla pizzans ingredienser
-                            {
-                                Console.WriteLine("Välj pizzans ingredienser (nummer, nummer, nummer etc.)");
-                                int counter = 1;
-
-                                foreach(var ingredient in await rep.ShowCondiments())
+                                // kolla pizzans pris
                                 {
-                                    Console.WriteLine($"{counter}. {ingredient.Type}");
-                                    counter++;
+                                    while (correctPizzaPrice == false)
+                                    {
+                                        Console.Write("Pizzans pris: ");
+                                        bool correctInput = float.TryParse(Console.ReadLine(), out float price);
+                                        if (correctInput == true)
+                                        {
+                                            pizzaPrice = price;
+                                            correctPizzaPrice = true;
+                                        }
+                                    }
                                 }
 
-                                string[] chosenPizzaIngredients = Console.ReadLine().Trim().Split(',');
-                                int[] confirmedChosenPizzaIngredients = null;
-                                counter = 0;
-                                
-                                foreach(var ingredientID in chosenPizzaIngredients)
+                                //kolla pizzans ingredienser
                                 {
-                                    bool checkCorrectValues = int.TryParse(ingredientID, out int id);
+                                    Console.WriteLine("Välj pizzans ingredienser (nummer, nummer, nummer etc.)");
+                                    int counter = 1;
 
-                                    if(checkCorrectValues == true)
+                                    foreach(var ingredient in await rep.ShowCondiments())
                                     {
-                                        confirmedChosenPizzaIngredients[counter] = id;
+                                        Console.WriteLine($"{counter}. {ingredient.Type}");
                                         counter++;
                                     }
-                                    else
+
+                                    string[] chosenPizzaIngredients = Console.ReadLine().Trim().Split(',');
+                                    int[] confirmedChosenPizzaIngredients = null;
+                                    counter = 0;
+                                
+                                    foreach(var ingredientID in chosenPizzaIngredients)
                                     {
-                                        continue;
+                                        bool checkCorrectValues = int.TryParse(ingredientID, out int id);
+
+                                        if(checkCorrectValues == true)
+                                        {
+                                            confirmedChosenPizzaIngredients[counter] = id;
+                                            counter++;
+                                        }
+                                        else
+                                        {
+                                            continue;
+                                        }
                                     }
+
+                                    // SKA DETTA ÖVERSÄTTAS TILL JSON OCH SKICKAS IN??
+
                                 }
 
-                                // SKA DETTA ÖVERSÄTTAS TILL JSON OCH SKICKAS IN??
 
                             }
-
-
-                        }
-                        break;
+                            break;
+                        case ProgramState.PROGRAM_MENUES.UPDATE_PIZZA:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.SHOW_PIZZA:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.DELETE_PIZZA:
+                            break;
 
                     // Ingredients
                     case ProgramState.PROGRAM_MENUES.INGREDIENTS:
                         {
+                            Console.Clear();
+                            // MENU CHOICES
+                            {
+                                Console.WriteLine("~~ INGREDIENSER ~~");
+                                ProgramState.PrintMenu(menus.menuChoices[3]);
+                            }
+
+                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
+
+                            //USER CHOICE
+                            {
+                                if (userChoice == true)
+                                {
+                                    if (choice == 1) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_INGREDIENT; }
+                                    else if (choice == 2) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT; }
+                                    else if (choice == 3) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_INGREDIENT; }
+                                    else if (choice == 4) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT; }
+                                    else if (choice == 5) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else
+                                    {
+                                        ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
+                                    }
+                                }
+
+                                else
+                                {
+                                    ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
+                                }
+                            }
                         }
                         break;
+                        case ProgramState.PROGRAM_MENUES.ADD_INGREDIENT:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.SHOW_INGREDIENT:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT:
+                            break;
 
                     // Extras
                     case ProgramState.PROGRAM_MENUES.EXTRAS:
                         {
+                            Console.Clear();
+                            // MENU CHOICES
+                            {
+                                Console.WriteLine("~~ TILLBEHÖR ~~");
+                                ProgramState.PrintMenu(menus.menuChoices[4]);
+                            }
+
+                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
+
+                            //USER CHOICE
+                            {
+                                if (userChoice == true)
+                                {
+                                    if (choice == 1) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_EXTRAS; }
+                                    else if (choice == 2) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS; }
+                                    else if (choice == 3) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_EXTRAS; }
+                                    else if (choice == 4) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EXTRAS; }
+                                    else if (choice == 5) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else
+                                    {
+                                        ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
+                                    }
+                                }
+
+                                else
+                                {
+                                    ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
+                                }
+                            }
                         }
                         break;
+                        case ProgramState.PROGRAM_MENUES.ADD_EXTRAS:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.SHOW_EXTRAS:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.DELETE_EXTRAS:
+                            break;
 
                     // Old orders
                     case ProgramState.PROGRAM_MENUES.OLD_ORDERS:
                         {
+                            Console.Clear();
+                            // MENU CHOICES
+                            {
+                                Console.WriteLine("~~ GAMLA ORDRAR ~~");
+                                ProgramState.PrintMenu(menus.menuChoices[5]);
+                            }
+
+                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
+
+                            //USER CHOICE
+                            {
+                                if (userChoice == true)
+                                {
+                                    if (choice == 1) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS; }
+                                    else if (choice == 2) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS; }
+                                    else if (choice == 3) { ProgramState.SetFormerPosition(); ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else
+                                    {
+                                        ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
+                                    }
+                                }
+
+                                else
+                                {
+                                    ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
+                                }
+                            }
                         }
                         break;
+                        case ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS:
+                            break;
+                        case ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS:
+                            break;
 
                     default:
                         ProgramState.Running = false;
