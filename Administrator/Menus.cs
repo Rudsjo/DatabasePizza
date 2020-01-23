@@ -13,20 +13,20 @@ namespace Administrator
          **/
 
 
-        public static string[][] menuChoices =
+        public string[][] menuChoices =
         {
             // main menu (0)
-            new string[] { "main", "Användare", "Pizzor", "Pålägg", "Tillbehör", "Gamla ordrar", "Logga ut" },
+            new string[] { "Anställda", "Pizzor", "Pålägg", "Tillbehör", "Gamla ordrar", "Logga ut" },
             // anställda (1)
-            new string[] { "users", "Lägg till", "Ta bort", "Ändra", "Lista på anställda", "Gå tillbaka" },
+            new string[] { "Lägg till anställd", "Uppdatera anställd", "Visa alla anställda", "Ta bort anställd", "Gå tillbaka" },
             // pizzor (2)
-            new string[] { "pizzas", "Lägg till", "Ta bort", "Ändra", "Lista över pizzor", "Gå tillbaka" },
+            new string[] { "Lägg till pizza", "Uppdatera pizza", "Visa alla pizzor", "Ta bort pizza", "Gå tillbaka" },
             // ingredienser (3)
-            new string[] { "ingredients", "Lägg till", "Ta bort", "Ändra", "Lista över pålägg", "Gå tillbaka" },
+            new string[] { "Lägg till ingrediens", "Uppdatera ingrediens", "Visa alla ingredienser", "Ta bort ingrediens", "Gå tillbaka" },
             // tillbehör (4)
-            new string[] { "extras", "Lägg till", "Ta bort", "Ändra", "Lista över tillbehör", "Gå tillbaka" },
+            new string[] { "Lägg till tillbehör", "Uppdatera tillbehör", "Visa alla tillbehör", "Ta bort tillbehör", "Gå tillbaka" },
             // gamla ordrar (5)
-            new string[] { "oldOrders", "Visa gamla ordrar", "Ta bort gamla ordrar", "Gå tillbaka" }
+            new string[] { "Visa gamla ordrar", "Ta bort gamla ordrar", "Gå tillbaka" }
 
         };
     }

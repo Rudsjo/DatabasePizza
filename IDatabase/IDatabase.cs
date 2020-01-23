@@ -42,6 +42,8 @@ namespace IDatabasePizza
         public Task<OldOrders> ShowSingleOldOrder(int ID , string storedProcedure = "ShowOldOrderByID");
         public Task<IEnumerable<OldOrders>> ShowOldOrders(string storedProcedure = "ShowOldOrders");
 
+        public Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedure = "CheckPassword", string secondStoredProcedure = "CheckRole");
+
         //Order interfaceimplementation måste göras. 
     }
 

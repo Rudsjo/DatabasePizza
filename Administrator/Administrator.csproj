@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MenuFunctions\MenuFunctions.csproj" />
     <ProjectReference Include="..\MSSQLRepository\MSSQLRepository.csproj" />
+    <ProjectReference Include="..\PostgreSQLRepository\PostgreSQLRepository.csproj" />
   </ItemGroup>
 
 </Project>

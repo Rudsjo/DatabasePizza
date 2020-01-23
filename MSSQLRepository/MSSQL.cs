@@ -25,12 +25,12 @@ namespace MSSQLRepository
 
         //Employees
         
-        public async Task AddEmployee(string storedProcedureToAddEmployee, string password, string role)
+        public async Task AddEmployee(string password, string role, string storedProcedureToAddEmployee = "AddEmployee")
         {
             await connection.QueryAsync<Employees>(storedProcedureToAddEmployee, new { Password = password, Role = role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Employees>> ShowEmployee(string storedProcedureToShowEmployees)
+        public async Task<IEnumerable<Employees>> ShowEmployee(string storedProcedureToShowEmployees = "ShowEmployees")
         {
             //IEnumerable<Employees> employees = (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
             //return employees;
@@ -140,6 +140,22 @@ namespace MSSQLRepository
         public async Task<IEnumerable<OldOrders>> ShowOldOrders(string storedProcedureToShowOldOrders)
         {
             return (await connection.QueryAsync<OldOrders>(storedProcedureToShowOldOrders, commandType: CommandType.StoredProcedure));
+        }
+
+        public async Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedureToCheckLogin = "CheckPassword", string storedProcedureToCheckRole = "CheckRole")
+        {
+            string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { id = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
+            bool correctLogInCredentials = false;
+            string role = "";
+            
+            if (passCheck == "true")
+            {
+                correctLogInCredentials = true;
+                var checkRole = await connection.QueryAsync<Employees>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
+                role = checkRole.First().Role;
+            }
+
+            return (correctLogInCredentials, role);
         }
 
         //Orders Måste fixas. Både interface och funktioner

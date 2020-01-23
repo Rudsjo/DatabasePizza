@@ -4,111 +4,97 @@ using System.Reflection;
 
 namespace MenuFunctions
 {
-    public class MenuFuncs
+    public static class ProgramState
     {
-        
-        public static (string, int) RunMainMenu(string[][] mainMenuChoice, object logInMenu, string logInFunctionName, params object[] parametersNeededForLogin)
+        public static bool Running { get; set; } = true;
+        public enum PROGRAM_MENUES
         {
-            int numberOfChoices = PrintMenu(mainMenuChoice, "main").Item1;
+            LOGIN_SCREEN,
+
+            MAIN_MENU,
+
+            EMPLOYEES,
+                ADD_EMPLOYEE,
+                UPDATE_EMPLOYEE,
+                SHOW_EMPLOYEE,
+                DELETE_EMPLOYEE,
+            PIZZAS,
+                ADD_PIZZA,
+                UPDATE_PIZZA,
+                SHOW_PIZZA,
+                DELETE_PIZZA,
+            INGREDIENTS,
+                ADD_INGREDIENT,
+                UPDATE_INGREDIENT,
+                SHOW_INGREDIENT,
+                DELETE_INGREDIENT,
+            EXTRAS,
+                ADD_EXTRAS,
+                UPDATE_EXTRAS,
+                SHOW_EXTRAS,
+                DELETE_EXTRAS,
+            OLD_ORDERS,
+                SHOW_OLD_ORDERS,
+                DELETE_OLD_ORDERS
+        }
+        public static PROGRAM_MENUES CURRENT_MENU { get; set; } =
+          PROGRAM_MENUES.LOGIN_SCREEN;
+
+        public static PROGRAM_MENUES FORMER_MENU { get; set; } =
+            PROGRAM_MENUES.MAIN_MENU;
+
+
+
+        public static void MessageIfChoiceIsNotRight(params string[] text)
+        {
             Console.Clear();
-            string currentPosition = PrintMenu(mainMenuChoice, "main").Item2;
-            string formerPositon = currentPosition;
-            int choice = Console.ReadKey(true).KeyChar - '0';
-
-            while (true)
+            foreach (var item in text)
             {
-                formerPositon = currentPosition;
-                currentPosition = UserChoice(choice, numberOfChoices, mainMenuChoice, currentPosition);
-
-                if (currentPosition == "error")
-                {
-                    Console.Clear();
-                    Console.WriteLine("Ditt val är felaktigt.");
-                    Thread.Sleep(1500);
-                    Console.Clear();
-                    PrintMenu(mainMenuChoice, formerPositon);
-                    choice = Console.ReadKey(true).KeyChar - '0';
-                }
-
-                else if (currentPosition == "logout")
-                {
-                    Console.Clear();
-                    MethodInfo mi = logInMenu.GetType().GetMethod(logInFunctionName);
-                    mi.Invoke(logInMenu, parametersNeededForLogin);
-                    break;
-                }
-
-                else
-                {
-                    Console.Clear();
-                    numberOfChoices = PrintMenu(mainMenuChoice, currentPosition).Item1;
-                    Console.Clear();
-                    currentPosition = PrintMenu(mainMenuChoice, currentPosition).Item2;
-                    choice = Console.ReadKey(true).KeyChar - '0';
-
-                    if (currentPosition != "main" && choice < (numberOfChoices - 1))
-                    {
-                        break; // använd invoke för att anropa rätt typ av funktion härifrån
-                    }
-
-                }
+                Console.WriteLine(item);
             }
-
-            return (currentPosition, choice);
+            Thread.Sleep(1000);
+            Console.Clear();
         }
 
-        public static (int, string) PrintMenu(string[][] menuChoice, string currentPosition)
+        public static void ConfirmationScreen(params string[] text)
+        {
+            Console.Clear();
+            foreach (var item in text)
+            {
+                Console.WriteLine(item);
+            }
+            Thread.Sleep(1000);
+
+        }
+
+        public static bool GoBackOption(char charChoice)
+        {
+            if (charChoice == 8)
+            {
+                ProgramState.CURRENT_MENU = ProgramState.FORMER_MENU;
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+
+        }
+        public static void SetFormerPosition()
+        {
+            ProgramState.FORMER_MENU = ProgramState.CURRENT_MENU;
+        }
+
+        public static void PrintMenu(string[] menuChoices)
         {
             int counter = 1;
 
-            for (int i = 0; i < menuChoice.Length; i++)
+            foreach(string menuChoice in menuChoices)
             {
-                if (menuChoice[i][0] == currentPosition)
-                {
-                    for (int menuItems = 1; menuItems < menuChoice[i].Length; menuItems++)
-                    {
-                        Console.WriteLine(counter + ". " + menuChoice[i][menuItems]);
-                        counter++;
-                    }
-                }
+                Console.WriteLine($"{counter}. {menuChoice}");
+                counter++;
             }
-
-            return (counter, currentPosition);
-        }
-
-        public static string UserChoice(int userChoice, int nrOfChoices, string[][] menuChoice, string currentPosition)
-        {
-            string newPosition = currentPosition;
-
-            for (int i = 1; i < nrOfChoices; i++)
-            {
-                if (userChoice == i && userChoice < (nrOfChoices - 1))
-                {
-                    newPosition = menuChoice[i][0];
-                    break;
-                }
-
-                else if (userChoice == (nrOfChoices - 1) && currentPosition == "main")
-                {
-                    // kontrollerar om vi befinner oss i huvudmenyn och således om vi ska logga ut, vid övriga går vi tillbaka till huvudmenyn
-                    newPosition = "logout";
-                    break;
-                }
-
-                else if (userChoice == (nrOfChoices - 1))
-                {
-                    newPosition = "main";
-                    break;
-                }
-
-                else if (userChoice >= nrOfChoices)
-                {
-                    newPosition = "error";
-                    break;
-                }
-            }
-
-            return newPosition;
         }
 
     }
