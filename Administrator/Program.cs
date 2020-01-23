@@ -331,12 +331,13 @@ namespace Administrator
                             {
                                 Console.Clear();
                                 Console.WriteLine("~~ SAMTLIGA ANSTÄLLDA ~~");
-
+                                Console.WriteLine();
                                 foreach (var employees in await rep.ShowEmployee())
                                 {
                                     Console.WriteLine(employees);
                                 }
 
+                                Console.WriteLine();
                                 Console.WriteLine("Klicka på backspace för att gå tillbaka");
                                 charChoice = Console.ReadKey().KeyChar;
                                 wantToGoBack = ProgramState.GoBackOption(charChoice);
