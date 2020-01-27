@@ -40,10 +40,6 @@ namespace MenuFunctions
         public static PROGRAM_MENUES CURRENT_MENU { get; set; } =
           PROGRAM_MENUES.LOGIN_SCREEN;
 
-        public static PROGRAM_MENUES FORMER_MENU { get; set; } =
-            PROGRAM_MENUES.MAIN_MENU;
-
-
 
         public static void MessageIfChoiceIsNotRight(params string[] text)
         {
@@ -67,25 +63,6 @@ namespace MenuFunctions
 
         }
 
-        public static bool GoBackOption(char charChoice)
-        {
-            if (charChoice == 8)
-            {
-                ProgramState.CURRENT_MENU = ProgramState.FORMER_MENU;
-                return true;
-            }
-
-            else
-            {
-                return false;
-            }
-
-        }
-        public static void SetFormerPosition()
-        {
-            ProgramState.FORMER_MENU = ProgramState.CURRENT_MENU;
-        }
-
         public static void PrintMenu(string[] menuChoices)
         {
             int counter = 1;
@@ -97,5 +74,87 @@ namespace MenuFunctions
             }
         }
 
+
+
+        public static string ShowPasswordAsStarsWithOptionToGoBack()
+        {
+            {
+                string input = "";
+                int stringIndex = 0;
+
+                do
+                {
+                    ConsoleKeyInfo readKeyResult = Console.ReadKey(true);
+
+                    if (readKeyResult.Key == ConsoleKey.Escape)
+                    {
+                        return null;
+                    }
+
+                    // handle Enter
+                    if (readKeyResult.Key == ConsoleKey.Enter)
+                    {
+                        return input;
+                    }
+
+                    if (readKeyResult.Key == ConsoleKey.Backspace)
+                    {
+                        if (stringIndex > 0)
+                        {
+                            input = input.Remove(input.Length - 1);
+                            Console.Write(readKeyResult.KeyChar);
+                            Console.Write(' ');
+                            Console.Write(readKeyResult.KeyChar);
+                            stringIndex--;
+                        }
+                    }
+
+                    else
+                    {
+                        input += readKeyResult.KeyChar;
+                        Console.Write("*");
+                        stringIndex++;
+                    }
+                } while (true);
+            }
+        }
+
+        public static string ReadLineWithOptionToGoBack()
+        {
+            {
+                string input = "";
+                int stringIndex = 0;
+
+                do
+                {
+                    ConsoleKeyInfo readKeyResult = Console.ReadKey(true);
+
+                    if (readKeyResult.Key == ConsoleKey.Escape) return null;
+
+                    // handle Enter
+                    if (readKeyResult.Key == ConsoleKey.Enter) { Console.WriteLine(); return input; }
+
+                    if (readKeyResult.Key == ConsoleKey.Backspace)
+                    {
+                        if (stringIndex > 0)
+                        {
+                            input = input.Remove(input.Length - 1);
+                            Console.Write(readKeyResult.KeyChar);
+                            Console.Write(' ');
+                            Console.Write(readKeyResult.KeyChar);
+                            stringIndex--;
+                        }
+                    }
+
+                    else
+                    {
+                        input += readKeyResult.KeyChar;
+                        Console.Write(readKeyResult.KeyChar);
+                        stringIndex++;
+                    }
+                } while (true);
+            }
+        }
     }
+
 }

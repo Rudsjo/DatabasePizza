@@ -27,119 +27,119 @@ namespace MSSQLRepository
         
         public async Task AddEmployee(string password, string role, string storedProcedureToAddEmployee = "AddEmployee")
         {
-            await connection.QueryAsync<Employees>(storedProcedureToAddEmployee, new { Password = password, Role = role }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = password, Role = role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Employees>> ShowEmployee(string storedProcedureToShowEmployees = "ShowEmployees")
+        public async Task<IEnumerable<Employee>> ShowEmployee(string storedProcedureToShowEmployees = "ShowEmployees")
         {
             //IEnumerable<Employees> employees = (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
             //return employees;
-            return (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
+            return (await connection.QueryAsync<Employee>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Employees> ShowSingleEmployee(int id, string storedProcedureToShowSingleEmployee)
+        public async Task<Employee> ShowSingleEmployee(int id, string storedProcedureToShowSingleEmployee = "ShowSingleEmployee")
         {
-            return (await connection.QueryAsync<Employees>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
+            return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateEmployee(Employees employee, string storedProcedureToUpdateEmployee)
+        public async Task UpdateEmployee(Employee employee, string storedProcedureToUpdateEmployee = "UpdateEmployeeByID")
         {
-            await connection.QueryAsync<Employees>(storedProcedureToUpdateEmployee, new { UserID = employee.UserID, Password = employee.Password, Role = employee.Role }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = employee.UserID, Password = employee.Password, Role = employee.Role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee = "DeleteEmployee")
+        public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
         {
-            await connection.QueryAsync<Employees>(storedProcedureToDeleteEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure);
         }
     
         //Pizzas
 
         public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, string pizzabase, string ingredients)
         {
-            await connection.QueryAsync<Pizzas>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = ingredients }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = ingredients }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Pizzas>> ShowPizza(string storedProcedureToShowPizzas)
+        public async Task<IEnumerable<Pizza>> ShowPizza(string storedProcedureToShowPizzas)
         {
-            return (await connection.QueryAsync<Pizzas>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
+            return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Pizzas> ShowSinglePizza(int id, string storedProcedureToShowSinglePizza)
+        public async Task<Pizza> ShowSinglePizza(int id, string storedProcedureToShowSinglePizza)
         {
-            return (await connection.QueryAsync<Pizzas>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
+            return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdatePizza(Pizzas pizza, string storedProcedureToUpdatePizza)
+        public async Task UpdatePizza(Pizza pizza, string storedProcedureToUpdatePizza)
         {
-            await connection.QueryAsync<Pizzas>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type ,Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.Ingredients}, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type ,Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.Ingredients}, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeletePizza(int id, string storedProcedureToDeletePizza)
         {
-            await connection.QueryAsync<Pizzas>(storedProcedureToDeletePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure);
         }
 
         //Condiments
         public async Task AddCondiment(string storedProcedureToAddCondiment, float price, string type)
         {
-            await connection.QueryAsync<Condiments>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Condiments>> ShowCondiments(string storedProcedureToShowCondiment = "ShowCondiments")
+        public async Task<IEnumerable<Condiment>> ShowCondiments(string storedProcedureToShowCondiment = "ShowCondiments")
         {
-            return (await connection.QueryAsync<Condiments>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
+            return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Condiments> ShowSingleCondiment(int id, string storedProcedureToShowSingleCondiment)
+        public async Task<Condiment> ShowSingleCondiment(int id, string storedProcedureToShowSingleCondiment)
         {
-            return (await connection.QueryAsync<Condiments>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
+            return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateCondiment(Condiments condiment, string storedProcedureToUpdateCondiment)
+        public async Task UpdateCondiment(Condiment condiment, string storedProcedureToUpdateCondiment)
         {
-            await connection.QueryAsync<Condiments>(storedProcedureToUpdateCondiment, new { CondimentID = condiment.CondimentID, Type = condiment.Type, Price = condiment.Price, }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = condiment.CondimentID, Type = condiment.Type, Price = condiment.Price, }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeleteCondiment(int id, string storedProcedureToDeleteCondiment = "DeleteCondiment")
         {
-            await connection.QueryAsync<Condiments>(storedProcedureToDeleteCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure);
         }
 
         //Extras
         public async Task AddExtra(string storedProcedureToAddExtra, float price, string type)
         {
-            await connection.QueryAsync<Extras>(storedProcedureToAddExtra, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Extras>> ShowExtra(string storedProcedureToShowExtra)
+        public async Task<IEnumerable<Extra>> ShowExtra(string storedProcedureToShowExtra)
         {
-            return (await connection.QueryAsync<Extras>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
+            return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Extras> ShowSingleExtra(int id, string storedProcedureToShowSingleExtra)
+        public async Task<Extra> ShowSingleExtra(int id, string storedProcedureToShowSingleExtra)
         {
-            return (await connection.QueryAsync<Extras>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
+            return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateExtra(Extras extra, string storedProcedureToUpdateExtra)
+        public async Task UpdateExtra(Extra extra, string storedProcedureToUpdateExtra)
         {
-            await connection.QueryAsync<Extras>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeleteExtra(int id, string storedProcedureToDeleteExtra)
         {
-            await connection.QueryAsync<Extras>(storedProcedureToDeleteExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure);
         }
 
         //OldOrders
-        public async Task<OldOrders> ShowSingleOldOrder(int id, string storedProcedureToShowSingleOldOrder)
+        public async Task<OldOrder> ShowSingleOldOrder(int id, string storedProcedureToShowSingleOldOrder)
         {
-            return (await connection.QueryAsync<OldOrders>(storedProcedureToShowSingleOldOrder, new { OldOrderID = id }, commandType: CommandType.StoredProcedure)).First();
+            return (await connection.QueryAsync<OldOrder>(storedProcedureToShowSingleOldOrder, new { OldOrderID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task<IEnumerable<OldOrders>> ShowOldOrders(string storedProcedureToShowOldOrders)
+        public async Task<IEnumerable<OldOrder>> ShowOldOrders(string storedProcedureToShowOldOrders)
         {
-            return (await connection.QueryAsync<OldOrders>(storedProcedureToShowOldOrders, commandType: CommandType.StoredProcedure));
+            return (await connection.QueryAsync<OldOrder>(storedProcedureToShowOldOrders, commandType: CommandType.StoredProcedure));
         }
 
         //Checking functions for existing ID and user/password.
@@ -153,7 +153,7 @@ namespace MSSQLRepository
             if (passCheck == "true")
             {
                 correctLogInCredentials = true;
-                var checkRole = await connection.QueryAsync<Employees>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
+                var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
                 role = checkRole.First().Role;
             }
 
