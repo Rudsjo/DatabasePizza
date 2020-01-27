@@ -89,7 +89,7 @@ namespace PizzaClassLibrary
         //Ska vi ha ovverride till alla klasser?
         public override string ToString()
         {
-            return $"{this.PizzaID} {this.Type} {this.Price} {this.Base} {this.Ingredients}";
+            return $"{this.PizzaID} {this.Type} {this.Price} {this.Base}";
         }
     }
 }

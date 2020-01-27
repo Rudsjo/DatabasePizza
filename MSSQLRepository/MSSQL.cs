@@ -60,12 +60,12 @@ namespace MSSQLRepository
             await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = JsonConvert.SerializeObject(ingredients) }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Pizza>> ShowPizza(string storedProcedureToShowPizzas)
+        public async Task<IEnumerable<Pizza>> ShowPizza(string storedProcedureToShowPizzas = "ShowPizzas")
         {
             return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Pizza> ShowSinglePizza(int id, string storedProcedureToShowSinglePizza)
+        public async Task<Pizza> ShowSinglePizza(int id, string storedProcedureToShowSinglePizza = "ShowSinglePizza")
         {
             return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
         }
