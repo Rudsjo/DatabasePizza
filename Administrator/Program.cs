@@ -484,9 +484,10 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                         {
-                            string pizzaName = null, pizzaBase = null, pizzaIngredients = null;
                             bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
-                            float pizzaPrice;
+
+                            Pizza newPizza = new Pizza();
+                            newPizza.Type = null; newPizza.Base = null; newPizza.Price = 0;
 
                             // kolla pizzans namn
                             {
@@ -498,77 +499,114 @@ namespace Administrator
 
                                     Console.WriteLine();
                                     Console.Write("Pizzans namn: ");
-                                    pizzaName = ProgramState.ReadLineWithOptionToGoBack();
+                                    newPizza.Type = ProgramState.ReadLineWithOptionToGoBack();
 
-                                    if(pizzaName == null)
+                                    if(newPizza.Type == null)
                                     {
                                         Console.Clear();
                                         ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                         break;
                                     }
 
-                                    else if (pizzaName.Length > 1) { correctPizzaName = true; }
+                                    else if (newPizza.Type.Length > 1) { correctPizzaName = true; }
                                     else { ProgramState.MessageIfChoiceIsNotRight("Namnet måste innehålla minst ett tecken."); }
                                 }
                             }
                             // kolla pizzans botten
                             {
-                                while (correctPizzaBase == false && pizzaName != null)
+                                while (correctPizzaBase == false && newPizza.Type != null)
                                 {
                                     Console.Write("Pizzans botten (Italiensk eller amerikansk): ");
-                                    pizzaBase = Console.ReadLine();
-                                    if (pizzaBase.ToLower() == "italiensk" || pizzaBase.ToLower() == "amerikansk")
+                                    newPizza.Base = ProgramState.ReadLineWithOptionToGoBack();
+
+                                    if(newPizza.Base == null)
+                                    {
+                                        Console.Clear();
+                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                        break;
+                                    }
+
+                                    else if (newPizza.Base.ToLower() == "italiensk" || newPizza.Base.ToLower() == "amerikansk")
                                     {
                                         correctPizzaBase = true;
                                     }
+
+                                    else { ProgramState.MessageIfChoiceIsNotRight("Pizzabasen finns inte."); }
                                 }
                             }
 
                             // kolla pizzans pris
                             {
-                                while (correctPizzaPrice == false)
+                                while (correctPizzaPrice == false && newPizza.Type != null && newPizza.Base != null)
                                 {
                                     Console.Write("Pizzans pris: ");
-                                    bool correctInput = float.TryParse(Console.ReadLine(), out float price);
-                                    if (correctInput == true)
+                                    string inputPrice = ProgramState.ReadLineWithOptionToGoBack();
+                                    bool correctInput = float.TryParse(inputPrice, out float price);
+
+                                    if(inputPrice == null)
                                     {
-                                        pizzaPrice = price;
+                                        Console.Clear();
+                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                        break;
+                                    }
+
+                                    else if (correctInput == true && price > 0)
+                                    {
+                                        newPizza.Price = price;
                                         correctPizzaPrice = true;
                                     }
+
+                                    else { ProgramState.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
                                 }
                             }
 
                             //kolla pizzans ingredienser
                             {
-                                Console.WriteLine("Välj pizzans ingredienser (nummer, nummer, nummer etc.)");
-                                int counter = 1;
-
-                                foreach (var ingredient in await rep.ShowCondiments())
+                                if (newPizza.Type != null && newPizza.Base != null && newPizza.Price != 0)
                                 {
-                                    Console.WriteLine($"{counter}. {ingredient.Type}");
-                                    counter++;
-                                }
+                                    bool confirmedPizza = false;
 
-                                string[] chosenPizzaIngredients = Console.ReadLine().Trim().Split(',');
-                                int[] confirmedChosenPizzaIngredients = null;
-                                counter = 0;
-
-                                foreach (var ingredientID in chosenPizzaIngredients)
-                                {
-                                    bool checkCorrectValues = int.TryParse(ingredientID, out int id);
-
-                                    if (checkCorrectValues == true)
+                                    while (confirmedPizza == false)
                                     {
-                                        confirmedChosenPizzaIngredients[counter] = id;
-                                        counter++;
-                                    }
-                                    else
-                                    {
-                                        continue;
+                                        Console.WriteLine("Välj en ingrediens till pizzan genom att ange ingrediensens nummer:");
+                                        int counter = 1;
+
+                                        foreach (var condiment in await rep.ShowCondiments())
+                                        {
+                                            Console.WriteLine($"{counter}. {condiment.Type}");
+                                            counter++;
+                                        }
+
+                                        string chosenCondiment = ProgramState.ReadLineWithOptionToGoBack();
+                                        bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
+
+                                        if(chosenCondiment == null)
+                                        {
+                                            Console.Clear();
+                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                            break;
+                                        }
+
+                                        else if (correctInput == true)
+                                        {
+                                            Condiment cond = await rep.ShowSingleCondiment(confirmedChosenCondiment);
+                                            newPizza.PizzaIngredients.Add(cond);
+                                            ProgramState.ConfirmationScreen("Ingrediens tillagd.");
+                                            Console.Clear();
+
+                                            Console.WriteLine("Ange ytterligare en ingrediens, ange 0 för att bekräfta pizzan.");
+                                            if(confirmedChosenCondiment == 0)
+                                            {
+                                               await rep.AddPizza(newPizza.Type, newPizza.Price, newPizza.Base, newPizza.PizzaIngredients);
+                                                ProgramState.ConfirmationScreen("Pizzan tillagd");
+                                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                                break;
+                                            }
+                                        }
+
+                                        else { ProgramState.MessageIfChoiceIsNotRight("Ditt val är felaktigt."); }
                                     }
                                 }
-
-                                // SKA DETTA ÖVERSÄTTAS TILL JSON OCH SKICKAS IN??
 
                             }
 
@@ -579,12 +617,7 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.SHOW_PIZZA:
                         {
-                            IEnumerable<Pizza> plist = await rep.ShowPizza("ShowPizzas");
-                            foreach(Pizza p in plist)
-                            {
-                                foreach (Condiment c in p.ObjectList) Console.WriteLine(p.Type + ": " + c.Type + " - " + c.Price);
-                                Console.ReadKey();
-                            }
+                            
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.DELETE_PIZZA:

@@ -55,7 +55,7 @@ namespace MSSQLRepository
     
         //Pizzas
 
-        public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, List<Condiment> ingredients, string pizzabase)
+        public async Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedureToAddPizza = "AddPizza")
         {
             await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = JsonConvert.SerializeObject(ingredients) }, commandType: CommandType.StoredProcedure);
         }
@@ -91,7 +91,7 @@ namespace MSSQLRepository
             return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Condiment> ShowSingleCondiment(int id, string storedProcedureToShowSingleCondiment)
+        public async Task<Condiment> ShowSingleCondiment(int id, string storedProcedureToShowSingleCondiment = "ShowSingleCondiment")
         {
             return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
         }
