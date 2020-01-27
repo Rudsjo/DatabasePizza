@@ -51,7 +51,7 @@ namespace MSSQLRepository
         {
             await connection.QueryAsync<Employees>(storedProcedureToDeleteEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure);
         }
-
+    
         //Pizzas
 
         public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, string pizzabase, string ingredients)
@@ -142,6 +142,8 @@ namespace MSSQLRepository
             return (await connection.QueryAsync<OldOrders>(storedProcedureToShowOldOrders, commandType: CommandType.StoredProcedure));
         }
 
+        //Checking functions for existing ID and user/password.
+
         public async Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedureToCheckLogin = "CheckPassword", string storedProcedureToCheckRole = "CheckRole")
         {
             string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { id = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
@@ -157,6 +159,44 @@ namespace MSSQLRepository
 
             return (correctLogInCredentials, role);
         }
+
+        public async Task<bool> CheckIfUserIDExists(int ID, string storedProcedureToCheckForExistingID = "CheckForExistingID")
+        {
+            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingID, new { UserID = ID }, commandType: CommandType.StoredProcedure)).First();
+            if (IDExists == true)
+                return true;
+            else
+                return false;
+        }
+
+        public async Task<bool> CheckIfProductIDExists(int ID, string storedProcedureToCheckForExistingProductID = "CheckForExistingProductID")
+        {
+            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingProductID, new { ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
+            if (IDExists == true)
+                return true;
+            else
+                return false;
+        }
+
+        public async Task<bool> CheckIfCondimentIDExists(int ID, string storedProcedureToCheckForExistingCondimentID = "CheckForExistingCondimentID")
+        {
+            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingCondimentID, new { CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
+            if (IDExists == true)
+                return true;
+            else
+                return false;
+        }
+
+        public async Task<bool> CheckIfPizzaIDExists(int ID, string storedProcedureToCheckForExistingPizzaID = "CheckForExistingPizzaID")
+        {
+            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingPizzaID, new { PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+            if (IDExists == true)
+                return true;
+            else
+                return false;
+        }
+
+        //Lägga till funtioner för resterande tabeller, för att kolla om ID existerar.
 
         //Orders Måste fixas. Både interface och funktioner
 

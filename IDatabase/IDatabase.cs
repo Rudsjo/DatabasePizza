@@ -42,7 +42,12 @@ namespace IDatabasePizza
         public Task<OldOrders> ShowSingleOldOrder(int ID , string storedProcedure = "ShowOldOrderByID");
         public Task<IEnumerable<OldOrders>> ShowOldOrders(string storedProcedure = "ShowOldOrders");
 
+        //Functions for checking user/password and for checking if an ID exists in the database.
         public Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedure = "CheckPassword", string secondStoredProcedure = "CheckRole");
+        public Task<bool> CheckIfUserIDExists(int ID, string storedProcedure = "CheckForExistingID");
+        public Task<bool> CheckIfProductIDExists(int ID, string storedProcedure = "CheckForExistingProductID");
+        public Task<bool> CheckIfCondimentIDExists(int ID, string storedProcedure = "CheckForExistingCondimentID");
+        public Task<bool> CheckIfPizzaIDExists(int ID, string storedProcedure = "CheckForExistingPizzaID");
 
         //Order interfaceimplementation måste göras. 
     }

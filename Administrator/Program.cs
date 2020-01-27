@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace Administrator
 {
     class Program
@@ -258,8 +259,10 @@ namespace Administrator
                                 Console.Write("Ange ID på den anställde som du vill uppdatera: ");
 
                                 int.TryParse(Console.ReadLine(), out int choice);
+                                //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
+                                bool doesUserExist = (await rep.CheckIfUserIDExists(choice));
 
-                                if (choice == 1)
+                                if (doesUserExist == true)
                                 {
                                     Console.Clear();
                                     Console.WriteLine("Ange vad du vill ändra hos användaren:");
