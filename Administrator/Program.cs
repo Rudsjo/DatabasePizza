@@ -484,7 +484,7 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                         {
-                            string pizzaName = "", pizzaBase = "", pizzaIngredients = "";
+                            string pizzaName = null, pizzaBase = null, pizzaIngredients = null;
                             bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
                             float pizzaPrice;
 
@@ -492,23 +492,28 @@ namespace Administrator
                             {
                                 while (correctPizzaName == false)
                                 {
+                                    Console.Clear();
                                     Console.WriteLine("~~ LÄGG TILL PIZZA ~~");
-                                    Console.WriteLine("Klicka på backspace för att gå tillbaka.");
-
-
-                                    /**
-                                     * LÄGGA TILL GÅ TILLBAKA FUNKTION MEN I ANNAN THREAD SÅ ATT MAN KAN SKRIVA OCH GÅ TILLBAKA SAMTIDIGT?
-                                     **/
+                                    Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
                                     Console.WriteLine();
                                     Console.Write("Pizzans namn: ");
-                                    pizzaName = Console.ReadLine();
-                                    if (pizzaName.Length > 1) { correctPizzaName = true; }
+                                    pizzaName = ProgramState.ReadLineWithOptionToGoBack();
+
+                                    if(pizzaName == null)
+                                    {
+                                        Console.Clear();
+                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                        break;
+                                    }
+
+                                    else if (pizzaName.Length > 1) { correctPizzaName = true; }
+                                    else { ProgramState.MessageIfChoiceIsNotRight("Namnet måste innehålla minst ett tecken."); }
                                 }
                             }
                             // kolla pizzans botten
                             {
-                                while (correctPizzaBase == false)
+                                while (correctPizzaBase == false && pizzaName != null)
                                 {
                                     Console.Write("Pizzans botten (Italiensk eller amerikansk): ");
                                     pizzaBase = Console.ReadLine();
