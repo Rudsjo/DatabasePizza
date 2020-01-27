@@ -7,6 +7,7 @@ using Dapper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace MSSQLRepository
 {
@@ -54,9 +55,9 @@ namespace MSSQLRepository
     
         //Pizzas
 
-        public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, string pizzabase, string ingredients)
+        public async Task AddPizza(string storedProcedureToAddPizza, float price, string type, List<Condiment> ingredients, string pizzabase)
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = ingredients }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = JsonConvert.SerializeObject(ingredients) }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task<IEnumerable<Pizza>> ShowPizza(string storedProcedureToShowPizzas)
@@ -71,7 +72,7 @@ namespace MSSQLRepository
 
         public async Task UpdatePizza(Pizza pizza, string storedProcedureToUpdatePizza)
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type ,Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.Ingredients}, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type ,Price = pizza.Price, Base = pizza.Base, Ingredients = JsonConvert.SerializeObject(pizza.PizzaIngredients)}, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeletePizza(int id, string storedProcedureToDeletePizza)

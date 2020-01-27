@@ -18,7 +18,7 @@ namespace IDatabasePizza
         public Task DeleteEmployee(int ID, string storedProcedure = "DeleteEmployeeByID");
 
         //Pizza
-        public Task AddPizza(string type, float price, string pizzabase, string ingredients, string storedProcedure = "AddPizza");
+        public Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedure = "AddPizza");
         public Task UpdatePizza(Pizza pizza, string storedProcedure = "UpdatePizzaByID");
         public Task<IEnumerable<Pizza>> ShowPizza(string storedProcedure = "ShowPizzas");
         public Task<Pizza> ShowSinglePizza(int ID, string storedProcedure = "ShowSinglePizza");
