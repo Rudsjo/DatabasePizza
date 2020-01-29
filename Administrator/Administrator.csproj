@@ -12,10 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BackendHandler\BackendHandler.csproj" />
     <ProjectReference Include="..\MenuFunctions\MenuFunctions.csproj" />
-    <ProjectReference Include="..\MSSQLRepository\MSSQLRepository.csproj" />
-    <ProjectReference Include="..\PizzaClassLibrary\PizzaClassLibrary.csproj" />
-    <ProjectReference Include="..\PostgreSQLRepository\PostgreSQLRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Backend.cfg.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

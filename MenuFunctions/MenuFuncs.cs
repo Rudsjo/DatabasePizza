@@ -1,46 +1,13 @@
 ﻿using System;
 using System.Threading;
-using System.Reflection;
+using System.Text.RegularExpressions;
+using BackendHandler;
+using System.Collections.Generic;
 
 namespace MenuFunctions
 {
-    public static class ProgramState
+    public static class MenuFuncs
     {
-        public static bool Running { get; set; } = true;
-        public enum PROGRAM_MENUES
-        {
-            LOGIN_SCREEN,
-
-            MAIN_MENU,
-
-            EMPLOYEES,
-                ADD_EMPLOYEE,
-                UPDATE_EMPLOYEE,
-                SHOW_EMPLOYEE,
-                DELETE_EMPLOYEE,
-            PIZZAS,
-                ADD_PIZZA,
-                UPDATE_PIZZA,
-                SHOW_PIZZA,
-                DELETE_PIZZA,
-            INGREDIENTS,
-                ADD_INGREDIENT,
-                UPDATE_INGREDIENT,
-                SHOW_INGREDIENT,
-                DELETE_INGREDIENT,
-            EXTRAS,
-                ADD_EXTRAS,
-                UPDATE_EXTRAS,
-                SHOW_EXTRAS,
-                DELETE_EXTRAS,
-            OLD_ORDERS,
-                SHOW_OLD_ORDERS,
-                DELETE_OLD_ORDERS
-        }
-        public static PROGRAM_MENUES CURRENT_MENU { get; set; } =
-          PROGRAM_MENUES.LOGIN_SCREEN;
-
-
         public static void MessageIfChoiceIsNotRight(params string[] text)
         {
             Console.Clear();
@@ -51,7 +18,6 @@ namespace MenuFunctions
             Thread.Sleep(1000);
             Console.Clear();
         }
-
         public static void ConfirmationScreen(params string[] text)
         {
             Console.Clear();
@@ -62,7 +28,6 @@ namespace MenuFunctions
             Thread.Sleep(1000);
 
         }
-
         public static void PrintMenu(string[] menuChoices)
         {
             int counter = 1;
@@ -73,9 +38,17 @@ namespace MenuFunctions
                 counter++;
             }
         }
-
-
-
+        //Ny metod för att kolla igenom string input och se om det är siffror i stringen.
+        public static bool RestrictNumericalInStrings(string input)
+        {
+            if(Regex.IsMatch(input, @"[a-öA-Ö]$")) { return true; }
+            else { return false; }               
+        }
+        public static bool RestrictLettersInNumerical(string input)
+        {
+            if(Regex.IsMatch(input, @"[0-9]$")) { return true; }
+            else { return false; }
+        }
         public static string ShowPasswordAsStarsWithOptionToGoBack()
         {
             {
@@ -118,7 +91,6 @@ namespace MenuFunctions
                 } while (true);
             }
         }
-
         public static string ReadLineWithOptionToGoBack()
         {
             {
@@ -155,6 +127,7 @@ namespace MenuFunctions
                 } while (true);
             }
         }
+
     }
 
 }

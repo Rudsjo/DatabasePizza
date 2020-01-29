@@ -5,15 +5,9 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administrator", "Administrator.csproj", "{9717B220-25C4-4C66-9017-D23352C5DA4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSQLRepository", "..\MSSQLRepository\MSSQLRepository.csproj", "{CA29B1E3-6B99-45F0-9167-5B32461FB5ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenuFunctions", "..\MenuFunctions\MenuFunctions.csproj", "{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgreSQLRepository", "..\PostgreSQLRepository\PostgreSQLRepository.csproj", "{14F665ED-49D4-4257-AC3A-07D71F5BA662}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MenuFunctions", "..\MenuFunctions\MenuFunctions.csproj", "{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDatabasePizza", "..\IDatabase\IDatabasePizza.csproj", "{D71AD9F5-91FE-4D7A-AF7A-82F23B0F04F9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaClassLibrary", "..\PizzaClassLibrary\PizzaClassLibrary.csproj", "{E65C2BD7-CC8B-421D-B50A-F1D7408D67B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackendHandler", "..\BackendHandler\BackendHandler.csproj", "{CCF3CCE9-8D04-4D63-BFD6-BFFF82A2BF63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,26 +19,14 @@ Global
 		{9717B220-25C4-4C66-9017-D23352C5DA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9717B220-25C4-4C66-9017-D23352C5DA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9717B220-25C4-4C66-9017-D23352C5DA4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA29B1E3-6B99-45F0-9167-5B32461FB5ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA29B1E3-6B99-45F0-9167-5B32461FB5ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA29B1E3-6B99-45F0-9167-5B32461FB5ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA29B1E3-6B99-45F0-9167-5B32461FB5ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{14F665ED-49D4-4257-AC3A-07D71F5BA662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{14F665ED-49D4-4257-AC3A-07D71F5BA662}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{14F665ED-49D4-4257-AC3A-07D71F5BA662}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{14F665ED-49D4-4257-AC3A-07D71F5BA662}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC0A03DF-6CB3-4C84-9BC8-CC22E0EE9DB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D71AD9F5-91FE-4D7A-AF7A-82F23B0F04F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D71AD9F5-91FE-4D7A-AF7A-82F23B0F04F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D71AD9F5-91FE-4D7A-AF7A-82F23B0F04F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D71AD9F5-91FE-4D7A-AF7A-82F23B0F04F9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E65C2BD7-CC8B-421D-B50A-F1D7408D67B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E65C2BD7-CC8B-421D-B50A-F1D7408D67B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E65C2BD7-CC8B-421D-B50A-F1D7408D67B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E65C2BD7-CC8B-421D-B50A-F1D7408D67B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCF3CCE9-8D04-4D63-BFD6-BFFF82A2BF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCF3CCE9-8D04-4D63-BFD6-BFFF82A2BF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCF3CCE9-8D04-4D63-BFD6-BFFF82A2BF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCF3CCE9-8D04-4D63-BFD6-BFFF82A2BF63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

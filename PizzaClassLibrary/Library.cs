@@ -43,48 +43,27 @@ namespace PizzaClassLibrary
             return $"{this.ProductID} {this.Type} {this.Price}";
         }
     }
-    public class OldOrder 
-    {
-        public int OldOrderID { get; }
-    }
-    public class Order    
+
+    public class Order
     {
         //Överensstämmer med databasen
         public int OrderID { get; }
-        public decimal Price { get; set; }
+        public float Price { get; set; }
         public int Status { get; set; }
-
         public List<Extra> ExtraList { get; set; }
-        public string Extras
-        {
-            get { return Extras; } set {
-                try { ExtraList = JsonConvert.DeserializeObject<List<Extra>>(value); }
-                catch { ExtraList = new List<Extra>();
-            } }
-        }
-    
         public List<Pizza> PizzaList { get; set; }
-        public string Pizzas
-        {
-            get { return Pizzas; } set {
-                try { PizzaList = JsonConvert.DeserializeObject<List<Pizza>>(value); } 
-                catch { PizzaList = new List<Pizza>(); }
-            } }
-        }
-    public class Pizza    
+    }
+
+    public class Pizza
     {
         //Överensstämmer med databasen
         public int PizzaID { get; }
+        public int PizzabaseID { get; set; }
         public string Type { get; set; }
         public float Price { get; set; }
         public string Base { get; set; }
-
-
         public List<Condiment> PizzaIngredients { get; set; }
-        public string Ingredients { get { return Ingredients; } set {
-                try { this.PizzaIngredients = JsonConvert.DeserializeObject<List<Condiment>>(value); } 
-                catch { PizzaIngredients = new List<Condiment>();};
-            } }
+
 
         //Ska vi ha ovverride till alla klasser?
         public override string ToString()
@@ -92,4 +71,5 @@ namespace PizzaClassLibrary
             return $"{this.PizzaID} {this.Type} {this.Price} {this.Base}";
         }
     }
+    
 }

@@ -6,14 +6,13 @@ using MenuFunctions;
 
 namespace Administrator
 {
-    public class Menus
+    public static class Menus
     {
         /** 
          * Denna klass innehåller samtliga stringarrayer med menyval för de menyer som tillhör admin-programmet
          **/
 
-
-        public string[][] menuChoices =
+        public static string[][] menuChoices { get; } =
         {
             // main menu (0)
             new string[] { "Anställda", "Pizzor", "Ingredienser", "Tillbehör", "Gamla ordrar", "Logga ut" },
