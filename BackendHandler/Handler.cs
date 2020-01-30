@@ -6,21 +6,32 @@ using System.Data.SqlClient;
 using System.Linq;
 using Newtonsoft.Json;
 using System;
+using System.Dynamic;
+using System.Reflection;
 
 namespace BackendHandler
 {
     public static class Helpers
     {
         /// <summary>
-        /// Returns the selected backend
+        /// Supported backends
+        ///  : MSSQL
+        ///  : PostgreSQL
         /// </summary>
         /// <param name="BackendName"></param>
-        /// <returns></returns>
+        /// <returns>if Interface wa not found, return MSSQL as standard</returns>
         public static IDatabase GetSelectedBackend(string BackendName)
         {
-            if (BackendName.Equals("MSSQL"))           return new MSSQL();
-            else if (BackendName.Equals("PostgreSQL")) return new PostgreSQL();
-            else                                       return null;
+            dynamic result = null;
+            foreach(Type type in Assembly.LoadFrom(Assembly.GetExecutingAssembly().GetName().Name).GetTypes())
+                if(type.IsClass && type.Name.Equals(BackendName))
+                {
+                    result = Activator.CreateInstance(type); // Create new instance on the fly
+                    IDatabase test = result as IDatabase;    // Used to check if class implements interface
+                    if(test != null)                         // Convertsion was successful
+                        return result;
+                }
+            return new MSSQL();
         }
 
         public static List<Pizza> LoadPizzasAsList(IDatabase rep)
