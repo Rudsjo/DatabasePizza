@@ -101,20 +101,20 @@ namespace BackendHandler
     #endregion
 
     /// <summary>
-    /// Backedn interface
+    /// Backend interface
     /// </summary>
     public interface IDatabase 
     {
         //De funktioner som bara skall visa innehåll har en ToString() override som stringar ex. type,role,price,id
         //Employee
-        public Task AddEmployee(string PW, string role, string storedProcedure = "AddEmployee");
-        public Task UpdateEmployee(Employee employee, string storedProcedure = "UpdateEmployeeByID");
+        public Task AddEmployee(Employee emp, string storedProcedure = "AddEmployee");
+        public Task UpdateEmployee(Employee emp, string storedProcedure = "UpdateEmployeeByID");
         public Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedure = "GetAllEmployees");
         public Task<Employee> GetSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee");
         public Task DeleteEmployee(int ID, string storedProcedure = "DeleteEmployeeByID");
 
         //Pizza
-        public Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedure = "AddPizza");
+        public Task AddPizza(Pizza pizza, string storedProcedure = "AddPizza");
         public Task UpdatePizza(Pizza pizza, string storedProcedure = "UpdatePizzaByID");
         public Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedure = "GetAllPizzas");
         public Task<Pizza> GetSinglePizza(int ID, string storedProcedure = "GetSpecificPizza");
@@ -122,14 +122,14 @@ namespace BackendHandler
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
 
         //Condiment
-        public Task AddCondiment(string type, float price, string storedProcedure = "AddCondiment");
-        public Task UpdateCondiment(Condiment condiment, string storedProcedure = "UpdateCondimentByID");
+        public Task AddCondiment(Condiment cond, string storedProcedure = "AddCondiment");
+        public Task UpdateCondiment(Condiment cond, string storedProcedure = "UpdateCondimentByID");
         public Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedure = "GetAllCondiments");
         public Task<Condiment> GetSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment");
         public Task DeleteCondiment(int ID, string storedProcedure = "DeleteCondimentByID");
 
         //Extra
-        public Task AddExtra(string type, float price, string storedProcedure = "AddExtra");
+        public Task AddExtra(Extra extra, string storedProcedure = "AddExtra");
         public Task UpdateExtra(Extra extra, string storedProcedure = "UpdateExtraByID");
         public Task<IEnumerable<Extra>> GetAllExtras(string storedProcedure = "GetAllExtras");
         public Task<Extra> GetSingleExtra(int ID, string storedProcedure = "GetSingleExtra");
@@ -162,9 +162,9 @@ namespace BackendHandler
 
         //Employees
 
-        public async Task AddEmployee(string password, string role, string storedProcedureToAddEmployee = "AddEmployee")
+        public async Task AddEmployee(Employee emp, string storedProcedureToAddEmployee = "AddEmployee")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = password, Role = role }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedureToShowEmployees = "GetAllEmployees")
@@ -179,9 +179,9 @@ namespace BackendHandler
             return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateEmployee(Employee employee, string storedProcedureToUpdateEmployee = "UpdateEmployeeByID")
+        public async Task UpdateEmployee(Employee emp, string storedProcedureToUpdateEmployee = "UpdateEmployeeByID")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = employee.UserID, Password = employee.Password, Role = employee.Role }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = emp.UserID, Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
@@ -191,9 +191,9 @@ namespace BackendHandler
 
         //Pizzas
 
-        public async Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedureToAddPizza = "AddPizza")
+        public async Task AddPizza(Pizza pizza, string storedProcedureToAddPizza = "AddPizza")
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = JsonConvert.SerializeObject(ingredients) }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.PizzaIngredients }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "GetAllPizzas")
@@ -221,9 +221,9 @@ namespace BackendHandler
         }
 
         //Condiments
-        public async Task AddCondiment(string type, float price, string storedProcedureToAddCondiment = "AddCondiment")
+        public async Task AddCondiment(Condiment cond, string storedProcedureToAddCondiment = "AddCondiment")
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = cond.Type, Price = cond.Price }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
         public async Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedureToShowCondiment = "GetAllCondiments")
@@ -236,9 +236,9 @@ namespace BackendHandler
             return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
         }
 
-        public async Task UpdateCondiment(Condiment condiment, string storedProcedureToUpdateCondiment = "UpdateCondimentByID") //Tillagt SP
+        public async Task UpdateCondiment(Condiment cond, string storedProcedureToUpdateCondiment = "UpdateCondimentByID") //Tillagt SP
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = condiment.CondimentID, Type = condiment.Type, Price = condiment.Price, }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure);
         }
 
         public async Task DeleteCondiment(int id, string storedProcedureToDeleteCondiment = "DeleteCondimentByID")
@@ -247,9 +247,9 @@ namespace BackendHandler
         } //Tillagt SP   
 
         //Extras
-        public async Task AddExtra(string type, float price, string storedProcedureToAddExtra = "AddExtra")
+        public async Task AddExtra(Extra extra, string storedProcedureToAddExtra = "AddExtra")
         {
-            await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = extra.Type, Price = extra.Price }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
         public async Task<IEnumerable<Extra>> GetAllExtras(string storedProcedureToShowExtra = "GetAllExtras")
@@ -335,22 +335,22 @@ namespace BackendHandler
     }
     public class PostgreSQL : IDatabase
     {
-        public Task AddCondiment(string type, float price, string storedProcedure = "AddCondiment")
+        public Task AddCondiment(Condiment cond, string storedProcedure = "AddCondiment")
         {
             throw new NotImplementedException();
         }
 
-        public Task AddEmployee(string PW, string role, string storedProcedure = "AddEmployee")
+        public Task AddEmployee(Employee emp, string storedProcedure = "AddEmployee")
         {
             throw new NotImplementedException();
         }
 
-        public Task AddExtra(string type, float price, string storedProcedure = "AddExtra")
+        public Task AddExtra(Extra extra, string storedProcedure = "AddExtra")
         {
             throw new NotImplementedException();
         }
 
-        public Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedure = "AddPizza")
+        public Task AddPizza(Pizza pizza, string storedProcedure = "AddPizza")
         {
             throw new NotImplementedException();
         }

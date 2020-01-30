@@ -177,9 +177,8 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_EMPLOYEE:
                         {
-                            string password = null;
-                            string role = null;
                             bool correctPass = false, correctRole = false;
+                            Employee emp = new Employee();
 
                             Console.Clear();
                             // MENU CHOICES
@@ -206,13 +205,13 @@ namespace Administrator
 
                                     else
                                     {
-                                        password = tempPassword;
+                                        emp.Password = tempPassword;
                                         correctPass = true;
                                     }
                                 } while (correctPass == false);
 
 
-                                while (correctRole == false && password != null)
+                                while (correctRole == false && emp.Password != null)
                                 {
                                     Console.Write("Ange den anställdes roll: ");
                                     string tempRole = Menus.ReadLineWithOptionToGoBack();
@@ -226,7 +225,7 @@ namespace Administrator
 
                                     else if (tempRole.ToLower() == "admin" || tempRole.ToLower() == "bagare" || tempRole.ToLower() == "kassör")
                                     {
-                                        role = tempRole;
+                                        emp.Role = tempRole;
                                         ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
                                         correctRole = true;
                                     }
@@ -241,7 +240,7 @@ namespace Administrator
 
                                 if (correctPass == true && correctRole == true)
                                 {
-                                    await rep.AddEmployee(password, role);
+                                    await rep.AddEmployee(emp);
                                     Menus.ConfirmationScreen("Den anställde är tillagd.");
                                 }
                             }
@@ -603,7 +602,7 @@ namespace Administrator
                                         else if (confirmedChosenCondiment == 0 && condimentsOfNewPizza.Count > 0)
                                         {
                                             newPizza.PizzaIngredients = condimentsOfNewPizza;
-                                            await rep.AddPizza(newPizza.Type, newPizza.Price, newPizza.Base, newPizza.PizzaIngredients);
+                                            await rep.AddPizza(newPizza);
                                             Menus.ConfirmationScreen("Pizzan tillagd");
                                             ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                             break;
@@ -743,8 +742,8 @@ namespace Administrator
                     ///
                     case ProgramState.PROGRAM_MENUES.ADD_INGREDIENT:
                         {
-                            Condiment condiment = new Condiment();
-                            condiment.Type = null; condiment.Price = 0;                          
+                            Condiment cond = new Condiment();
+                            cond.Type = null; cond.Price = 0;                          
 
                             Console.Clear();
                             Console.WriteLine("~~ LÄGG TILL INGREDIENS ~~");
@@ -760,7 +759,7 @@ namespace Administrator
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
                                 break;
                             }
-                            else { condiment.Type = condimentName; }
+                            else { cond.Type = condimentName; }
 
                             Console.Write("Ange pris för ingrediensen: ");
                             string inputPrice = Menus.ReadLineWithOptionToGoBack();
@@ -772,14 +771,14 @@ namespace Administrator
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
                                 break;
                             }
-                            else { condiment.Price = price; }
+                            else { cond.Price = price; }
 
                             Console.Clear();
                             Console.WriteLine("~~ LÄGG TILL INGREDIENS ~~\n");
-                            Console.Write($"Vill du lägga till artikeln i ingredienser?\n\n{condiment.Type} {condiment.Price}kr\n\nj/n: ");
+                            Console.Write($"Vill du lägga till artikeln i ingredienser?\n\n{cond.Type} {cond.Price}kr\n\nj/n: ");
                             string confirm = Console.ReadLine();
 
-                            if (confirm.ToLower() == "j") {await rep.AddCondiment(condimentName, price); }
+                            if (confirm.ToLower() == "j") {await rep.AddCondiment(cond); }
                             else { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; break; }
                         }
                         break;
@@ -994,7 +993,7 @@ namespace Administrator
                             Console.Write($"Vill du lägga till artikeln i tillbehör?\n\n{extra.Type} {extra.Price}kr\n\nj/n: ");
                             string confirm = Console.ReadLine();
 
-                            if (confirm.ToLower() == "j") { await rep.AddExtra(extraName, price); } //Break här?
+                            if (confirm.ToLower() == "j") { await rep.AddExtra(extra); } //Break här?
                             else { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; break; }
                         }
                         break;                    
