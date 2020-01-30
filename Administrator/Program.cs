@@ -482,9 +482,8 @@ namespace Administrator
                     case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                         {
                             bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
-
-                            Pizza newPizza = new Pizza();
-                            newPizza.Type = null; newPizza.Base = null; newPizza.Price = 0;
+                            int newPizzaID = 0;
+                            Pizza newPizza = new Pizza();                         
 
                             // kolla pizzans namn
                             {
@@ -513,29 +512,33 @@ namespace Administrator
                             {
                                 while (correctPizzaBase == false && newPizza.Type != null)
                                 {
-                                    Console.Write("Pizzans botten (Italiensk eller amerikansk): ");
-                                    newPizza.Base = Menus.ReadLineWithOptionToGoBack();
+                                    Console.Write("Pizzans botten ([1] Italiensk eller [2] Amerikansk): ");
+                                    int.TryParse(Console.ReadLine(), out int input);
 
-                                    if(newPizza.Base == null)
-                                    {
-                                        Console.Clear();
-                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                        break;
-                                    }
+                                    
+                                    newPizza.PizzabaseID = input;
+                                    correctPizzaBase = true;
+                                    //if(newPizza.Base == null)
+                                    //{
+                                    //    Console.Clear();
+                                    //    ProgramState.CURREN_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                    //    break;
+                                    //}
 
-                                    else if (newPizza.Base.ToLower() == "italiensk" || newPizza.Base.ToLower() == "amerikansk")
-                                    {
-                                        correctPizzaBase = true;
-                                    }
+                                    //else if (newPizza.Base.ToLower() == "italiensk" || newPizza.Base.ToLower() == "amerikansk")
+                                    //{
+                                    //    correctPizzaBase = true;
+                                    //}
 
-                                    else { Menus.MessageIfChoiceIsNotRight("Pizzabasen finns inte."); }
+                                    //else { Menus.MessageIfChoiceIsNotRight("Pizzabasen finns inte."); }
                                 }
                             }
 
                             // kolla pizzans pris
                             {
-                                while (correctPizzaPrice == false && newPizza.Type != null && newPizza.Base != null)
+                                while (correctPizzaPrice == false && newPizza.Type != null && newPizza.PizzabaseID != 0)
                                 {
+                                   
                                     Console.Write("Pizzans pris: ");
                                     string inputPrice = Menus.ReadLineWithOptionToGoBack();
                                     bool correctInput = float.TryParse(inputPrice, out float price);
@@ -551,15 +554,18 @@ namespace Administrator
                                     {
                                         newPizza.Price = price;
                                         correctPizzaPrice = true;
+                                        await rep.AddPizza(newPizza);
+                                        newPizzaID = await rep.GetSinglePizza();
+                                        Console.WriteLine();
                                     }
 
                                     else { Menus.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
                                 }
                             }
-
+                            
                             //kolla pizzans ingredienser
                             {
-                                if (newPizza.Type != null && newPizza.Base != null && newPizza.Price != 0)
+                                if (newPizza.Type != null && newPizza.PizzabaseID != 0 && newPizza.Price != 0)
                                 {
                                     bool confirmedPizza = false;
                                     List<Condiment> condimentsOfNewPizza = new List<Condiment>();
@@ -602,7 +608,8 @@ namespace Administrator
                                         else if (confirmedChosenCondiment == 0 && condimentsOfNewPizza.Count > 0)
                                         {
                                             newPizza.PizzaIngredients = condimentsOfNewPizza;
-                                            await rep.AddPizza(newPizza);
+                                            
+                                            await rep.AddCondimentToPizza(newPizzaID, newPizza);
                                             Menus.ConfirmationScreen("Pizzan tillagd");
                                             ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                             break;

@@ -129,8 +129,10 @@ namespace BackendHandler
         public Task UpdatePizza(Pizza pizza, string storedProcedure = "UpdatePizzaByID");
         public Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedure = "GetAllPizzas");
         public Task<Pizza> GetSinglePizza(int ID, string storedProcedure = "GetSpecificPizza");
+        public Task<Pizza> GetSinglePizza(string PizzaName, string storedProcedure = "GetSpecificPizza");
         public Task DeletePizza(int ID, string storedProcedure = "DeletePizzaByID");
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
+        public Task AddCondimentToPizza(int PizzaID, Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza");
 
         //Condiment
         public Task AddCondiment(Condiment cond, string storedProcedure = "AddCondiment");
@@ -204,7 +206,15 @@ namespace BackendHandler
 
         public async Task AddPizza(Pizza pizza, string storedProcedureToAddPizza = "AddPizza")
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = pizza.PizzaIngredients }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task AddCondimentToPizza(int PizzaID, Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza")
+        {
+            foreach (var item in pizza.PizzaIngredients)
+            {
+                await connection.QueryAsync<Pizza>(storedProcedureToAddCondimentToPizza, new {CondimentID = item.CondimentID, PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
+            }          
         }
 
         public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "GetAllPizzas")
@@ -455,6 +465,10 @@ namespace BackendHandler
         {
             throw new NotImplementedException();
         }
+        public Task<Pizza> GetSinglePizza(string PizzaName, string storedProcedure = "GetSpecificPizza")
+        {
+            throw new NotImplementedException();
+        }
 
         public Task UpdateCondiment(Condiment condiment, string storedProcedure = "UpdateCondimentByID")
         {
@@ -472,6 +486,11 @@ namespace BackendHandler
         }
 
         public Task UpdatePizza(Pizza pizza, string storedProcedure = "UpdatePizzaByID")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddCondimentToPizza(int PizzaID, Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza")
         {
             throw new NotImplementedException();
         }
