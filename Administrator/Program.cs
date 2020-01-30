@@ -648,10 +648,7 @@ namespace Administrator
                             }
                         }
                         break;
-                    ///
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///Lagt till så att man får upp en lista på allt som är möjligt att radera, visas med ID och typ
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.DELETE_PIZZA:
                         {
                             Console.Clear();
@@ -736,10 +733,7 @@ namespace Administrator
                             }
                         }
                         break;
-                    ///
-                    ///Regex är använt för att kolla så att man inte försöker lägga in siffror i namnet. kollar a - ö och A-Ö i unicode.
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.ADD_INGREDIENT:
                         {
                             Condiment cond = new Condiment();
@@ -753,12 +747,13 @@ namespace Administrator
                             Console.Write("Vilken ingrediens vill du lägga till: ");
                             string condimentName = Menus.ReadLineWithOptionToGoBack();
 
-                            if(condimentName == null || condimentName.Length < 1 || !Regex.IsMatch(condimentName, @"^[a-öA-Ö]+$"))
+                            if(condimentName == null)
                             {
                                 Thread.Sleep(500);
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
                                 break;
                             }
+                            else if(condimentName.Length < 1 || !Regex.IsMatch(condimentName, @"^[a-öA-Ö]+$")) { Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
                             else { cond.Type = condimentName; }
 
                             Console.Write("Ange pris för ingrediensen: ");
@@ -782,10 +777,7 @@ namespace Administrator
                             else { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; break; }
                         }
                         break;
-                    ///
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///Testad, funkar.
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT:
                         {
                             Console.Clear();
@@ -840,9 +832,7 @@ namespace Administrator
                             }
                         }
                         break;        
-                    /// 
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.SHOW_INGREDIENT:
                         {
                             Console.Clear();
@@ -862,10 +852,7 @@ namespace Administrator
                             else { Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
                         }
                         break;
-                    ///
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///Lagt till så att man får upp en lista på allt som är möjligt att radera, visas med ID och typ
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT:
                         {
                             Console.Clear();
@@ -950,11 +937,7 @@ namespace Administrator
                             }
                         }
                         break;
-                    ///
-                    ///Regex är använt för att kolla så att man inte försöker lägga in siffror i namnet,
-                    ///kollar a - ö och A-Ö i unicode, tillåter blanksteg i typnamn
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///
+
                     case ProgramState.PROGRAM_MENUES.ADD_EXTRAS:
                         {
                             Extra extra = new Extra();
@@ -980,12 +963,12 @@ namespace Administrator
                             string inputPrice = Menus.ReadLineWithOptionToGoBack();
                             bool correctInput = float.TryParse(inputPrice, out float price);
 
-                            if (inputPrice == null || correctInput == false || price == 0)
+                            if (inputPrice == null)
                             {
-                                Thread.Sleep(500);
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
                                 break;
                             }
+                            else if(correctInput == false || price == 0) { Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
                             else { extra.Price = price; }
 
                             Console.Clear();
