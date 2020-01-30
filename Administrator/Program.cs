@@ -127,16 +127,14 @@ namespace Administrator
                             // USER CHOICE
                             {
                                 if (userChoice == true)
-                                {
-                                    #region Massa if skit
+                                {                                 
                                     if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
                                     else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
                                     else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                                     else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                                     else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS; }
                                     else if (choice == 6) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.LOGIN_SCREEN; }
-                                    else MenuFuncs.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                                    #endregion
+                                    else MenuFuncs.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");                             
                                 }
                                 else MenuFuncs.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                                 
@@ -276,7 +274,7 @@ namespace Administrator
 
                             else
                             {
-                                Employee emp = await rep.ShowSingleEmployee(ID);
+                                Employee emp = await rep.GetSingleEmployee(ID);
 
                                 Console.Clear();
                                 Console.WriteLine("Klicka ESC för att gå tillbaka.");
@@ -388,7 +386,7 @@ namespace Administrator
                                 Console.Clear();
                                 Console.WriteLine("~~ SAMTLIGA ANSTÄLLDA ~~");
                                 Console.WriteLine();
-                                foreach (var employees in await rep.ShowEmployee())
+                                foreach (var employees in await rep.GetAllEmployees())
                                 {
                                     Console.WriteLine(employees);
                                 }
@@ -572,7 +570,7 @@ namespace Administrator
                                         Console.WriteLine("Välj en ingrediens till pizzan genom att ange ingrediensens nummer:");
                                         int counter = 1;
 
-                                        foreach (var condiment in await rep.ShowCondiments())
+                                        foreach (var condiment in await rep.GetAllCondiments())
                                         {
                                             Console.WriteLine($"{counter}. {condiment.Type}");
                                             counter++;
@@ -590,7 +588,7 @@ namespace Administrator
 
                                         else if (correctInput == true && confirmedChosenCondiment != 0)
                                         {
-                                            Condiment cond = await rep.ShowSingleCondiment(confirmedChosenCondiment);
+                                            Condiment cond = await rep.GetSingleCondiment(confirmedChosenCondiment);
                                             cond.Price = 0;
                                             condimentsOfNewPizza.Add(cond);
 
@@ -662,7 +660,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
-                            foreach (var pizza in await rep.ShowPizza())
+                            foreach (var pizza in await rep.GetAllPizzas())
                             {
                                 Console.WriteLine($"ID - {pizza.PizzaID}, {pizza.Type}\n");
                             }
@@ -793,7 +791,7 @@ namespace Administrator
                         {
                             Console.Clear();
                             Console.WriteLine("~~ UPPDATERA INGREDIENS ~~\n");
-                            foreach (var ingredient in await rep.ShowCondiments())
+                            foreach (var ingredient in await rep.GetAllCondiments())
                             {
                                 Console.WriteLine($"{ingredient.CondimentID} - {ingredient.Type}, {ingredient.Price} kr\n");
                             }
@@ -818,7 +816,7 @@ namespace Administrator
 
                             else
                             {
-                                Condiment cond = await rep.ShowSingleCondiment(ID);
+                                Condiment cond = await rep.GetSingleCondiment(ID);
 
                                 Console.Clear();
                                 Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
@@ -851,7 +849,7 @@ namespace Administrator
                             Console.Clear();
                             Console.WriteLine($"~~ SAMTLIGA INGREDIENSER ~~\n");
 
-                            foreach (var ingredient in await rep.ShowCondiments())
+                            foreach (var ingredient in await rep.GetAllCondiments())
                             {
                                 Console.WriteLine($"{ingredient.Type}, {ingredient.Price} kr\n");
                             }
@@ -876,7 +874,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
-                            foreach (var ingredient in await rep.ShowCondiments())
+                            foreach (var ingredient in await rep.GetAllCondiments())
                             {
                                 Console.WriteLine($"ID - {ingredient.CondimentID}, {ingredient.Type}\n");
                             }
@@ -1004,7 +1002,7 @@ namespace Administrator
                         {
                             Console.Clear();
                             Console.WriteLine("~~ UPPDATERA TILLBEHÖR ~~\n");
-                            foreach (var extra in await rep.ShowExtra())
+                            foreach (var extra in await rep.GetAllExtras())
                             {
                                 Console.WriteLine($"{extra.ProductID} - {extra.Type}, {extra.Price} kr\n");
                             }
@@ -1029,7 +1027,7 @@ namespace Administrator
 
                             else
                             {
-                                Extra extra = await rep.ShowSingleExtra(ID);
+                                Extra extra = await rep.GetSingleExtra(ID);
 
                                 Console.Clear();
                                 Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
@@ -1062,7 +1060,7 @@ namespace Administrator
                             Console.Clear();
                             Console.WriteLine($"~~ SAMTLIGA TILLBEHÖR ~~\n");
 
-                            foreach (var extra in await rep.ShowExtra())
+                            foreach (var extra in await rep.GetAllExtras())
                             {
                                 Console.WriteLine($"{extra.Type}, {extra.Price} kr\n");
                             }
@@ -1087,7 +1085,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
-                            foreach (var extra in await rep.ShowExtra())
+                            foreach (var extra in await rep.GetAllExtras())
                             {
                                 Console.WriteLine($"ID - {extra.ProductID}, {extra.Type}\n");
                             }

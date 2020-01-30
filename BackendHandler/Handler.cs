@@ -25,7 +25,7 @@ namespace BackendHandler
 
         public static List<Pizza> LoadPizzasAsList(IDatabase rep)
         {
-            IEnumerable<Pizza> res = rep.ShowPizza().Result.ToList();
+            IEnumerable<Pizza> res = rep.GetAllPizzas().Result.ToList();
             foreach (Pizza p in res)
                 p.PizzaIngredients = rep.GetIngredientsFromSpecificPizza(p.PizzaID).Result.ToList();
             return res.ToList();
@@ -109,30 +109,30 @@ namespace BackendHandler
         //Employee
         public Task AddEmployee(string PW, string role, string storedProcedure = "AddEmployee");
         public Task UpdateEmployee(Employee employee, string storedProcedure = "UpdateEmployeeByID");
-        public Task<IEnumerable<Employee>> ShowEmployee(string storedProcedure = "GetAllEmployees");
-        public Task<Employee> ShowSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee");
+        public Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedure = "GetAllEmployees");
+        public Task<Employee> GetSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee");
         public Task DeleteEmployee(int ID, string storedProcedure = "DeleteEmployeeByID");
 
         //Pizza
         public Task AddPizza(string type, float price, string pizzabase, List<Condiment> ingredients, string storedProcedure = "AddPizza");
         public Task UpdatePizza(Pizza pizza, string storedProcedure = "UpdatePizzaByID");
-        public Task<IEnumerable<Pizza>> ShowPizza(string storedProcedure = "GetAllPizzas");
-        public Task<Pizza> ShowSinglePizza(int ID, string storedProcedure = "GetSpecificPizza");
+        public Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedure = "GetAllPizzas");
+        public Task<Pizza> GetSinglePizza(int ID, string storedProcedure = "GetSpecificPizza");
         public Task DeletePizza(int ID, string storedProcedure = "DeletePizzaByID");
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
 
         //Condiment
         public Task AddCondiment(string type, float price, string storedProcedure = "AddCondiment");
         public Task UpdateCondiment(Condiment condiment, string storedProcedure = "UpdateCondimentByID");
-        public Task<IEnumerable<Condiment>> ShowCondiments(string storedProcedure = "GetAllCondiments");
-        public Task<Condiment> ShowSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment");
+        public Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedure = "GetAllCondiments");
+        public Task<Condiment> GetSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment");
         public Task DeleteCondiment(int ID, string storedProcedure = "DeleteCondimentByID");
 
         //Extra
         public Task AddExtra(string type, float price, string storedProcedure = "AddExtra");
         public Task UpdateExtra(Extra extra, string storedProcedure = "UpdateExtraByID");
-        public Task<IEnumerable<Extra>> ShowExtra(string storedProcedure = "GetAllExtras");
-        public Task<Extra> ShowSingleExtra(int ID, string storedProcedure = "GetSingleExtra");
+        public Task<IEnumerable<Extra>> GetAllExtras(string storedProcedure = "GetAllExtras");
+        public Task<Extra> GetSingleExtra(int ID, string storedProcedure = "GetSingleExtra");
         public Task DeleteExtra(int ID, string storedProcedure = "DeleteExtraByID");
 
 
@@ -167,14 +167,14 @@ namespace BackendHandler
             await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = password, Role = role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Employee>> ShowEmployee(string storedProcedureToShowEmployees = "GetAllEmployees")
+        public async Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedureToShowEmployees = "GetAllEmployees")
         {
             //IEnumerable<Employees> employees = (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
             //return employees;
             return (await connection.QueryAsync<Employee>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Employee> ShowSingleEmployee(int id, string storedProcedureToShowSingleEmployee = "GetSingleEmployee")
+        public async Task<Employee> GetSingleEmployee(int id, string storedProcedureToShowSingleEmployee = "GetSingleEmployee")
         {
             return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
         }
@@ -196,12 +196,12 @@ namespace BackendHandler
             await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = type, Price = price, Base = pizzabase, Ingredients = JsonConvert.SerializeObject(ingredients) }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<IEnumerable<Pizza>> ShowPizza(string storedProcedureToShowPizzas = "GetAllPizzas")
+        public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "GetAllPizzas")
         {
             return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Pizza> ShowSinglePizza(int id, string storedProcedureToShowSinglePizza = "GetSpecificPizza")
+        public async Task<Pizza> GetSinglePizza(int id, string storedProcedureToShowSinglePizza = "GetSpecificPizza")
         {
             return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
         }
@@ -226,12 +226,12 @@ namespace BackendHandler
             await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
-        public async Task<IEnumerable<Condiment>> ShowCondiments(string storedProcedureToShowCondiment = "GetAllCondiments")
+        public async Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedureToShowCondiment = "GetAllCondiments")
         {
             return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Condiment> ShowSingleCondiment(int id, string storedProcedureToShowSingleCondiment = "GetSingleCondiment")
+        public async Task<Condiment> GetSingleCondiment(int id, string storedProcedureToShowSingleCondiment = "GetSingleCondiment")
         {
             return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
         }
@@ -252,12 +252,12 @@ namespace BackendHandler
             await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = type, Price = price }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
-        public async Task<IEnumerable<Extra>> ShowExtra(string storedProcedureToShowExtra = "GetAllExtras")
+        public async Task<IEnumerable<Extra>> GetAllExtras(string storedProcedureToShowExtra = "GetAllExtras")
         {
             return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<Extra> ShowSingleExtra(int id, string storedProcedureToShowSingleExtra = "GetSingleExtra")
+        public async Task<Extra> GetSingleExtra(int id, string storedProcedureToShowSingleExtra = "GetSingleExtra")
         {
             return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
         } //Tillagt SP
@@ -405,42 +405,42 @@ namespace BackendHandler
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Condiment>> ShowCondiments(string storedProcedure = "GetAllCondiments")
+        public Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedure = "GetAllCondiments")
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Employee>> ShowEmployee(string storedProcedure = "GetAllEmployees")
+        public Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedure = "GetAllEmployees")
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Extra>> ShowExtra(string storedProcedure = "GetAllExtras")
+        public Task<IEnumerable<Extra>> GetAllExtras(string storedProcedure = "GetAllExtras")
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Pizza>> ShowPizza(string storedProcedure = "GetAllPizzas")
+        public Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedure = "GetAllPizzas")
         {
             throw new NotImplementedException();
         }
 
-        public Task<Condiment> ShowSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment")
+        public Task<Condiment> GetSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment")
         {
             throw new NotImplementedException();
         }
 
-        public Task<Employee> ShowSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee")
+        public Task<Employee> GetSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee")
         {
             throw new NotImplementedException();
         }
 
-        public Task<Extra> ShowSingleExtra(int ID, string storedProcedure = "GetSingleExtra")
+        public Task<Extra> GetSingleExtra(int ID, string storedProcedure = "GetSingleExtra")
         {
             throw new NotImplementedException();
         }
 
-        public Task<Pizza> ShowSinglePizza(int ID, string storedProcedure = "GetSpecificPizza")
+        public Task<Pizza> GetSinglePizza(int ID, string storedProcedure = "GetSpecificPizza")
         {
             throw new NotImplementedException();
         }
