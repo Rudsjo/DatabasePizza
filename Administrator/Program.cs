@@ -554,15 +554,15 @@ namespace Administrator
                                     {
                                         newPizza.Price = price;
                                         correctPizzaPrice = true;
-                                        await rep.AddPizza(newPizza);
-                                        newPizzaID = await rep.GetSinglePizza();
-                                        Console.WriteLine();
                                     }
 
                                     else { Menus.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
                                 }
                             }
-                            
+
+                            newPizza = await rep.AddPizza(newPizza);
+
+
                             //kolla pizzans ingredienser
                             {
                                 if (newPizza.Type != null && newPizza.PizzabaseID != 0 && newPizza.Price != 0)
@@ -603,13 +603,16 @@ namespace Administrator
                                             Console.WriteLine("Ange ytterligare en ingrediens, ange 0 för att bekräfta pizzan.");
                                             Console.WriteLine("Klicka på ESC för att avbryta");
                                             Console.WriteLine();
+                                            Console.Write(newPizza.Type + ":\n");
+                                            foreach (var condName in condimentsOfNewPizza) { Console.Write($" {condName.Type},"); }
+                                            Console.WriteLine();
                                         }
 
                                         else if (confirmedChosenCondiment == 0 && condimentsOfNewPizza.Count > 0)
                                         {
                                             newPizza.PizzaIngredients = condimentsOfNewPizza;
                                             
-                                            await rep.AddCondimentToPizza(newPizzaID, newPizza);
+                                            await rep.AddCondimentToPizza(newPizza);
                                             Menus.ConfirmationScreen("Pizzan tillagd");
                                             ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                             break;
