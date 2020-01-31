@@ -63,114 +63,55 @@ namespace Administrator
             {
                 switch (ProgramState.CURRENT_MENU)
                 {
+                    #region // Case: Login
                     case ProgramState.PROGRAM_MENUES.LOGIN_SCREEN:
                         {
-
-                            #region Variables
-                            int userID;
-                            string password = "";
-                            bool correctTypeOfInput = false;
-                            #endregion
-
-                            Console.Clear();
-                            // LOG IN TEXT
+                            bool CorrectLogin = await Menus.PrintAndReturnStateOfLogin(rep);
+                            if (CorrectLogin == true)
                             {
-                                Console.Write("AnvändarID: ");
-                                bool userInput = int.TryParse(Menus.ReadLineWithOptionToGoBack(), out userID);
-
-                                if (userInput == true)
-                                {
-                                    Console.Write("Lösenord: ");
-                                    password = Menus.ShowPasswordAsStarsWithOptionToGoBack();
-                                    correctTypeOfInput = true;
-                                }
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("ID är skrivet i fel format.");
-                                }
+                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
                             }
-
-                            // CHECK LOG IN
-                            {
-                                if (correctTypeOfInput == true)
-                                {
-                                    bool correctLogInCredentials = (await rep.CheckUserIdAndPassword(userID, password, "CheckPassword")).Item1;
-                                    string checkRole = (await rep.CheckUserIdAndPassword(userID, password, "CheckPassword")).Item2;
-
-                                    if (correctLogInCredentials == true)
-                                    {
-                                        if (checkRole.ToLower() == "admin")
-                                        {
-                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
-                                        }
-                                        else
-                                        {
-                                            Menus.MessageIfChoiceIsNotRight("Behörighet saknas.");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Menus.MessageIfChoiceIsNotRight("AnvändarID eller lösenord är felaktigt. Försök igen.");
-                                    }
-                                }
-                            }
+                            else await Menus.PrintAndReturnStateOfLogin(rep);
                         }
                         break;
+                    #endregion
+                    
+                    #region // Case: Main Menu
                     case ProgramState.PROGRAM_MENUES.MAIN_MENU:
                         {
-                            // MENU CHOICES
-                            Console.Clear();
-                            Menus.PrintMenu(Menus.menuChoices[0]);
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            // USER CHOICE
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[0]);
                             {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {                                 
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
-                                    else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
-                                    else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS; }
-                                    else if (choice == 6) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.LOGIN_SCREEN; }
-                                    else Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");                             
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
+                                    else if (UserChoice.Item2 == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
+                                    else if (UserChoice.Item2 == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS; }
+                                    else if (UserChoice.Item2 == 6) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.LOGIN_SCREEN; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");                             
                                 }
-                                else Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");                                
                             }
                         }
                         break;
+                    #endregion
 
                     #region // Employees
                     case ProgramState.PROGRAM_MENUES.EMPLOYEES:
                         {
-                            Console.Clear();
-                            // MENU CHOICES
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[1]);
                             {
-                                Console.WriteLine("~~ ANSTÄLLDA ~~");
-                                Menus.PrintMenu(Menus.menuChoices[1]);
-                            }
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            //USER CHOICE
-                            {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_EMPLOYEE; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EMPLOYEE; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_EMPLOYEE; }
-                                    else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EMPLOYEE; }
-                                    else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
-                                    else Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                              
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_EMPLOYEE; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EMPLOYEE; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_EMPLOYEE; }
+                                    else if (UserChoice.Item2 == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EMPLOYEE; }
+                                    else if (UserChoice.Item2 == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
                                 }
-
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                }
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                             }
                         }
                         break;
@@ -189,18 +130,17 @@ namespace Administrator
                                     Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
                                     Console.Write("Ange den anställdes lösenord: ");
-                                    string tempPassword = Menus.ReadLineWithOptionToGoBack();
+                                    string tempPassword = await Menus.ReadLineWithOptionToGoBack();
 
                                     if (tempPassword == null)
                                     {
-                                        Console.Clear();
                                         ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
                                         break;
                                     }
 
                                     else if (tempPassword.Length < 1)
                                     {
-                                        Menus.MessageIfChoiceIsNotRight("Ditt lösenord måste innehålla tecken.");
+                                        await Menus.MessageIfChoiceIsNotRight("Ditt lösenord måste innehålla tecken.");
                                     }
 
                                     else
@@ -214,7 +154,7 @@ namespace Administrator
                                 while (correctRole == false && emp.Password != null)
                                 {
                                     Console.Write("Ange den anställdes roll: ");
-                                    string tempRole = Menus.ReadLineWithOptionToGoBack();
+                                    string tempRole = await Menus.ReadLineWithOptionToGoBack();
 
                                     if(tempRole == null)
                                     {
@@ -232,7 +172,7 @@ namespace Administrator
 
                                     else
                                     {
-                                        Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
+                                        await Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
                                         Console.Clear();
                                     }
 
@@ -241,7 +181,7 @@ namespace Administrator
                                 if (correctPass == true && correctRole == true)
                                 {
                                     await rep.AddEmployee(emp);
-                                    Menus.ConfirmationScreen("Den anställde är tillagd.");
+                                    await Menus.ConfirmationScreen("Den anställde är tillagd.");
                                 }
                             }
                         }
@@ -255,7 +195,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
                             Console.Write("Ange ID på den anställde som du vill uppdatera: ");
-                            string IDToChange = Menus.ReadLineWithOptionToGoBack();
+                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
 
                             int.TryParse(IDToChange, out int ID);
                             //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
@@ -268,7 +208,7 @@ namespace Administrator
 
                             else if (doesUserExist == false && IDToChange != null)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Den anställde med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Den anställde med angivet ID finns inte.");
                             }
 
                             else
@@ -281,7 +221,7 @@ namespace Administrator
                                 Console.WriteLine("1. Lösenord");
                                 Console.WriteLine("2. Roll");
 
-                                string whatToChange = Menus.ReadLineWithOptionToGoBack();
+                                string whatToChange = await Menus.ReadLineWithOptionToGoBack();
                                 bool userInput = int.TryParse(whatToChange, out int changeChoice);
 
                                 if(whatToChange == null) // || userInput == false?
@@ -300,7 +240,7 @@ namespace Administrator
                                             Console.Clear();
                                             Console.WriteLine("Klicka ESC för att gå tillbaka.");
                                             Console.Write("Ange den anställdes nya lösenord: ");
-                                            string tempPass = Menus.ReadLineWithOptionToGoBack();
+                                            string tempPass = await Menus.ReadLineWithOptionToGoBack();
                                             if(tempPass == null)
                                             {
                                                 Console.Clear();
@@ -310,13 +250,13 @@ namespace Administrator
 
                                             else if (tempPass.Length < 1)
                                             {
-                                                Menus.MessageIfChoiceIsNotRight("Lösenordet måste innehålla tecken.");
+                                                await Menus.MessageIfChoiceIsNotRight("Lösenordet måste innehålla tecken.");
                                             }
 
                                             else
                                             {
                                                 emp.Password = tempPass;
-                                                Menus.ConfirmationScreen("Lösenordet ändrat.");
+                                                await Menus.ConfirmationScreen("Lösenordet ändrat.");
                                                 correctPass = true;
                                             }
 
@@ -325,7 +265,7 @@ namespace Administrator
                                         if (correctPass == true)
                                         {
                                             await rep.UpdateEmployee(emp);
-                                            Menus.ConfirmationScreen("Den anställde är uppdaterad.");
+                                            await Menus.ConfirmationScreen("Den anställde är uppdaterad.");
                                         }
 
                                     }
@@ -339,7 +279,7 @@ namespace Administrator
                                             Console.WriteLine("Klicka ESC för att gå tillbaka.");
                                             Console.Write("Ange användarens nya roll: ");
 
-                                            string tempRole = Menus.ReadLineWithOptionToGoBack();
+                                            string tempRole = await Menus.ReadLineWithOptionToGoBack();
 
                                             if(tempRole == null)
                                             {
@@ -351,26 +291,26 @@ namespace Administrator
                                             else if (tempRole.ToLower() == "admin" || tempRole.ToLower() == "bagare" || tempRole.ToLower() == "kassör")
                                             {
                                                 emp.Role = tempRole;
-                                                Menus.ConfirmationScreen("Rollen ändrad.");
+                                                await Menus.ConfirmationScreen("Rollen ändrad.");
                                                 correctRole = true;
                                             }
 
                                             else
                                             {
-                                                Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
+                                                await Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
                                             }
                                         }
 
                                         if(correctRole == true)
                                         {
                                             await rep.UpdateEmployee(emp);
-                                            Menus.ConfirmationScreen("Den anställde är uppdaterad.");
+                                            await Menus.ConfirmationScreen("Den anställde är uppdaterad.");
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    Menus.MessageIfChoiceIsNotRight("Valet finns inte.");
+                                    await Menus.MessageIfChoiceIsNotRight("Valet finns inte.");
                                 }
 
                             }
@@ -409,7 +349,7 @@ namespace Administrator
 
                             Console.Write("Ange ID för den anställda som du vill ta bort: ");
 
-                            string IDOfUserToRemove = Menus.ReadLineWithOptionToGoBack();
+                            string IDOfUserToRemove = await Menus.ReadLineWithOptionToGoBack();
                             bool userInput = int.TryParse(IDOfUserToRemove, out int ID);
                             bool doesUserExist = (await rep.CheckIfUserIDExists(ID));
 
@@ -420,25 +360,25 @@ namespace Administrator
 
                             else if(doesUserExist == false)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Användare med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Användare med angivet ID finns inte.");
                             }
 
                             else if (userInput == true)
                             {
                                 Console.WriteLine($"Är du säker på att du vill ta bort anställd {ID} (j/n)? Valet kan inte ändras.");
 
-                                string choice = Menus.ReadLineWithOptionToGoBack();
+                                string choice = await Menus.ReadLineWithOptionToGoBack();
 
                                 if(choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
                                 else if (choice == "j")
                                 {
                                     await rep.DeleteEmployee(ID);
-                                    Menus.ConfirmationScreen("Anställd borttagen");
+                                    await Menus.ConfirmationScreen("Anställd borttagen");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
 
                                 }
                                 else if (choice == "n"){ ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EMPLOYEE; }
-                                else { Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
+                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
 
                         }
@@ -448,41 +388,25 @@ namespace Administrator
                     #region// Pizzas
                     case ProgramState.PROGRAM_MENUES.PIZZAS:
                         {
-                            Console.Clear();
-                            // MENU CHOICES
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[2]);
                             {
-                                Console.WriteLine("~~ PIZZOR ~~");
-                                Menus.PrintMenu(Menus.menuChoices[2]);
-                            }
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            //USER CHOICE
-                            {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_PIZZA; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_PIZZA; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_PIZZA; }
-                                    else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_PIZZA; }
-                                    else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
-                                    else
-                                    {
-                                        Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                                    }
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_PIZZA; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_PIZZA; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_PIZZA; }
+                                    else if (UserChoice.Item2 == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_PIZZA; }
+                                    else if (UserChoice.Item2 == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
                                 }
-
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                }
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                             }
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                         {
                             bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
-                            int newPizzaID = 0;
+
                             Pizza newPizza = new Pizza();                         
 
                             // kolla pizzans namn
@@ -495,7 +419,7 @@ namespace Administrator
 
                                     Console.WriteLine();
                                     Console.Write("Pizzans namn: ");
-                                    newPizza.Type = Menus.ReadLineWithOptionToGoBack();
+                                    newPizza.Type = await Menus.ReadLineWithOptionToGoBack();
 
                                     if(newPizza.Type == null)
                                     {
@@ -505,7 +429,7 @@ namespace Administrator
                                     }
 
                                     else if (newPizza.Type.Length > 1) { correctPizzaName = true; }
-                                    else { Menus.MessageIfChoiceIsNotRight("Namnet måste innehålla minst ett tecken."); }
+                                    else { await Menus.MessageIfChoiceIsNotRight("Namnet måste innehålla minst ett tecken."); }
                                 }
                             }
                             // kolla pizzans botten
@@ -540,7 +464,7 @@ namespace Administrator
                                 {
                                    
                                     Console.Write("Pizzans pris: ");
-                                    string inputPrice = Menus.ReadLineWithOptionToGoBack();
+                                    string inputPrice = await Menus.ReadLineWithOptionToGoBack();
                                     bool correctInput = float.TryParse(inputPrice, out float price);
 
                                     if(inputPrice == null)
@@ -556,7 +480,7 @@ namespace Administrator
                                         correctPizzaPrice = true;
                                     }
 
-                                    else { Menus.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
+                                    else { await Menus.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
                                 }
                             }
 
@@ -581,7 +505,7 @@ namespace Administrator
                                             counter++;
                                         }
 
-                                        string chosenCondiment = Menus.ReadLineWithOptionToGoBack();
+                                        string chosenCondiment = await Menus.ReadLineWithOptionToGoBack();
                                         bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
 
                                         if (chosenCondiment == null)
@@ -597,7 +521,7 @@ namespace Administrator
                                             cond.Price = 0;
                                             condimentsOfNewPizza.Add(cond);
 
-                                            Menus.ConfirmationScreen("Ingrediens tillagd.");
+                                            await Menus.ConfirmationScreen("Ingrediens tillagd.");
                                             Console.Clear();
 
                                             Console.WriteLine("Ange ytterligare en ingrediens, ange 0 för att bekräfta pizzan.");
@@ -613,12 +537,12 @@ namespace Administrator
                                             newPizza.PizzaIngredients = condimentsOfNewPizza;
                                             
                                             await rep.AddCondimentToPizza(newPizza);
-                                            Menus.ConfirmationScreen("Pizzan tillagd");
+                                            await Menus.ConfirmationScreen("Pizzan tillagd");
                                             ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                             break;
                                         }
 
-                                        else { Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt."); }
+                                        else { await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt."); }
                                     }
                                 }
 
@@ -654,7 +578,7 @@ namespace Administrator
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
                                     break;
                                 }
-                                else { Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
+                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
                             }
                         }
                         break;
@@ -673,7 +597,7 @@ namespace Administrator
 
                             Console.Write("Ange ID för den pizza som du vill ta bort: ");
 
-                            string IDOfPizzaToRemove = Menus.ReadLineWithOptionToGoBack();
+                            string IDOfPizzaToRemove = await Menus.ReadLineWithOptionToGoBack();
                             bool userInput = int.TryParse(IDOfPizzaToRemove, out int ID);
                             bool doesPizzaExist = (await rep.CheckIfPizzaIDExists(ID));
 
@@ -684,7 +608,7 @@ namespace Administrator
 
                             else if (doesPizzaExist == false)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Pizza med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Pizza med angivet ID finns inte.");
                             }
 
                             else if (userInput == true)
@@ -692,18 +616,18 @@ namespace Administrator
                                 Console.Clear();
                                 Console.WriteLine($"Är du säker på att du vill ta bort pizza {ID} (j/n)? Valet kan inte ändras."); //Visa namn istället för ID?
 
-                                string choice = Menus.ReadLineWithOptionToGoBack();
+                                string choice = await Menus.ReadLineWithOptionToGoBack();
 
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
                                 else if (choice == "j")
                                 {
                                     await rep.DeletePizza(ID);
-                                    Menus.ConfirmationScreen("Pizza borttagen");
+                                    await Menus.ConfirmationScreen("Pizza borttagen");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
 
                                 }
                                 else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_PIZZA; }
-                                else { Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
+                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;
@@ -712,34 +636,18 @@ namespace Administrator
                     #region// Ingredients
                     case ProgramState.PROGRAM_MENUES.INGREDIENTS:
                         {
-                            Console.Clear();
-                            // MENU CHOICES
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[3]);
                             {
-                                Console.WriteLine("~~ INGREDIENSER ~~");
-                                Menus.PrintMenu(Menus.menuChoices[3]);
-                            }
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            //USER CHOICE
-                            {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_INGREDIENT; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_INGREDIENT; }
-                                    else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT; }
-                                    else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
-                                    else
-                                    {
-                                        Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                                    }
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_INGREDIENT; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_INGREDIENT; }
+                                    else if (UserChoice.Item2 == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT; }
+                                    else if (UserChoice.Item2 == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
                                 }
-
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                }
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                             }
                         }
                         break;
@@ -755,19 +663,18 @@ namespace Administrator
 
                             Console.WriteLine();
                             Console.Write("Vilken ingrediens vill du lägga till: ");
-                            string condimentName = Menus.ReadLineWithOptionToGoBack();
+                            string condimentName = await Menus.ReadLineWithOptionToGoBack();
 
                             if(condimentName == null)
                             {
-                                Thread.Sleep(500);
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
                                 break;
                             }
-                            else if(condimentName.Length < 1 || !Regex.IsMatch(condimentName, @"^[a-öA-Ö]+$")) { Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
+                            else if(condimentName.Length < 1 || !Regex.IsMatch(condimentName, @"^[a-öA-Ö]+$")) { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
                             else { cond.Type = condimentName; }
 
                             Console.Write("Ange pris för ingrediensen: ");
-                            string inputPrice = Menus.ReadLineWithOptionToGoBack();
+                            string inputPrice = await Menus.ReadLineWithOptionToGoBack();
                             bool correctInput = float.TryParse(inputPrice, out float price);
 
                             if (inputPrice == null || correctInput == false || price == 0)
@@ -799,7 +706,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
                             Console.Write("Ange ID på den ingrediens som du vill uppdatera: ");
-                            string IDToChange = Menus.ReadLineWithOptionToGoBack();
+                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
 
                             int.TryParse(IDToChange, out int ID);
                             //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
@@ -812,7 +719,7 @@ namespace Administrator
 
                             else if (doesIngredientExist == false && IDToChange != null)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Ingrediensen med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Ingrediensen med angivet ID finns inte.");
                             }
 
                             else
@@ -823,7 +730,7 @@ namespace Administrator
                                 Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
                                 Console.Write("Ange ingrediensens nya pris: ");
 
-                                string newPrice = Menus.ReadLineWithOptionToGoBack();
+                                string newPrice = await Menus.ReadLineWithOptionToGoBack();
                                 float.TryParse(newPrice, out float userInput);
 
                                 if (newPrice == null || userInput <= 0) // || userInput == false?
@@ -836,7 +743,7 @@ namespace Administrator
                                     cond.Price = userInput;
                                     await rep.UpdateCondiment(cond);
                                     Thread.Sleep(500);
-                                    Menus.ConfirmationScreen("Priset ändrat.");
+                                    await Menus.ConfirmationScreen("Priset ändrat.");
                                     
                                 }
                             }
@@ -859,7 +766,7 @@ namespace Administrator
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
                                 break;
                             }
-                            else { Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
+                            else { await Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
                         }
                         break;
 
@@ -877,7 +784,7 @@ namespace Administrator
 
                             Console.Write("Ange ID för den ingrediens som du vill ta bort: ");
 
-                            string IDOfIngredientToRemove = Menus.ReadLineWithOptionToGoBack();
+                            string IDOfIngredientToRemove = await Menus.ReadLineWithOptionToGoBack();
                             bool userInput = int.TryParse(IDOfIngredientToRemove, out int ID);
                             bool doesIngredientExist = (await rep.CheckIfCondimentIDExists(ID));
 
@@ -888,7 +795,7 @@ namespace Administrator
 
                             else if (doesIngredientExist == false)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Ingrediens med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Ingrediens med angivet ID finns inte.");
                             }
 
                             else if (userInput == true)
@@ -896,18 +803,18 @@ namespace Administrator
                                 Console.Clear();
                                 Console.WriteLine($"Är du säker på att du vill ta bort ingrediens {ID} (j/n)? Valet kan inte ändras.");
 
-                                string choice = Menus.ReadLineWithOptionToGoBack();
+                                string choice = await Menus.ReadLineWithOptionToGoBack();
 
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                                 else if (choice == "j")
                                 {
                                     await rep.DeleteCondiment(ID);
-                                    Menus.ConfirmationScreen("Ingrediens borttagen");
+                                    await Menus.ConfirmationScreen("Ingrediens borttagen");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
 
                                 }
                                 else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT; }
-                                else { Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
+                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;
@@ -916,34 +823,19 @@ namespace Administrator
                     #region// Extras
                     case ProgramState.PROGRAM_MENUES.EXTRAS:
                         {
-                            Console.Clear();
-                            // MENU CHOICES
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[4]);
+
                             {
-                                Console.WriteLine("~~ TILLBEHÖR ~~");
-                                Menus.PrintMenu(Menus.menuChoices[4]);
-                            }
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            //USER CHOICE
-                            {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_EXTRAS; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_EXTRAS; }
-                                    else if (choice == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EXTRAS; }
-                                    else if (choice == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
-                                    else
-                                    {
-                                        Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                                    }
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ADD_EXTRAS; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_EXTRAS; }
+                                    else if (UserChoice.Item2 == 4) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EXTRAS; }
+                                    else if (UserChoice.Item2 == 5) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
                                 }
-
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                }
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                             }
                         }
                         break;
@@ -959,7 +851,7 @@ namespace Administrator
 
                             Console.WriteLine();
                             Console.Write("Vilket tillbehör vill du lägga till: ");
-                            string extraName = Menus.ReadLineWithOptionToGoBack();
+                            string extraName = await Menus.ReadLineWithOptionToGoBack();
                             
                             if (extraName == null || extraName.Length < 1 || !Regex.IsMatch(extraName, @"^[a-öA-Ö\s]+$")) // \s är för att inkludera whitespace
                             {
@@ -970,7 +862,7 @@ namespace Administrator
                             else { extra.Type = extraName; }
 
                             Console.Write("Ange pris för tillbehöret: ");
-                            string inputPrice = Menus.ReadLineWithOptionToGoBack();
+                            string inputPrice = await Menus.ReadLineWithOptionToGoBack();
                             bool correctInput = float.TryParse(inputPrice, out float price);
 
                             if (inputPrice == null)
@@ -978,7 +870,7 @@ namespace Administrator
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
                                 break;
                             }
-                            else if(correctInput == false || price == 0) { Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
+                            else if(correctInput == false || price == 0) { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
                             else { extra.Price = price; }
 
                             Console.Clear();
@@ -1001,7 +893,7 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
                             Console.Write("Ange ID på det tillbehör som du vill uppdatera: ");
-                            string IDToChange = Menus.ReadLineWithOptionToGoBack();
+                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
 
                             int.TryParse(IDToChange, out int ID);
                             //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
@@ -1014,7 +906,7 @@ namespace Administrator
 
                             else if (doesExtraExist == false && IDToChange != null)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Tillbehöret med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Tillbehöret med angivet ID finns inte.");
                             }
 
                             else
@@ -1025,7 +917,7 @@ namespace Administrator
                                 Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
                                 Console.Write("Ange tillbehörets nya pris: ");
 
-                                string newPrice = Menus.ReadLineWithOptionToGoBack();
+                                string newPrice = await Menus.ReadLineWithOptionToGoBack();
                                 float.TryParse(newPrice, out float userInput);
 
                                 if (newPrice == null || userInput <= 0) // || userInput == false?
@@ -1038,7 +930,7 @@ namespace Administrator
                                     extra.Price = userInput;
                                     await rep.UpdateExtra(extra);
                                     Thread.Sleep(500);
-                                    Menus.ConfirmationScreen("Priset ändrat.");
+                                    await Menus.ConfirmationScreen("Priset ändrat.");
 
                                 }
                             }
@@ -1063,7 +955,7 @@ namespace Administrator
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
                                 break;
                             }
-                            else { Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
+                            else { await Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
                         }
                         break;
                     ///
@@ -1084,7 +976,7 @@ namespace Administrator
 
                             Console.Write("Ange ID för det tillbehör som du vill ta bort: ");
 
-                            string IDOfExtraToRemove = Menus.ReadLineWithOptionToGoBack();
+                            string IDOfExtraToRemove = await Menus.ReadLineWithOptionToGoBack();
                             bool userInput = int.TryParse(IDOfExtraToRemove, out int ID);
                             bool doesExtraExist = (await rep.CheckIfProductIDExists(ID));
 
@@ -1095,7 +987,7 @@ namespace Administrator
 
                             else if (doesExtraExist == false)
                             {
-                                Menus.MessageIfChoiceIsNotRight("Tillbehör med angivet ID finns inte.");
+                                await Menus.MessageIfChoiceIsNotRight("Tillbehör med angivet ID finns inte.");
                             }
 
                             else if (userInput == true)
@@ -1103,18 +995,18 @@ namespace Administrator
                                 Console.Clear();
                                 Console.WriteLine($"Är du säker på att du vill ta bort tillbehör {ID} (j/n)? Valet kan inte ändras.");
 
-                                string choice = Menus.ReadLineWithOptionToGoBack();
+                                string choice = await Menus.ReadLineWithOptionToGoBack();
 
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                                 else if (choice == "j")
                                 {
                                     await rep.DeleteExtra(ID);
-                                    Menus.ConfirmationScreen("Tillbehör borttaget");
+                                    await Menus.ConfirmationScreen("Tillbehör borttaget");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
 
                                 }
                                 else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EXTRAS; }
-                                else { Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
+                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;
@@ -1123,32 +1015,17 @@ namespace Administrator
                     #region // Old orders
                     case ProgramState.PROGRAM_MENUES.OLD_ORDERS:
                         {
-                            Console.Clear();
-                            // MENU CHOICES
+                            var UserChoice = await Menus.PrintMenuAndCheckChoice(Menus.MenuChoices[5]);
+
                             {
-                                Console.WriteLine("~~ GAMLA ORDRAR ~~");
-                                Menus.PrintMenu(Menus.menuChoices[5]);
-                            }
-
-                            bool userChoice = int.TryParse(Console.ReadLine(), out int choice);
-
-                            //USER CHOICE
-                            {
-                                if (userChoice == true)
+                                if (UserChoice.Item1 == true)
                                 {
-                                    if (choice == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS; }
-                                    else if (choice == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS; }
-                                    else if (choice == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
-                                    else
-                                    {
-                                        Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
-                                    }
+                                    if (UserChoice.Item2 == 1) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS; }
+                                    else if (UserChoice.Item2 == 2) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS; }
+                                    else if (UserChoice.Item2 == 3) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU; }
+                                    else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.", "Valet finns inte.");
                                 }
-
-                                else
-                                {
-                                    Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
-                                }
+                                else await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt.");
                             }
                         }
                         break;
