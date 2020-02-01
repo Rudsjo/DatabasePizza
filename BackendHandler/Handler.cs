@@ -122,7 +122,7 @@ namespace BackendHandler
         public Task UpdateEmployee(Employee emp, string storedProcedure = "UpdateEmployeeByID");
         public Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedure = "GetAllEmployees");
         public Task<Employee> GetSingleEmployee(int ID, string storedProcedure = "GetSingleEmployee");
-        public Task DeleteEmployee(int ID, string storedProcedure = "DeleteEmployeeByID");
+        public Task DeleteEmployee(Employee emp, string storedProcedure = "DeleteEmployeeByID");
 
         //Pizza
         public Task<Pizza> AddPizza(Pizza pizza, string storedProcedure = "AddPizza");
@@ -130,7 +130,7 @@ namespace BackendHandler
         public Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedure = "GetAllPizzas");
         public Task<Pizza> GetSinglePizza(int ID, string storedProcedure = "GetSpecificPizza");
         //public Task<Pizza> GetSinglePizza(string PizzaName, string storedProcedure = "GetSpecificPizza");
-        public Task DeletePizza(int ID, string storedProcedure = "DeletePizzaByID");
+        public Task DeletePizza(Pizza pizza, string storedProcedure = "DeletePizzaByID");
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
         public Task AddCondimentToPizza(Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza");
 
@@ -139,14 +139,14 @@ namespace BackendHandler
         public Task UpdateCondiment(Condiment cond, string storedProcedure = "UpdateCondimentByID");
         public Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedure = "GetAllCondiments");
         public Task<Condiment> GetSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment");
-        public Task DeleteCondiment(int ID, string storedProcedure = "DeleteCondimentByID");
+        public Task DeleteCondiment(Condiment cond, string storedProcedure = "DeleteCondimentByID");
 
         //Extra
         public Task AddExtra(Extra extra, string storedProcedure = "AddExtra");
         public Task UpdateExtra(Extra extra, string storedProcedure = "UpdateExtraByID");
         public Task<IEnumerable<Extra>> GetAllExtras(string storedProcedure = "GetAllExtras");
         public Task<Extra> GetSingleExtra(int ID, string storedProcedure = "GetSingleExtra");
-        public Task DeleteExtra(int ID, string storedProcedure = "DeleteExtraByID");
+        public Task DeleteExtra(Extra extra, string storedProcedure = "DeleteExtraByID");
 
 
         //Functions for checking user/password and for checking if an ID exists in the database.
@@ -197,9 +197,9 @@ namespace BackendHandler
             await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = emp.UserID, Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteEmployee(int id, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
+        public async Task DeleteEmployee(Employee emp, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure);
         }
 
         //Pizzas
@@ -232,9 +232,9 @@ namespace BackendHandler
             await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = JsonConvert.SerializeObject(pizza.PizzaIngredients) }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
-        public async Task DeletePizza(int id, string storedProcedureToDeletePizza = "DeletePizzaByID")
+        public async Task DeletePizza(Pizza pizza, string storedProcedureToDeletePizza = "DeletePizzaByID")
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
         }
         public async Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int id, string storedProcedureToGetIngredientFromSpecifikPizza = "GetIngredientsFromSpecificPizza")
         {
@@ -262,9 +262,9 @@ namespace BackendHandler
             await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task DeleteCondiment(int id, string storedProcedureToDeleteCondiment = "DeleteCondimentByID")
+        public async Task DeleteCondiment(Condiment cond, string storedProcedureToDeleteCondiment = "DeleteCondimentByID")
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = cond.CondimentID }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP   
 
         //Extras
@@ -288,9 +288,9 @@ namespace BackendHandler
             await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
-        public async Task DeleteExtra(int id, string storedProcedureToDeleteExtra = "DeleteExtraByID")
+        public async Task DeleteExtra(Extra extra, string storedProcedureToDeleteExtra = "DeleteExtraByID")
         {
-            await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure);
+            await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure);
         } //Tillagt SP
 
 
@@ -401,22 +401,22 @@ namespace BackendHandler
             throw new NotImplementedException();
         }
 
-        public Task DeleteCondiment(int ID, string storedProcedure = "DeleteCondimentByID")
+        public Task DeleteCondiment(Condiment cond, string storedProcedure = "DeleteCondimentByID")
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteEmployee(int ID, string storedProcedure = "DeleteEmployeeByID")
+        public Task DeleteEmployee(Employee emp, string storedProcedure = "DeleteEmployeeByID")
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteExtra(int ID, string storedProcedure = "DeleteExtraByID")
+        public Task DeleteExtra(Extra extra, string storedProcedure = "DeleteExtraByID")
         {
             throw new NotImplementedException();
         }
 
-        public Task DeletePizza(int ID, string storedProcedure = "DeletePizzaByID")
+        public Task DeletePizza(Pizza pizza, string storedProcedure = "DeletePizzaByID")
         {
             throw new NotImplementedException();
         }

@@ -118,202 +118,40 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_EMPLOYEE:
                         {
-                            bool correctPass = false, correctRole = false;
-                            Employee emp = new Employee();
+                            Employee newEmployee = await Menus.AddEmployeeMenu();
 
-                            Console.Clear();
-                            // MENU CHOICES
+                            if(newEmployee.Password == null || newEmployee.Role == null)    // Om något av värdena returnerats som null så innebär det att ESC klickats och då skickas användaren tillbaka
                             {
-                                do
-                                {
-                                    Console.WriteLine("~~ LÄGG TILL ANSTÄLLD ~~");
-                                    Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-
-                                    Console.Write("Ange den anställdes lösenord: ");
-                                    string tempPassword = await Menus.ReadLineWithOptionToGoBack();
-
-                                    if (tempPassword == null)
-                                    {
-                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
-                                        break;
-                                    }
-
-                                    else if (tempPassword.Length < 1)
-                                    {
-                                        await Menus.MessageIfChoiceIsNotRight("Ditt lösenord måste innehålla tecken.");
-                                    }
-
-                                    else
-                                    {
-                                        emp.Password = tempPassword;
-                                        correctPass = true;
-                                    }
-                                } while (correctPass == false);
-
-
-                                while (correctRole == false && emp.Password != null)
-                                {
-                                    Console.Write("Ange den anställdes roll: ");
-                                    string tempRole = await Menus.ReadLineWithOptionToGoBack();
-
-                                    if(tempRole == null)
-                                    {
-                                        Console.Clear();
-                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
-                                        break;
-                                    }
-
-                                    else if (tempRole.ToLower() == "admin" || tempRole.ToLower() == "bagare" || tempRole.ToLower() == "kassör")
-                                    {
-                                        emp.Role = tempRole;
-                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
-                                        correctRole = true;
-                                    }
-
-                                    else
-                                    {
-                                        await Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
-                                        Console.Clear();
-                                    }
-
-                                }
-
-                                if (correctPass == true && correctRole == true)
-                                {
-                                    await rep.AddEmployee(emp);
-                                    await Menus.ConfirmationScreen("Den anställde är tillagd.");
-                                }
+                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
+                            }
+                            else
+                            {                                               // Annars läggs den nya användaren till i databasen
+                                await rep.AddEmployee(newEmployee);
+                                await Menus.ConfirmationScreen("Den anställde är tillagd.");
                             }
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.UPDATE_EMPLOYEE:
                         {
-
-                            Console.Clear();
-
-                            Console.WriteLine("~~ UPPDATERA ANSTÄLLD ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-
-                            Console.Write("Ange ID på den anställde som du vill uppdatera: ");
-                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
-
-                            int.TryParse(IDToChange, out int ID);
-                            //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
-                            bool doesUserExist = (await rep.CheckIfUserIDExists(ID));
-
-                            if(IDToChange == null)
+                            Employee employeeToUpdate = await Menus.CheckEmployeeIDMenu(rep);
+                            if(employeeToUpdate.Password == null)                               // kontrollerar om ESC klickats
                             {
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
                             }
-
-                            else if (doesUserExist == false && IDToChange != null)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Den anställde med angivet ID finns inte.");
-                            }
-
                             else
                             {
-                                Employee emp = await rep.GetSingleEmployee(ID);
-
-                                Console.Clear();
-                                Console.WriteLine("Klicka ESC för att gå tillbaka.");
-                                Console.WriteLine("Ange vad du vill ändra hos användaren:");
-                                Console.WriteLine("1. Lösenord");
-                                Console.WriteLine("2. Roll");
-
-                                string whatToChange = await Menus.ReadLineWithOptionToGoBack();
-                                bool userInput = int.TryParse(whatToChange, out int changeChoice);
-
-                                if(whatToChange == null) // || userInput == false?
+                                employeeToUpdate = await Menus.UpdateEmployeeMenu(employeeToUpdate);
+                                if(employeeToUpdate.Password == null || employeeToUpdate.Role == null)
                                 {
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EMPLOYEE;
-                                }
-
-                                else if (userInput == true)
-                                {
-                                    bool correctPass = false, correctRole = false;
-                                    // ändra lösenord
-                                    if (changeChoice == 1)
-                                    {
-                                        while (correctPass == false)
-                                        {
-                                            Console.Clear();
-                                            Console.WriteLine("Klicka ESC för att gå tillbaka.");
-                                            Console.Write("Ange den anställdes nya lösenord: ");
-                                            string tempPass = await Menus.ReadLineWithOptionToGoBack();
-                                            if(tempPass == null)
-                                            {
-                                                Console.Clear();
-                                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EMPLOYEE;
-                                                break;
-                                            }
-
-                                            else if (tempPass.Length < 1)
-                                            {
-                                                await Menus.MessageIfChoiceIsNotRight("Lösenordet måste innehålla tecken.");
-                                            }
-
-                                            else
-                                            {
-                                                emp.Password = tempPass;
-                                                await Menus.ConfirmationScreen("Lösenordet ändrat.");
-                                                correctPass = true;
-                                            }
-
-                                        }
-
-                                        if (correctPass == true)
-                                        {
-                                            await rep.UpdateEmployee(emp);
-                                            await Menus.ConfirmationScreen("Den anställde är uppdaterad.");
-                                        }
-
-                                    }
-
-                                    // ändra roll
-                                    else if (changeChoice == 2)
-                                    {
-                                        while (correctRole == false)
-                                        {
-                                            Console.Clear();
-                                            Console.WriteLine("Klicka ESC för att gå tillbaka.");
-                                            Console.Write("Ange användarens nya roll: ");
-
-                                            string tempRole = await Menus.ReadLineWithOptionToGoBack();
-
-                                            if(tempRole == null)
-                                            {
-                                                Console.Clear();
-                                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
-                                                break;
-                                            }
-
-                                            else if (tempRole.ToLower() == "admin" || tempRole.ToLower() == "bagare" || tempRole.ToLower() == "kassör")
-                                            {
-                                                emp.Role = tempRole;
-                                                await Menus.ConfirmationScreen("Rollen ändrad.");
-                                                correctRole = true;
-                                            }
-
-                                            else
-                                            {
-                                                await Menus.MessageIfChoiceIsNotRight("Rollen finns inte.");
-                                            }
-                                        }
-
-                                        if(correctRole == true)
-                                        {
-                                            await rep.UpdateEmployee(emp);
-                                            await Menus.ConfirmationScreen("Den anställde är uppdaterad.");
-                                        }
-                                    }
+                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
                                 }
                                 else
                                 {
-                                    await Menus.MessageIfChoiceIsNotRight("Valet finns inte.");
+                                    await rep.UpdateEmployee(employeeToUpdate);
+                                    await Menus.ConfirmationScreen("Anställd uppdaterad.");
                                 }
-
                             }
+
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.SHOW_EMPLOYEE:
@@ -342,45 +180,13 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.DELETE_EMPLOYEE:
                         {
-                            Console.Clear();
-                            Console.WriteLine("~~ TA BORT ANSTÄLLD ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-                            Console.WriteLine();
-
-                            Console.Write("Ange ID för den anställda som du vill ta bort: ");
-
-                            string IDOfUserToRemove = await Menus.ReadLineWithOptionToGoBack();
-                            bool userInput = int.TryParse(IDOfUserToRemove, out int ID);
-                            bool doesUserExist = (await rep.CheckIfUserIDExists(ID));
-
-                            if (IDOfUserToRemove == null)
+                            Employee employeeToDelete = await Menus.DeleteEmployeeMenu(rep);
+                            if(employeeToDelete.Password == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
+                            else
                             {
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
+                                await rep.DeleteEmployee(employeeToDelete);
+                                await Menus.ConfirmationScreen("Anställd borttagen.");
                             }
-
-                            else if(doesUserExist == false)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Användare med angivet ID finns inte.");
-                            }
-
-                            else if (userInput == true)
-                            {
-                                Console.WriteLine($"Är du säker på att du vill ta bort anställd {ID} (j/n)? Valet kan inte ändras.");
-
-                                string choice = await Menus.ReadLineWithOptionToGoBack();
-
-                                if(choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES; }
-                                else if (choice == "j")
-                                {
-                                    await rep.DeleteEmployee(ID);
-                                    await Menus.ConfirmationScreen("Anställd borttagen");
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
-
-                                }
-                                else if (choice == "n"){ ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EMPLOYEE; }
-                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
-                            }
-
                         }
                         break;
                     #endregion
@@ -590,6 +396,8 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
+                            Pizza p = new Pizza();
+
                             foreach (var pizza in await rep.GetAllPizzas())
                             {
                                 Console.WriteLine($"ID - {pizza.PizzaID}, {pizza.Type}\n");
@@ -621,7 +429,7 @@ namespace Administrator
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
                                 else if (choice == "j")
                                 {
-                                    await rep.DeletePizza(ID);
+                                    await rep.DeletePizza(p);
                                     await Menus.ConfirmationScreen("Pizza borttagen");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
 
@@ -777,6 +585,8 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
+                            Condiment c = new Condiment();
+
                             foreach (var ingredient in await rep.GetAllCondiments())
                             {
                                 Console.WriteLine($"ID - {ingredient.CondimentID}, {ingredient.Type}\n");
@@ -808,7 +618,7 @@ namespace Administrator
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                                 else if (choice == "j")
                                 {
-                                    await rep.DeleteCondiment(ID);
+                                    await rep.DeleteCondiment(c);
                                     await Menus.ConfirmationScreen("Ingrediens borttagen");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
 
@@ -969,6 +779,8 @@ namespace Administrator
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
                             Console.WriteLine();
 
+                            Extra e = new Extra();
+
                             foreach (var extra in await rep.GetAllExtras())
                             {
                                 Console.WriteLine($"ID - {extra.ProductID}, {extra.Type}\n");
@@ -1000,7 +812,7 @@ namespace Administrator
                                 if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                                 else if (choice == "j")
                                 {
-                                    await rep.DeleteExtra(ID);
+                                    await rep.DeleteExtra(e);
                                     await Menus.ConfirmationScreen("Tillbehör borttaget");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
 
