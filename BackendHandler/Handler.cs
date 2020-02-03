@@ -174,181 +174,220 @@ namespace BackendHandler
         }
 
         //Employees
-
+        #region Employees
         public async Task AddEmployee(Employee emp, string storedProcedureToAddEmployee = "AddEmployee")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure); }
         }
-
         public async Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedureToShowEmployees = "GetAllEmployees")
         {
-            //IEnumerable<Employees> employees = (await connection.QueryAsync<Employees>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
-            //return employees;
-            return (await connection.QueryAsync<Employee>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Employee>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure)); }
         }
-
         public async Task<Employee> GetSingleEmployee(int id, string storedProcedureToShowSingleEmployee = "GetSingleEmployee")
         {
-            return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First(); }
         }
-
         public async Task UpdateEmployee(Employee emp, string storedProcedureToUpdateEmployee = "UpdateEmployeeByID")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = emp.UserID, Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = emp.UserID, Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure); }
         }
-
         public async Task DeleteEmployee(Employee emp, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
         {
-            await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure);
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure); }
         }
-
+        #endregion
         //Pizzas
-
+        #region Pizzas
         public async Task<Pizza> AddPizza(Pizza pizza, string storedProcedureToAddPizza = "AddPizza")
         {
-            return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First();
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First(); }
         }
 
         public async Task AddCondimentToPizza(Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza")
         {
-            foreach (var item in pizza.PizzaIngredients)
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
             {
-                await connection.QueryAsync(storedProcedureToAddCondimentToPizza, new {CondimentID = item.CondimentID, PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
-            }          
+                foreach (var item in pizza.PizzaIngredients)
+                {
+                    await connection.QueryAsync(storedProcedureToAddCondimentToPizza, new { CondimentID = item.CondimentID, PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
+                }
+            }
         }
-
+        
         public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "GetAllPizzas")
         {
-            return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure)); }
         }
 
         public async Task<Pizza> GetSinglePizza(int id, string storedProcedureToShowSinglePizza = "GetSpecificPizza")
         {
-            return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First(); }
         }
 
         public async Task UpdatePizza(Pizza pizza, string storedProcedureToUpdatePizza = "UpdatePizzaByID")
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = JsonConvert.SerializeObject(pizza.PizzaIngredients) }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = JsonConvert.SerializeObject(pizza.PizzaIngredients) }, commandType: CommandType.StoredProcedure); }
+        } 
 
         public async Task DeletePizza(Pizza pizza, string storedProcedureToDeletePizza = "DeletePizzaByID")
         {
-            await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure); }
         }
         public async Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int id, string storedProcedureToGetIngredientFromSpecifikPizza = "GetIngredientsFromSpecificPizza")
         {
-            return (await connection.QueryAsync<Condiment>(storedProcedureToGetIngredientFromSpecifikPizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure));
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Condiment>(storedProcedureToGetIngredientFromSpecifikPizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)); }
         }
+        #endregion
 
-        //Condiments
+        #region Condiments
         public async Task AddCondiment(Condiment cond, string storedProcedureToAddCondiment = "AddCondiment")
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = cond.Type, Price = cond.Price }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = cond.Type, Price = cond.Price }, commandType: CommandType.StoredProcedure); }
+        } 
 
         public async Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedureToShowCondiment = "GetAllCondiments")
         {
-            return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure)); }
         }
 
         public async Task<Condiment> GetSingleCondiment(int id, string storedProcedureToShowSingleCondiment = "GetSingleCondiment")
         {
-            return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First(); }
         }
 
-        public async Task UpdateCondiment(Condiment cond, string storedProcedureToUpdateCondiment = "UpdateCondimentByID") //Tillagt SP
+        public async Task UpdateCondiment(Condiment cond, string storedProcedureToUpdateCondiment = "UpdateCondimentByID")
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure);
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure); }
         }
 
         public async Task DeleteCondiment(Condiment cond, string storedProcedureToDeleteCondiment = "DeleteCondimentByID")
         {
-            await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = cond.CondimentID }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP   
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = cond.CondimentID }, commandType: CommandType.StoredProcedure); }
+        }
+        #endregion
 
-        //Extras
+        #region Extras
         public async Task AddExtra(Extra extra, string storedProcedureToAddExtra = "AddExtra")
         {
-            await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = extra.Type, Price = extra.Price }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = extra.Type, Price = extra.Price }, commandType: CommandType.StoredProcedure); }
+        } 
 
         public async Task<IEnumerable<Extra>> GetAllExtras(string storedProcedureToShowExtra = "GetAllExtras")
         {
-            return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure)); }
         }
 
         public async Task<Extra> GetSingleExtra(int id, string storedProcedureToShowSingleExtra = "GetSingleExtra")
         {
-            return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
-        } //Tillagt SP
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First(); }
+        } 
 
         public async Task UpdateExtra(Extra extra, string storedProcedureToUpdateExtra = "UpdateExtraByID")
         {
-            await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure); }
+        } 
 
         public async Task DeleteExtra(Extra extra, string storedProcedureToDeleteExtra = "DeleteExtraByID")
         {
-            await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure);
-        } //Tillagt SP
-
-
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure); }
+        }
+        #endregion
         //Checking functions for existing ID and user/password.
-
+        #region CheckingID functions
         public async Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedureToCheckLogin = "CheckPassword", string storedProcedureToCheckRole = "CheckRole")
         {
-            string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { id = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
-            bool correctLogInCredentials = false;
-            string role = "";
-
-            if (passCheck == "true")
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
             {
-                correctLogInCredentials = true;
-                var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
-                role = checkRole.First().Role;
-            }
+                string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { id = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
+                bool correctLogInCredentials = false;
+                string role = "";
 
-            return (correctLogInCredentials, role);
+                if (passCheck == "true")
+                {
+                    correctLogInCredentials = true;
+                    var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
+                    role = checkRole.First().Role;
+                }
+
+                return (correctLogInCredentials, role);
+            }
         }
 
         public async Task<bool> CheckIfUserIDExists(int ID, string storedProcedureToCheckForExistingID = "CheckForExistingID")
         {
-            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingID, new { UserID = ID }, commandType: CommandType.StoredProcedure)).First();
-            if (IDExists == true)
-                return true;
-            else
-                return false;
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
+            {
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingID, new { UserID = ID }, commandType: CommandType.StoredProcedure)).First();
+                if (IDExists == true)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         public async Task<bool> CheckIfProductIDExists(int ID, string storedProcedureToCheckForExistingProductID = "CheckForExistingProductID")
         {
-            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingProductID, new { ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
-            if (IDExists == true)
-                return true;
-            else
-                return false;
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
+            {
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingProductID, new { ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
+                if (IDExists == true)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         public async Task<bool> CheckIfCondimentIDExists(int ID, string storedProcedureToCheckForExistingCondimentID = "CheckForExistingCondimentID")
         {
-            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingCondimentID, new { CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
-            if (IDExists == true)
-                return true;
-            else
-                return false;
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
+            {
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingCondimentID, new { CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
+                if (IDExists == true)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         public async Task<bool> CheckIfPizzaIDExists(int ID, string storedProcedureToCheckForExistingPizzaID = "CheckForExistingPizzaID")
         {
-            bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingPizzaID, new { PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
-            if (IDExists == true)
-                return true;
-            else
-                return false;
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
+            {
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingPizzaID, new { PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+                if (IDExists == true)
+                    return true;
+                else
+                    return false;
+            }
         }
-
-        //Lägga till funtioner för resterande tabeller, för att kolla om ID existerar.
+        #endregion
 
         //Orders Måste fixas. Både interface och funktioner
 
