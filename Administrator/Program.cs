@@ -842,6 +842,26 @@ namespace Administrator
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS:
+                        {
+                            Console.Clear();
+                            Console.WriteLine("~~ SAMTLIGA GAMLA ORDRAR ~~");
+                            Console.WriteLine();
+                            var result = await rep.GetAllOrders();
+                            var orders = result.Where(x => x.Status == 4);
+
+                            foreach (var order in orders)
+                            {
+                                Console.WriteLine(order);
+                            }
+
+                            Console.WriteLine();
+                            Console.WriteLine("Klicka på ESC för att gå tillbaka");
+                            if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                            {
+                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
+                                break;
+                            }
+                        }
                         break;
                     case ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS:
                         break;

@@ -91,6 +91,10 @@ namespace BackendHandler
         public int Status { get; set; }
         public List<Extra> ExtraList { get; set; }
         public List<Pizza> PizzaList { get; set; }
+        public override string ToString()
+        {
+            return $"ID: {this.OrderID}\nTillbehör: {this.ExtraList}\nPizzor: {this.PizzaList}\nPris: {this.Price}";
+        }
     }
     public class Pizza    
     {
@@ -157,7 +161,8 @@ namespace BackendHandler
         public Task<bool> CheckIfPizzaIDExists(int ID, string storedProcedure = "CheckForExistingPizzaID");
 
         //Order interfaceimplementation måste göras. 
-        public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders");
+        public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders");
+        public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder");
     }
 
     #region Backends
@@ -391,10 +396,15 @@ namespace BackendHandler
         #endregion
         //Orders Måste fixas. Både interface och funktioner
         #region Orders
-        public async Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders")
+        public async Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders")
         {
             MSSQL rep = new MSSQL();
-            using (rep.connection) { return (await connection.QueryAsync<Order>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure)); }
+            using (rep.connection) { return (await connection.QueryAsync<Order>(storedProcedureToShowOrders, commandType: CommandType.StoredProcedure)); }
+        }
+        public async Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
+        {
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { pizzas = order.PizzaList, extras = order.ExtraList, price = order.Price }, commandType: CommandType.StoredProcedure); }
         }
         #endregion
 
@@ -541,6 +551,11 @@ namespace BackendHandler
         }
 
         public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
             throw new NotImplementedException();
         }
