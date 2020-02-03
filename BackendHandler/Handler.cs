@@ -157,6 +157,7 @@ namespace BackendHandler
         public Task<bool> CheckIfPizzaIDExists(int ID, string storedProcedure = "CheckForExistingPizzaID");
 
         //Order interfaceimplementation måste göras. 
+        public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders");
     }
 
     #region Backends
@@ -388,9 +389,14 @@ namespace BackendHandler
             }
         }
         #endregion
-
         //Orders Måste fixas. Både interface och funktioner
-
+        #region Orders
+        public async Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders")
+        {
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { return (await connection.QueryAsync<Order>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure)); }
+        }
+        #endregion
 
     }
     public class PostgreSQL : IDatabase
@@ -530,6 +536,11 @@ namespace BackendHandler
         }
 
         public Task AddCondimentToPizza(Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowExtra = "GetAllOrders")
         {
             throw new NotImplementedException();
         }
