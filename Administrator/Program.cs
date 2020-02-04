@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.IO;
 using MenuFunctions;
+using System.Data;
 
 namespace Administrator
 {
@@ -211,153 +212,72 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.ADD_PIZZA:
                         {
-                            bool correctPizzaName = false, correctPizzaBase = false, correctPizzaPrice = false;
-
-                            Pizza newPizza = new Pizza();                         
-
-                            // kolla pizzans namn
+                            Pizza newPizza = new Pizza();
+                            newPizza = await Menus.AddPizzaMenu(rep);
+                            if(newPizza.Type == null || newPizza.PizzabaseID == 0 || newPizza.Price <= 0)
                             {
-                                while (correctPizzaName == false)
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine("~~ LÄGG TILL PIZZA ~~");
-                                    Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-
-                                    Console.WriteLine();
-                                    Console.Write("Pizzans namn: ");
-                                    newPizza.Type = await Menus.ReadLineWithOptionToGoBack();
-
-                                    if(newPizza.Type == null)
+                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                            }
+                            else
+                            {
+                                //using (IDbTransaction transaction = await rep.Transaction())
+                                //{
+                                    newPizza = await rep.AddPizza(newPizza);
+                                    newPizza.PizzaIngredients = await Menus.AddCondimentToPizzaMenu(rep, newPizza);
+                                    if(newPizza.PizzaIngredients.Count < 1) 
                                     {
-                                        Console.Clear();
+                                        await rep.DeletePizza(newPizza);
+                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; 
+                                    }
+                                    else
+                                    {
+                                        await rep.AddCondimentToPizza(newPizza);
+                                        await Menus.ConfirmationScreen("Pizzan tillagd.");
                                         ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                        break;
                                     }
-
-                                    else if (newPizza.Type.Length > 1) { correctPizzaName = true; }
-                                    else { await Menus.MessageIfChoiceIsNotRight("Namnet måste innehålla minst ett tecken."); }
-                                }
-                            }
-                            // kolla pizzans botten
-                            {
-                                while (correctPizzaBase == false && newPizza.Type != null)
-                                {
-                                    Console.Write("Pizzans botten ([1] Italiensk eller [2] Amerikansk): ");
-                                    int.TryParse(Console.ReadLine(), out int input);
-
-                                    
-                                    newPizza.PizzabaseID = input;
-                                    correctPizzaBase = true;
-                                    //if(newPizza.Base == null)
-                                    //{
-                                    //    Console.Clear();
-                                    //    ProgramState.CURREN_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                    //    break;
-                                    //}
-
-                                    //else if (newPizza.Base.ToLower() == "italiensk" || newPizza.Base.ToLower() == "amerikansk")
-                                    //{
-                                    //    correctPizzaBase = true;
-                                    //}
-
-                                    //else { Menus.MessageIfChoiceIsNotRight("Pizzabasen finns inte."); }
-                                }
-                            }
-
-                            // kolla pizzans pris
-                            {
-                                while (correctPizzaPrice == false && newPizza.Type != null && newPizza.PizzabaseID != 0)
-                                {
-                                   
-                                    Console.Write("Pizzans pris: ");
-                                    string inputPrice = await Menus.ReadLineWithOptionToGoBack();
-                                    bool correctInput = float.TryParse(inputPrice, out float price);
-
-                                    if(inputPrice == null)
-                                    {
-                                        Console.Clear();
-                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                        break;
-                                    }
-
-                                    else if (correctInput == true && price > 0)
-                                    {
-                                        newPizza.Price = price;
-                                        correctPizzaPrice = true;
-                                    }
-
-                                    else { await Menus.MessageIfChoiceIsNotRight("Priset är angivet felaktigt."); }
-                                }
-                            }
-
-                            newPizza = await rep.AddPizza(newPizza);
-
-
-                            //kolla pizzans ingredienser
-                            {
-                                if (newPizza.Type != null && newPizza.PizzabaseID != 0 && newPizza.Price != 0)
-                                {
-                                    bool confirmedPizza = false;
-                                    List<Condiment> condimentsOfNewPizza = new List<Condiment>();
-
-                                    while (confirmedPizza == false)
-                                    {
-                                        Console.WriteLine("Välj en ingrediens till pizzan genom att ange ingrediensens nummer:");
-                                        int counter = 1;
-
-                                        foreach (var condiment in await rep.GetAllCondiments())
-                                        {
-                                            Console.WriteLine($"{counter}. {condiment.Type}");
-                                            counter++;
-                                        }
-
-                                        string chosenCondiment = await Menus.ReadLineWithOptionToGoBack();
-                                        bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
-
-                                        if (chosenCondiment == null)
-                                        {
-                                            Console.Clear();
-                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                            break;
-                                        }
-
-                                        else if (correctInput == true && confirmedChosenCondiment != 0)
-                                        {
-                                            Condiment cond = await rep.GetSingleCondiment(confirmedChosenCondiment);
-                                            cond.Price = 0;
-                                            condimentsOfNewPizza.Add(cond);
-
-                                            await Menus.ConfirmationScreen("Ingrediens tillagd.");
-                                            Console.Clear();
-
-                                            Console.WriteLine("Ange ytterligare en ingrediens, ange 0 för att bekräfta pizzan.");
-                                            Console.WriteLine("Klicka på ESC för att avbryta");
-                                            Console.WriteLine();
-                                            Console.Write(newPizza.Type + ":\n");
-                                            foreach (var condName in condimentsOfNewPizza) { Console.Write($" {condName.Type},"); }
-                                            Console.WriteLine();
-                                        }
-
-                                        else if (confirmedChosenCondiment == 0 && condimentsOfNewPizza.Count > 0)
-                                        {
-                                            newPizza.PizzaIngredients = condimentsOfNewPizza;
-                                            
-                                            await rep.AddCondimentToPizza(newPizza);
-                                            await Menus.ConfirmationScreen("Pizzan tillagd");
-                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                                            break;
-                                        }
-
-                                        else { await Menus.MessageIfChoiceIsNotRight("Ditt val är felaktigt."); }
-                                    }
-                                }
+                                //}
 
                             }
-
 
                         }
                         break;
                     case ProgramState.PROGRAM_MENUES.UPDATE_PIZZA:
+                        {
+                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+                            Console.Write("Ange ID på den pizza du vill ändra: ");
+                            string pizzaIDToBeUpdated = await Menus.ReadLineWithOptionToGoBack();
+                            if(pizzaIDToBeUpdated == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
+                            else
+                            {
+                                bool correctInput = int.TryParse(pizzaIDToBeUpdated, out int IDOfPizzaToBeUpdated);
+                                if(correctInput == true)
+                                {
+                                    bool checkIfPizzaExists = await rep.CheckIfPizzaIDExists(IDOfPizzaToBeUpdated);
+
+                                    if(checkIfPizzaExists == true)
+                                    {
+                                        Pizza pizzaToBeUpdated = new Pizza();
+                                        pizzaToBeUpdated = await rep.GetSinglePizza(IDOfPizzaToBeUpdated);
+                                        pizzaToBeUpdated = await Menus.UpdatePizzaMenu(rep, pizzaToBeUpdated);
+
+                                        if(pizzaToBeUpdated.PizzabaseID == 0 || pizzaToBeUpdated.PizzaIngredients == null || pizzaToBeUpdated.Type == null || pizzaToBeUpdated.Price == 0)
+                                        {
+                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                        }
+                                        else
+                                        {
+                                            await rep.UpdatePizza(pizzaToBeUpdated);
+                                            await Menus.ConfirmationScreen("Pizzan uppdaterad.");
+                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
+                                        }
+
+                                    }
+                                    else { await Menus.MessageIfChoiceIsNotRight("Angiven pizza finns inte."); }
+                                }
+                                else { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
+
+                            }
+                        }
                         break;
                     case ProgramState.PROGRAM_MENUES.SHOW_PIZZA:
                         {
@@ -366,12 +286,11 @@ namespace Administrator
                             while (wantToGoBack == false)
                             {
                                 Console.Clear();
-                                Console.WriteLine("~~ SAM" +
-                                    "TLIGA PIZZOR ~~");
+                                Console.WriteLine("~~ SAMTLIGA PIZZOR ~~");
                                 Console.WriteLine();
                                 foreach (Pizza pizza in Helpers.LoadPizzasAsList(rep))
                                 {
-                                    Console.WriteLine(pizza.Type + ", " + pizza.Price + " kr");
+                                    Console.WriteLine($"{pizza.PizzaID}. {pizza.Type}  {pizza.Price} kr");
                                     for (int index = 0; index < pizza.PizzaIngredients.Count; index++)
                                         Console.WriteLine(pizza.PizzaIngredients[index].Type);
                                     Console.WriteLine();

@@ -100,17 +100,16 @@ namespace BackendHandler
     {
         //Överensstämmer med databasen
         public int PizzaID { get; }
-        public int PizzabaseID { get; set; }
         public string Type { get; set; }
         public float Price { get; set; }
-        public string Base { get; set; }
+        public int PizzabaseID { get; set; }
         public List<Condiment> PizzaIngredients { get; set; }
 
 
         //Ska vi ha ovverride till alla klasser?
         public override string ToString()
         {
-            return $"{this.PizzaID} {this.Type} {this.Price} {this.Base}";
+            return $"{this.PizzaID} {this.Type} {this.Price}";
         }
     }
     #endregion
@@ -145,6 +144,8 @@ namespace BackendHandler
         public Task<Condiment> GetSingleCondiment(int ID, string storedProcedure = "GetSingleCondiment");
         public Task DeleteCondiment(Condiment cond, string storedProcedure = "DeleteCondimentByID");
 
+        public Task DeleteCondimentFromPizza(Pizza pizza, Condiment condiment, string storedProcedure = "DeleteCondimentFromPizza");
+
         //Extra
         public Task AddExtra(Extra extra, string storedProcedure = "AddExtra");
         public Task UpdateExtra(Extra extra, string storedProcedure = "UpdateExtraByID");
@@ -163,6 +164,8 @@ namespace BackendHandler
         //Order interfaceimplementation måste göras. 
         public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders");
         public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder");
+
+        public Task<IDbTransaction> Transaction();
     }
 
     #region Backends
@@ -242,7 +245,7 @@ namespace BackendHandler
         public async Task UpdatePizza(Pizza pizza, string storedProcedureToUpdatePizza = "UpdatePizzaByID")
         {
             MSSQL rep = new MSSQL();
-            using (rep.connection) { await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, Base = pizza.Base, Ingredients = JsonConvert.SerializeObject(pizza.PizzaIngredients) }, commandType: CommandType.StoredProcedure); }
+            using (rep.connection) { await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure); }
         } 
 
         public async Task DeletePizza(Pizza pizza, string storedProcedureToDeletePizza = "DeletePizzaByID")
@@ -408,6 +411,20 @@ namespace BackendHandler
         }
         #endregion
 
+        public async Task<IDbTransaction> Transaction()
+        {
+            MSSQL rep = new MSSQL();
+            using (rep.connection)
+            {
+                return await connection.BeginTransactionAsync();
+            }
+        }
+
+        public async Task DeleteCondimentFromPizza(Pizza pizza, Condiment condiment, string storedProcedure = "DeleteCondimentFromPizza")
+        {
+            MSSQL rep = new MSSQL();
+            using (rep.connection) { await connection.QueryAsync<Pizza>(storedProcedure, new { PizzaID = pizza.PizzaID, CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure); }
+        }
     }
     public class PostgreSQL : IDatabase
     {
@@ -556,6 +573,16 @@ namespace BackendHandler
         }
 
         public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDbTransaction> Transaction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteCondimentFromPizza(Pizza pizza, Condiment condiment, string storedProcedure = "DeleteCondimentFromPizza")
         {
             throw new NotImplementedException();
         }

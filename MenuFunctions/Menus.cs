@@ -5,6 +5,8 @@ using BackendHandler;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Linq;
 
 namespace MenuFunctions
 {
@@ -301,20 +303,253 @@ namespace MenuFunctions
                 return employeeToDelete;
             }
         }
+        public static async Task<Pizza> AddPizzaMenu(IDatabase database)
+        {
+
+            Pizza newPizza = new Pizza();
+
+            Console.Clear();
+
+        chooseName:
+            Console.WriteLine("~~ LÄGG TILL PIZZA ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+
+            Console.WriteLine();
+            Console.Write("Pizzans namn: ");
+            newPizza.Type = await Menus.ReadLineWithOptionToGoBack();
+            if(newPizza.Type == null) { return newPizza; }
+            else if (newPizza.Type.Length < 1)
+            {
+                    await MessageIfChoiceIsNotRight("Pizzans namn måste innehålla tecken.");
+                    await AddPizzaMenu(database);
+            }
+            else // om allt är ok med namnet går vi vidare till val av pizzabas
+            {
+                foreach(var pizza in await database.GetAllPizzas())
+                {
+                    if(newPizza.Type == pizza.Type)
+                    {
+                        await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
+                        goto chooseName;
+                    }
+                }
+
+                Console.Write("Välj vilken bas pizzan skall ha: [1] Italiensk eller [2] Amerikansk: ");
+                string choiceOfBase = await ReadLineWithOptionToGoBack();
+                if(choiceOfBase == null) { return newPizza; }
+                else
+                {
+                    newPizza.PizzabaseID = int.Parse(choiceOfBase);
+                    if (newPizza.PizzabaseID == 1 || newPizza.PizzabaseID == 2)
+                    {
+                        Console.Write("Pizzans pris: ");
+                        string pizzaPrice = await ReadLineWithOptionToGoBack();
+                        if (pizzaPrice == null) { return newPizza; }
+                        else
+                        {
+                            bool correctInput = int.TryParse(pizzaPrice, out int price);
+                            if (correctInput == false || pizzaPrice.Length >= 4 || price < 0)
+                            {
+                                await MessageIfChoiceIsNotRight("Priset kan endast anges i siffror, kan inte kosta mer än 999 kr och måste vara över 0.");
+                                await AddPizzaMenu(database);
+                            }
+                            else // om allt går igenom så returneras objektet
+                            {
+                                newPizza.Price = price;
+                                return newPizza;
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        await MessageIfChoiceIsNotRight("Du måste välja [1] eller [2]");
+                        await AddPizzaMenu(database);
+                    }
+                }
+            }
+            return newPizza;
+        }
+        public static async Task<List<Condiment>> AddCondimentToPizzaMenu(IDatabase database, Pizza pizzaWithoutCondiments)
+        {
+            List<Condiment> condimentsToNewPizza = new List<Condiment>();
+
+        start:
+            Console.Clear();
+            Console.WriteLine("Välj en ingrediens till pizzan genom att ange ingrediensens nummer:");
+            Console.WriteLine("Ange 0 för att bekräfta pizzans ingredienser.");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+            Console.WriteLine();
+            Console.Write(pizzaWithoutCondiments.Type + ":\n");
+            foreach (var condName in condimentsToNewPizza) { Console.Write($" {condName.Type},"); }
+            Console.WriteLine();
+            Console.WriteLine();
+            foreach (var condiment in await database.GetAllCondiments())
+            {
+                Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+            }
+
+            string chosenCondiment = await Menus.ReadLineWithOptionToGoBack();
+            if(chosenCondiment == null) { return condimentsToNewPizza; }
+            else
+            {
+                bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
+                if(correctInput == true && confirmedChosenCondiment == 0 && condimentsToNewPizza.Count > 0)
+                {
+                    return condimentsToNewPizza;
+                }
+                else
+                {
+                    Condiment cond = await database.GetSingleCondiment(confirmedChosenCondiment);
+                    cond.Price = 0;
+                    condimentsToNewPizza.Add(cond);
+
+                    await Menus.ConfirmationScreen("Ingrediens tillagd.");
+                }
+                goto start;
+            }
+        }
+        public static async Task<Pizza> UpdatePizzaMenu(IDatabase database, Pizza pizza)
+        {
+            Pizza pizzaToUpdate = pizza;
+
+            Console.Clear();
+            Console.WriteLine("Klicka ESC för att gå tillbaka.");
+            Console.WriteLine("Ange vad du vill ändra i pizzan:");
+            Console.WriteLine("1. Botten");
+            Console.WriteLine("2. Pris");
+            Console.WriteLine("3. Ingredienser");
+
+            string whatToUpdate = await ReadLineWithOptionToGoBack();
+            if(whatToUpdate == null) { return pizzaToUpdate; }
+            else
+            {
+                bool correctInput = int.TryParse(whatToUpdate, out int choice);
+                if(correctInput == true && (choice == 1 || choice == 2 || choice == 3))
+                {
+                    if(choice == 1) { goto changeBase; }
+                    else if(choice == 2) { goto changePrice; }
+                    else if(choice == 3) { goto changeCondiments; }
+                }
+                else { await MessageIfChoiceIsNotRight("Det angivna valet finns inte."); }
+            }
+
+        changeBase:
+            {
+                if (pizzaToUpdate.PizzabaseID == 1)
+                {
+                    Console.Write("Skriv y om du vill ändra pizzans botten till amerikansk: ");
+                    string userInput = await ReadLineWithOptionToGoBack();
+                    if (userInput == null) { pizzaToUpdate.PizzabaseID = 0; return pizzaToUpdate; }
+                    if (userInput == "y")
+                    {
+                        pizzaToUpdate.PizzabaseID = 2;
+                        await ConfirmationScreen("Pizzans botten uppdaterad.");
+                        return pizzaToUpdate;
+                    }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inmatning. Klicka på ESC för att gå tillbaka."); }
+                }
+
+                else if (pizzaToUpdate.PizzabaseID == 2)
+                {
+                    Console.Write("Skriv y om du vill ändra pizzans botten till italiensk: ");
+                    string userInput = await ReadLineWithOptionToGoBack();
+                    if (userInput == null) { pizzaToUpdate.PizzabaseID = 0; return pizzaToUpdate; }
+                    if (userInput == "y")
+                    {
+                        pizzaToUpdate.PizzabaseID = 1;
+                        await ConfirmationScreen("Pizzans botten uppdaterad.");
+                        return pizzaToUpdate;
+                    }
+                    else
+                    {
+                        await MessageIfChoiceIsNotRight("Felaktig inmatning. Klicka på ESC för att gå tillbaka.");
+                    }
+                }
+            }
+
+        changePrice:
+            {
+                Console.Write("Ange pizzans nya pris: ");
+                string newPriceText = await ReadLineWithOptionToGoBack();
+                if (newPriceText == null) { pizzaToUpdate.Price = 0; return pizzaToUpdate; }
+                else
+                {
+                    bool correctInput = int.TryParse(newPriceText, out int newPrice);
+                    if (correctInput == true && newPriceText.Length > 0 && newPriceText.Length < 4)
+                    {
+                        pizzaToUpdate.Price = newPrice;
+                        await ConfirmationScreen("Pizzans pris uppdaterat.");
+                        return pizzaToUpdate;
+                    }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inmatning"); }
+                }
+            }
+
+        changeCondiments:
+            {
+                Console.WriteLine("Ange vilken typ av ändring du vill göra:");
+                Console.WriteLine("1. Lägga till ingredienser");
+                Console.WriteLine("2. Ta bort ingredienser");
+                Console.WriteLine();
+                Console.Write("Ditt val: ");
+                string choiceOfChange = await ReadLineWithOptionToGoBack();
+                if (choiceOfChange == null) { pizzaToUpdate.PizzaIngredients = null; return pizzaToUpdate; }
+                else
+                {
+                    bool correctInput = int.TryParse(choiceOfChange, out int choice);
+                    if (correctInput == true && choice == 1) // lägga till
+                    {
+                        pizzaToUpdate.PizzaIngredients = await AddCondimentToPizzaMenu(database, pizzaToUpdate);
+
+                        if(pizzaToUpdate.PizzaIngredients != null)
+                        {
+                            await database.AddCondimentToPizza(pizzaToUpdate);
+                        }
+
+                        return pizzaToUpdate;
+                    }
+                    else if (correctInput == true && choice == 2) // ta bort
+                    {
+                        Console.WriteLine("Ange numret på den ingrediens som du önskar att ta bort");
+
+                        foreach (var condiment in pizzaToUpdate.PizzaIngredients)
+                        {
+                            Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+                        }
+
+                        Console.Write("Ditt val: "); string userChoice = await ReadLineWithOptionToGoBack();
+
+                        bool correctRemovalInput = int.TryParse(userChoice, out int removalChoice);
+                        if (correctRemovalInput == true)
+                        {
+                            foreach (var condiment in pizzaToUpdate.PizzaIngredients)
+                            {
+                                if (removalChoice == condiment.CondimentID)
+                                {
+                                    await database.DeleteCondimentFromPizza(pizzaToUpdate, condiment);
+                                    pizzaToUpdate.PizzaIngredients = (await database.GetIngredientsFromSpecificPizza(pizzaToUpdate.PizzaID)).ToList();
+                                    return pizzaToUpdate;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await MessageIfChoiceIsNotRight("Felaktig inmatning.");
+                        }
+
+                    }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inamtning."); }
+                }
+
+            }
+            return pizzaToUpdate;
+        }
+        
         #endregion
 
 
         //Ny metod för att kolla igenom string input och se om det är siffror i stringen.
-        public static async Task<bool> RestrictNumericalInStrings(string input)
-        {
-            if(Regex.IsMatch(input, @"[a-öA-Ö]$")) { return true; }
-            else { return false; }               
-        }
-        public static async Task<bool> RestrictLettersInNumerical(string input)
-        {
-                if (Regex.IsMatch(input, @"[0-9]$")) { return true; }
-                else { return false; }
-        }
         public static async Task<string> ShowPasswordAsStarsWithOptionToGoBack()
         {
             {
