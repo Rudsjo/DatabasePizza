@@ -281,10 +281,6 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.SHOW_PIZZA:
                         {
-                            bool wantToGoBack = false;
-
-                            while (wantToGoBack == false)
-                            {
                                 Console.Clear();
                                 Console.WriteLine("~~ SAMTLIGA PIZZOR ~~");
                                 Console.WriteLine();
@@ -292,8 +288,12 @@ namespace Administrator
                                 {
                                     Console.WriteLine($"{pizza.PizzaID}. {pizza.Type}  {pizza.Price} kr");
                                     for (int index = 0; index < pizza.PizzaIngredients.Count; index++)
-                                        Console.WriteLine(pizza.PizzaIngredients[index].Type);
-                                    Console.WriteLine();
+                                    {
+                                        if(index == 0) { Console.Write($"{pizza.PizzaIngredients[index].Type}"); }
+                                        else { Console.Write($", {pizza.PizzaIngredients[index].Type}"); }
+                                    }
+                                        
+                                    Console.WriteLine("\n");
                                 }
 
                                 Console.WriteLine();
@@ -304,57 +304,19 @@ namespace Administrator
                                     break;
                                 }
                                 else { await Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
-                            }
                         }
                         break;
 
                     case ProgramState.PROGRAM_MENUES.DELETE_PIZZA:
                         {
-                            Console.Clear();
-                            Console.WriteLine("~~ TA BORT PIZZA ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-                            Console.WriteLine();
+                            Pizza pizzaToDelete = await Menus.DeletePizzaMenu(rep);
 
-                            Pizza p = new Pizza();
-
-                            foreach (var pizza in await rep.GetAllPizzas())
+                            if(pizzaToDelete == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
+                            else
                             {
-                                Console.WriteLine($"ID - {pizza.PizzaID}, {pizza.Type}\n");
-                            }
-
-                            Console.Write("Ange ID för den pizza som du vill ta bort: ");
-
-                            string IDOfPizzaToRemove = await Menus.ReadLineWithOptionToGoBack();
-                            bool userInput = int.TryParse(IDOfPizzaToRemove, out int ID);
-                            bool doesPizzaExist = (await rep.CheckIfPizzaIDExists(ID));
-
-                            if (IDOfPizzaToRemove == null)
-                            {
+                                await rep.DeletePizza(pizzaToDelete);
+                                await Menus.ConfirmationScreen("Pizzan raderad.");
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-                            }
-
-                            else if (doesPizzaExist == false)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Pizza med angivet ID finns inte.");
-                            }
-
-                            else if (userInput == true)
-                            {
-                                Console.Clear();
-                                Console.WriteLine($"Är du säker på att du vill ta bort pizza {ID} (j/n)? Valet kan inte ändras."); //Visa namn istället för ID?
-
-                                string choice = await Menus.ReadLineWithOptionToGoBack();
-
-                                if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
-                                else if (choice == "j")
-                                {
-                                    await rep.DeletePizza(p);
-                                    await Menus.ConfirmationScreen("Pizza borttagen");
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS;
-
-                                }
-                                else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_PIZZA; }
-                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;

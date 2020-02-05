@@ -381,9 +381,14 @@ namespace MenuFunctions
             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
             Console.WriteLine();
             Console.Write(pizzaWithoutCondiments.Type + ":\n");
-            foreach (var condName in condimentsToNewPizza) { Console.Write($" {condName.Type},"); }
-            Console.WriteLine();
-            Console.WriteLine();
+            for(int index = 0; index < condimentsToNewPizza.Count; index++)
+            {
+                if(index == 0) { Console.Write($"{condimentsToNewPizza[index].Type}"); }
+                else { Console.Write($", {condimentsToNewPizza[index].Type}"); }
+
+            }
+            Console.WriteLine("\n");
+
             foreach (var condiment in await database.GetAllCondiments())
             {
                 Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
@@ -544,6 +549,50 @@ namespace MenuFunctions
 
             }
             return pizzaToUpdate;
+        }
+        public static async Task<Pizza> DeletePizzaMenu(IDatabase database)
+        {
+            start:
+            Pizza pizzaToDelete = new Pizza();
+
+            Console.Clear();
+            Console.WriteLine("~~ TA BORT PIZZA ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+            Console.WriteLine();
+
+            foreach (var pizza in await database.GetAllPizzas())
+            {
+                Console.WriteLine($"ID - {pizza.PizzaID}, {pizza.Type}\n");
+            }
+
+            Console.Write("Ange ID för den pizza som du vill ta bort: ");
+            string IDOfPizzaToRemove = await Menus.ReadLineWithOptionToGoBack();
+            if(IDOfPizzaToRemove == null) { return pizzaToDelete; }
+            else
+            {
+                bool correctInput = int.TryParse(IDOfPizzaToRemove, out int IDOfPizza);
+                if(correctInput == true)
+                {
+                    bool checkIfPizzaExists = await database.CheckIfPizzaIDExists(IDOfPizza);
+                    if(checkIfPizzaExists == true)
+                    {
+                        pizzaToDelete = await database.GetSinglePizza(IDOfPizza);
+                        Console.Clear();
+                        Console.WriteLine($"\nAnge y för att bekräfta borttagning av {pizzaToDelete.PizzaID}. {pizzaToDelete.Type}");
+                        Console.Write("\nDitt val: "); string choiceToDelete = await ReadLineWithOptionToGoBack();
+
+                        if (choiceToDelete == null) { pizzaToDelete = null; return pizzaToDelete; }
+                        else if (choiceToDelete.ToLower() == "y") { return pizzaToDelete; }
+                        else
+                        {
+                            await MessageIfChoiceIsNotRight("Ange y för att bekräfta eller ESC för att gå tillbaka.");
+                            goto start;
+                        }
+                    }
+                    else { await MessageIfChoiceIsNotRight("Det angivna ID:t finns inte."); goto start; }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+            }
         }
         
         #endregion
