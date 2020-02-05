@@ -749,6 +749,130 @@ namespace MenuFunctions
             }
 
         }
+        public static async Task<Extra> AddExtraMenu()
+        {
+        start:
+            Extra newExtra = new Extra();
+
+            Console.Clear();
+            Console.WriteLine("~~ LÄGG TILL TILLBEHÖR ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+
+            Console.WriteLine();
+            Console.Write("Ange namnet på tillbehöret du vill lägga till: ");
+            newExtra.Type = await Menus.ReadLineWithOptionToGoBack();
+            if(newExtra.Type == null) { newExtra = null; return newExtra; }
+            else if(newExtra.Type.Length < 1 || !Regex.IsMatch(newExtra.Type, @"^[a-öA-Ö\s]+$"))
+            {
+                await MessageIfChoiceIsNotRight("Namnet kan endast innehålla bokstäver och det måste vara minst ett tecken.");
+                goto start;
+            }
+            else { goto setPrice; }
+
+            setPrice:
+            {
+                Console.Write("\nAnge tillbehörets pris: ");
+                string priceOfNewExtra = await ReadLineWithOptionToGoBack();
+                if(priceOfNewExtra == null) { newExtra = null; return newExtra; }
+                else
+                {
+                    bool correctInput = int.TryParse(priceOfNewExtra, out int price);
+                    if(correctInput == true && price > 0 && priceOfNewExtra.Length < 3)
+                    {
+                        return newExtra;
+                    }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto setPrice; }
+                }
+            }
+        }
+        public static async Task<Extra> UpdateExtraMenu(Extra extraToUpdate)
+        {
+            start:
+            Console.WriteLine($"Ange vad du vill uppdatera med tillbehöret {extraToUpdate.Type}");
+            Console.WriteLine("1. Namn");
+            Console.WriteLine("2. Pris");
+            string whatToUpdate = await ReadLineWithOptionToGoBack();
+            if(whatToUpdate == null) { extraToUpdate = null; return extraToUpdate; }
+            else
+            {
+                bool correctInput = int.TryParse(whatToUpdate, out int choice);
+                if(correctInput == true && choice == 1)
+                {
+                    changeType:
+                    {
+                        Console.Clear();
+                        Console.Write("Ange tillbehörets nya namn: ");
+                        extraToUpdate.Type = await ReadLineWithOptionToGoBack();
+                        if(extraToUpdate.Type == null) { extraToUpdate = null; return extraToUpdate; }
+                        else if(extraToUpdate.Type.Length < 1 || !Regex.IsMatch(extraToUpdate.Type, @"^[a-öA-Ö]+$"))
+                        {
+                            await MessageIfChoiceIsNotRight("Namnet kan endast innehålla bokstäver och måste vara minst ett tecken.");
+                            goto changeType;
+                        }
+                        else { return extraToUpdate; }
+                    }
+                }
+                else if(correctInput == true && choice == 2)
+                {
+                    changePrice:
+                    {
+                        Console.Clear();
+                        Console.Write("Ange tillbehörets nya pris: ");
+                        string newPriceOfExtra = await ReadLineWithOptionToGoBack();
+                        if(newPriceOfExtra == null) { extraToUpdate = null; return extraToUpdate; }
+                        else
+                        {
+                            correctInput = int.TryParse(newPriceOfExtra, out int price);
+                            if(correctInput == true && price > 0 && newPriceOfExtra.Length < 3)
+                            {
+                                return extraToUpdate;
+                            }
+                            else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto changePrice; }
+                        }
+                    }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+            }
+        }
+        public static async Task<Extra> DeleteExtraMenu(IDatabase database)
+        {
+        start:
+            Extra extraToDelete = new Extra();
+            Console.Clear();
+            Console.WriteLine("~~ TA BORT TILLBEHÖR ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+
+            Console.Write("\n\nAnge ID för det tillbehör som ska tas bort: ");
+            string IDOfExtraToDelete = await ReadLineWithOptionToGoBack();
+            if(IDOfExtraToDelete == null) { extraToDelete = null; return extraToDelete; }
+            else
+            {
+                bool correctInput = int.TryParse(IDOfExtraToDelete, out int IDOfExtra);
+                if(correctInput == true)
+                {
+                    bool checkIfIDExists = await database.CheckIfProductIDExists(IDOfExtra);
+                    if(checkIfIDExists == true)
+                    {
+                        extraToDelete = await database.GetSingleExtra(IDOfExtra);
+
+                    confirmationToDelete:
+                        {
+                            Console.Clear();
+                            Console.WriteLine($"Ange y för att bekräfta borttagningen av tillbehöret {extraToDelete.Type}");
+                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+                            Console.Write("\nDitt val: ");
+                            string choiceToDelete = await ReadLineWithOptionToGoBack();
+                            if (choiceToDelete == null) { extraToDelete = null; return extraToDelete; }
+                            else if (choiceToDelete.ToLower() == "y") { return extraToDelete; }
+                            else { await MessageIfChoiceIsNotRight("Ange y för att bekräfta eller ESC för att gå tillbaka."); goto confirmationToDelete; }
+                        }
+                    }
+                    else { await MessageIfChoiceIsNotRight("Det angivna ID:t finns inte."); goto start; }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+            }
+
+        }
         
         #endregion
 

@@ -452,103 +452,50 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_EXTRAS:
                         {
-                            Extra extra = new Extra();
-                            extra.Type = null; extra.Price = 0;
-
-                            Console.Clear();
-                            Console.WriteLine("~~ LÄGG TILL TILLBEHÖR ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-
-                            Console.WriteLine();
-                            Console.Write("Vilket tillbehör vill du lägga till: ");
-                            string extraName = await Menus.ReadLineWithOptionToGoBack();
-                            
-                            if (extraName == null || extraName.Length < 1 || !Regex.IsMatch(extraName, @"^[a-öA-Ö\s]+$")) // \s är för att inkludera whitespace
+                            Extra newExtra = await Menus.AddExtraMenu();
+                            if(newExtra == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
+                            else
                             {
-                                Thread.Sleep(500);
+                                await rep.AddExtra(newExtra);
+                                await Menus.ConfirmationScreen("Tillbehör tillagt.");
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
-                                break;
                             }
-                            else { extra.Type = extraName; }
-
-                            Console.Write("Ange pris för tillbehöret: ");
-                            string inputPrice = await Menus.ReadLineWithOptionToGoBack();
-                            bool correctInput = float.TryParse(inputPrice, out float price);
-
-                            if (inputPrice == null)
-                            {
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
-                                break;
-                            }
-                            else if(correctInput == false || price == 0) { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
-                            else { extra.Price = price; }
-
-                            Console.Clear();
-                            Console.WriteLine("~~ LÄGG TILL TILLBEHÖR ~~\n");
-                            Console.Write($"Vill du lägga till artikeln i tillbehör?\n\n{extra.Type} {extra.Price}kr\n\nj/n: ");
-                            string confirm = Console.ReadLine();
-
-                            if (confirm.ToLower() == "j") { await rep.AddExtra(extra); } //Break här?
-                            else { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; break; }
                         }
                         break;                    
                     case ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS:
                         {
+                        start:
+                            Extra extraToUpdate = new Extra();
                             Console.Clear();
                             Console.WriteLine("~~ UPPDATERA TILLBEHÖR ~~\n");
-                            foreach (var extra in await rep.GetAllExtras())
-                            {
-                                Console.WriteLine($"{extra.ProductID} - {extra.Type}, {extra.Price} kr\n");
-                            }
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
 
-                            Console.Write("Ange ID på det tillbehör som du vill uppdatera: ");
-                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
-
-                            int.TryParse(IDToChange, out int ID);
-                            //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
-                            bool doesExtraExist = (await rep.CheckIfProductIDExists(ID));
-
-                            if (IDToChange == null)
-                            {
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
-                            }
-
-                            else if (doesExtraExist == false && IDToChange != null)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Tillbehöret med angivet ID finns inte.");
-                            }
-
+                            Console.Write("\n\nAnge ID på det tillbehör som ska ändras: ");
+                            string IDOfExtraToUpdate = await Menus.ReadLineWithOptionToGoBack();
+                            if(IDOfExtraToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                             else
                             {
-                                Extra extra = await rep.GetSingleExtra(ID);
-
-                                Console.Clear();
-                                Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
-                                Console.Write("Ange tillbehörets nya pris: ");
-
-                                string newPrice = await Menus.ReadLineWithOptionToGoBack();
-                                float.TryParse(newPrice, out float userInput);
-
-                                if (newPrice == null || userInput <= 0) // || userInput == false?
+                                bool correctInput = int.TryParse(IDOfExtraToUpdate, out int IDOfExtra);
+                                if(correctInput == true)
                                 {
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS;
+                                    bool checkIfIDExists = await rep.CheckIfProductIDExists(IDOfExtra);
+                                    if(checkIfIDExists == true)
+                                    {
+                                        extraToUpdate = await Menus.UpdateExtraMenu(extraToUpdate);
+                                        if(extraToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
+                                        else
+                                        {
+                                            await rep.UpdateExtra(extraToUpdate);
+                                            await Menus.ConfirmationScreen("Tillbehöret uppdaterat.");
+                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
+                                        }
+                                    }
+                                    else { await Menus.MessageIfChoiceIsNotRight("Det angivna ID:t finns inte."); goto start; }
                                 }
-                                // ändra roll
-                                else if (userInput > 0)
-                                {
-                                    extra.Price = userInput;
-                                    await rep.UpdateExtra(extra);
-                                    Thread.Sleep(500);
-                                    await Menus.ConfirmationScreen("Priset ändrat.");
-
-                                }
+                                else { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
                             }
                         }
                         break;
-                    /*
-                    Denna är tillagd utan att pusha till GIT
-                    */
                     case ProgramState.PROGRAM_MENUES.SHOW_EXTRAS:
                         {
                             Console.Clear();
@@ -556,7 +503,7 @@ namespace Administrator
 
                             foreach (var extra in await rep.GetAllExtras())
                             {
-                                Console.WriteLine($"{extra.Type}, {extra.Price} kr\n");
+                                Console.WriteLine($"{extra.ProductID}. {extra.Type}, {extra.Price} kr\n");
                             }
 
                             Console.WriteLine($"\nKlicka på ESC för att gå tillbaka");
@@ -568,57 +515,15 @@ namespace Administrator
                             else { await Menus.MessageIfChoiceIsNotRight("Vänligen klicka på ESC för att återgå."); }
                         }
                         break;
-                    ///
-                    ///Denna är tillagd utan att pusha till GIT
-                    ///Lagt till så att man får upp en lista på allt som är möjligt att radera, visas med ID och typ
-                    ///
                     case ProgramState.PROGRAM_MENUES.DELETE_EXTRAS:
                         {
-                            Console.Clear();
-                            Console.WriteLine("~~ TA BORT TILLBEHÖR ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-                            Console.WriteLine();
-
-                            Extra e = new Extra();
-
-                            foreach (var extra in await rep.GetAllExtras())
+                            Extra extraToDelete = await Menus.DeleteExtraMenu(rep);
+                            if(extraToDelete == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
+                            else
                             {
-                                Console.WriteLine($"ID - {extra.ProductID}, {extra.Type}\n");
-                            }
-
-                            Console.Write("Ange ID för det tillbehör som du vill ta bort: ");
-
-                            string IDOfExtraToRemove = await Menus.ReadLineWithOptionToGoBack();
-                            bool userInput = int.TryParse(IDOfExtraToRemove, out int ID);
-                            bool doesExtraExist = (await rep.CheckIfProductIDExists(ID));
-
-                            if (IDOfExtraToRemove == null)
-                            {
+                                await rep.DeleteExtra(extraToDelete);
+                                await Menus.ConfirmationScreen("Tillbehöret borttaget.");
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
-                            }
-
-                            else if (doesExtraExist == false)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Tillbehör med angivet ID finns inte.");
-                            }
-
-                            else if (userInput == true)
-                            {
-                                Console.Clear();
-                                Console.WriteLine($"Är du säker på att du vill ta bort tillbehör {ID} (j/n)? Valet kan inte ändras.");
-
-                                string choice = await Menus.ReadLineWithOptionToGoBack();
-
-                                if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
-                                else if (choice == "j")
-                                {
-                                    await rep.DeleteExtra(e);
-                                    await Menus.ConfirmationScreen("Tillbehör borttaget");
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS;
-
-                                }
-                                else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_EXTRAS; }
-                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;
