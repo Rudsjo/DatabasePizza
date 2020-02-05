@@ -150,6 +150,7 @@ namespace Administrator
                                 {
                                     await rep.UpdateEmployee(employeeToUpdate);
                                     await Menus.ConfirmationScreen("Anställd uppdaterad.");
+                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
                                 }
                             }
 
@@ -343,99 +344,55 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_INGREDIENT:
                         {
-                            Condiment cond = new Condiment();
-                            cond.Type = null; cond.Price = 0;                          
-
-                            Console.Clear();
-                            Console.WriteLine("~~ LÄGG TILL INGREDIENS ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-
-                            Console.WriteLine();
-                            Console.Write("Vilken ingrediens vill du lägga till: ");
-                            string condimentName = await Menus.ReadLineWithOptionToGoBack();
-
-                            if(condimentName == null)
+                            Condiment newCondiment = await Menus.AddCondimentMenu();
+                            if(newCondiment == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
+                            else
                             {
+                                await rep.AddCondiment(newCondiment);
+                                await Menus.ConfirmationScreen("Ingrediens tillagd.");
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
-                                break;
                             }
-                            else if(condimentName.Length < 1 || !Regex.IsMatch(condimentName, @"^[a-öA-Ö]+$")) { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); }
-                            else { cond.Type = condimentName; }
-
-                            Console.Write("Ange pris för ingrediensen: ");
-                            string inputPrice = await Menus.ReadLineWithOptionToGoBack();
-                            bool correctInput = float.TryParse(inputPrice, out float price);
-
-                            if (inputPrice == null || correctInput == false || price == 0)
-                            {
-                                Thread.Sleep(500);
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
-                                break;
-                            }
-                            else { cond.Price = price; }
-
-                            Console.Clear();
-                            Console.WriteLine("~~ LÄGG TILL INGREDIENS ~~\n");
-                            Console.Write($"Vill du lägga till artikeln i ingredienser?\n\n{cond.Type} {cond.Price}kr\n\nj/n: ");
-                            string confirm = Console.ReadLine();
-
-                            if (confirm.ToLower() == "j") {await rep.AddCondiment(cond); }
-                            else { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; break; }
                         }
                         break;
 
                     case ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT:
                         {
+                            start:
                             Console.Clear();
-                            Console.WriteLine("~~ UPPDATERA INGREDIENS ~~\n");
-                            foreach (var ingredient in await rep.GetAllCondiments())
-                            {
-                                Console.WriteLine($"{ingredient.CondimentID} - {ingredient.Type}, {ingredient.Price} kr\n");
-                            }
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+                            Console.WriteLine("~~ UPPDATERA INGREDIENS ~~");
+                            Console.WriteLine("Klicka ESC för att gå tillbaka.");
 
-                            Console.Write("Ange ID på den ingrediens som du vill uppdatera: ");
-                            string IDToChange = await Menus.ReadLineWithOptionToGoBack();
-
-                            int.TryParse(IDToChange, out int ID);
-                            //Fixat SP så man kan kolla om användaren man vill ändra finns i databasen
-                            bool doesIngredientExist = (await rep.CheckIfCondimentIDExists(ID));
-
-                            if (IDToChange == null)
-                            {
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
-                            }
-
-                            else if (doesIngredientExist == false && IDToChange != null)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Ingrediensen med angivet ID finns inte.");
-                            }
-
+                            Console.Write("\nAnge ID för den ingrediens du vill ändra: ");
+                            string IDOfCondimentToUpdate = await Menus.ReadLineWithOptionToGoBack();
+                            if(IDOfCondimentToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                             else
                             {
-                                Condiment cond = await rep.GetSingleCondiment(ID);
-
-                                Console.Clear();
-                                Console.WriteLine("Klicka ESC för att gå tillbaka.\n");
-                                Console.Write("Ange ingrediensens nya pris: ");
-
-                                string newPrice = await Menus.ReadLineWithOptionToGoBack();
-                                float.TryParse(newPrice, out float userInput);
-
-                                if (newPrice == null || userInput <= 0) // || userInput == false?
+                                bool correctInput = int.TryParse(IDOfCondimentToUpdate, out int IDToCheck);
+                                if(correctInput == true)
                                 {
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.UPDATE_INGREDIENT;
+                                    bool checkIfIDExists = await rep.CheckIfCondimentIDExists(IDToCheck);
+                                    if(checkIfIDExists == true)
+                                    {
+                                        Condiment condimentToUpdate = await rep.GetSingleCondiment(IDToCheck);
+                                        condimentToUpdate = await Menus.UpdateCondimentMenu(condimentToUpdate);
+                                        if(condimentToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
+                                        else
+                                        {
+                                            await rep.UpdateCondiment(condimentToUpdate);
+                                            await Menus.ConfirmationScreen("Ingrediens uppdaterad.");
+                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        await Menus.MessageIfChoiceIsNotRight("Angivet ID finns inte.");
+                                        goto start;
+                                    }
                                 }
-                                // ändra roll
-                                else if (userInput > 0)
-                                {              
-                                    cond.Price = userInput;
-                                    await rep.UpdateCondiment(cond);
-                                    Thread.Sleep(500);
-                                    await Menus.ConfirmationScreen("Priset ändrat.");
-                                    
-                                }
+                                else { await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+
                             }
+
                         }
                         break;        
 
@@ -446,7 +403,7 @@ namespace Administrator
 
                             foreach (var ingredient in await rep.GetAllCondiments())
                             {
-                                Console.WriteLine($"{ingredient.Type}, {ingredient.Price} kr\n");
+                                Console.WriteLine($"{ingredient.CondimentID}. {ingredient.Type}, {ingredient.Price} kr\n");
                             }
                             
                             Console.WriteLine($"\nKlicka på ESC för att gå tillbaka");
@@ -461,51 +418,13 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT:
                         {
-                            Console.Clear();
-                            Console.WriteLine("~~ TA BORT INGREDIENS ~~");
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-                            Console.WriteLine();
-
-                            Condiment c = new Condiment();
-
-                            foreach (var ingredient in await rep.GetAllCondiments())
+                            Condiment condimentToDelete = await Menus.DeleteCondimentMenu(rep);
+                            if(condimentToDelete == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
+                            else
                             {
-                                Console.WriteLine($"ID - {ingredient.CondimentID}, {ingredient.Type}\n");
-                            }
-
-                            Console.Write("Ange ID för den ingrediens som du vill ta bort: ");
-
-                            string IDOfIngredientToRemove = await Menus.ReadLineWithOptionToGoBack();
-                            bool userInput = int.TryParse(IDOfIngredientToRemove, out int ID);
-                            bool doesIngredientExist = (await rep.CheckIfCondimentIDExists(ID));
-
-                            if (IDOfIngredientToRemove == null)
-                            {
+                                await rep.DeleteCondiment(condimentToDelete);
+                                await Menus.ConfirmationScreen("Ingrediensen borttagen.");
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
-                            }
-
-                            else if (doesIngredientExist == false)
-                            {
-                                await Menus.MessageIfChoiceIsNotRight("Ingrediens med angivet ID finns inte.");
-                            }
-
-                            else if (userInput == true)
-                            {
-                                Console.Clear();
-                                Console.WriteLine($"Är du säker på att du vill ta bort ingrediens {ID} (j/n)? Valet kan inte ändras.");
-
-                                string choice = await Menus.ReadLineWithOptionToGoBack();
-
-                                if (choice == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
-                                else if (choice == "j")
-                                {
-                                    await rep.DeleteCondiment(c);
-                                    await Menus.ConfirmationScreen("Ingrediens borttagen");
-                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS;
-
-                                }
-                                else if (choice == "n") { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.DELETE_INGREDIENT; }
-                                else { await Menus.MessageIfChoiceIsNotRight("Vänligen svara med j eller n."); }
                             }
                         }
                         break;

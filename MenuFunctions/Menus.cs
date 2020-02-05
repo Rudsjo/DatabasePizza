@@ -190,6 +190,7 @@ namespace MenuFunctions
         }
         public static async Task<Employee> UpdateEmployeeMenu(Employee emp) // Funktion som uppdaterar en angiven användare. Det objekt som skickas in här bör ha kontrolleras i CheckEmployeeID tididgare.
         {
+            start:
             Employee UpdatedEmployee = new Employee();
 
             Console.Clear();
@@ -205,48 +206,54 @@ namespace MenuFunctions
                 UpdatedEmployee = emp;              // annars så får instansen UpdatedEmployee samma värden som det medskickade objektet
                 bool CheckIfUserInputIsCorrect = int.TryParse(whatToUpdate, out int choice);
 
-                if(CheckIfUserInputIsCorrect == true && choice == 1)
+                if (CheckIfUserInputIsCorrect == true && choice == 1)
                 {
-                    Console.Clear();
-                    Console.WriteLine($"~~ ÄNDRA LÖSENORD FÖR ANVÄNDARE {UpdatedEmployee.UserID}");
-                    Console.WriteLine("Klicka ESC för att gå tillbaka");
-
-                    Console.Write("Ange det nya lösenordet: ");
-                    UpdatedEmployee.Password = await ReadLineWithOptionToGoBack();
-                    if(UpdatedEmployee.Password.Length < 1)
+                changePassword:
                     {
-                        await MessageIfChoiceIsNotRight("Lösenordet måste innehålla tecken.");
-                        await UpdateEmployeeMenu(emp);
+                        Console.Clear();
+                        Console.WriteLine($"~~ ÄNDRA LÖSENORD FÖR ANVÄNDARE {UpdatedEmployee.UserID}");
+                        Console.WriteLine("Klicka ESC för att gå tillbaka");
+
+                        Console.Write("Ange det nya lösenordet: ");
+                        UpdatedEmployee.Password = await ReadLineWithOptionToGoBack();
+                        if(UpdatedEmployee.Password == null) { UpdatedEmployee = null; return UpdatedEmployee; }
+                        else if (UpdatedEmployee.Password.Length < 1)
+                        {
+                            await MessageIfChoiceIsNotRight("Lösenordet måste innehålla tecken.");
+                            goto changePassword;
+                        }
+                        else { return UpdatedEmployee; } // om ESC klickats så kommer Password att vara null vilket kan kontrolleras i ProgramState
                     }
-                    else { return UpdatedEmployee; } // om ESC klickats så kommer Password att vara null vilket kan kontrolleras i ProgramState
                 }
 
-                else if(CheckIfUserInputIsCorrect == true && choice == 2)
+                else if (CheckIfUserInputIsCorrect == true && choice == 2)
                 {
-                    Console.Clear();
-                    Console.WriteLine($"~~ ÄNDRA ROLL FÖR ANVÄNDARE {UpdatedEmployee.UserID}");
-                    Console.WriteLine("Klicka ESC för att gå tillbaka");
+                changeRole:
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"~~ ÄNDRA ROLL FÖR ANVÄNDARE {UpdatedEmployee.UserID}");
+                        Console.WriteLine("Klicka ESC för att gå tillbaka");
 
-                    Console.Write("Ange den nya rollen: ");
-                    UpdatedEmployee.Role = await ReadLineWithOptionToGoBack();
-                    if(UpdatedEmployee.Role.ToLower() == "admin" || UpdatedEmployee.Role.ToLower() == "bagare" || UpdatedEmployee.Role.ToLower() == "kassör" || UpdatedEmployee.Role == null)
-                    {
-                        return UpdatedEmployee;
-                    }
-                    else
-                    {
-                        await MessageIfChoiceIsNotRight("Den angivna rollen finns inte.");
-                        await UpdateEmployeeMenu(emp);
+                        Console.Write("Ange den nya rollen: ");
+                        UpdatedEmployee.Role = await ReadLineWithOptionToGoBack();
+                        if(UpdatedEmployee.Role == null) { UpdatedEmployee = null; return UpdatedEmployee; }
+                        else if (UpdatedEmployee.Role.ToLower() == "admin" || UpdatedEmployee.Role.ToLower() == "bagare" || UpdatedEmployee.Role.ToLower() == "kassör" || UpdatedEmployee.Role == null)
+                        {
+                            return UpdatedEmployee;
+                        }
+                        else
+                        {
+                            await MessageIfChoiceIsNotRight("Den angivna rollen finns inte.");
+                            goto changeRole;
+                        }
                     }
                 }
 
                 else
                 {
                     await MessageIfChoiceIsNotRight("Felaktig inmatning.");
-                    await UpdateEmployeeMenu(emp);
+                    goto start;
                 }
-
-                return UpdatedEmployee;
             }
         }
         public static async Task<Employee> DeleteEmployeeMenu(IDatabase database) // funktion som returnernar ett objekt av en anställd som ska raderas
@@ -593,6 +600,154 @@ namespace MenuFunctions
                 }
                 else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
             }
+        }
+        public static async Task<Condiment> AddCondimentMenu()
+        {
+            start:
+            Condiment newCondiment = new Condiment();
+            Console.Clear();
+            Console.WriteLine("~~ LÄGG TILL INGREDIENS ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+
+            Console.WriteLine();
+            Console.Write("Ange namnet på ingrediensen: ");
+            string newCondimentName = await Menus.ReadLineWithOptionToGoBack();
+            if(newCondimentName == null) { return newCondiment; }
+            else if(newCondimentName.Length < 1 || !Regex.IsMatch(newCondimentName, @"^[a-öA-Ö]+$"))
+            {
+                await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning.");
+                goto start;
+            }
+            else
+            {
+                newCondiment.Type = newCondimentName;
+                goto addPrice;
+            }
+
+            addPrice:
+            {
+                Console.Write("\nAnge pris för ingrediensen: ");
+                string newCondimentPrice = await ReadLineWithOptionToGoBack();
+                if(newCondimentPrice == null) { newCondiment = null; return newCondiment; }
+                else
+                {
+                    bool correctInput = int.TryParse(newCondimentPrice, out int price);
+                    if(correctInput == true && price > 0 && newCondimentPrice.Length < 3)
+                    {
+                        newCondiment.Price = price;
+                        goto confirmation;
+                    }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto addPrice; }
+                }
+            }
+
+            confirmation:
+            {
+                Console.Clear();
+                Console.WriteLine($"Ange y om du vill lägga till {newCondiment.Type} som ingrediens.");
+                Console.WriteLine("Klicka ESC om du vill gå tillbaka.");
+                Console.Write("\nDitt val: "); string confirmChoice = await ReadLineWithOptionToGoBack();
+                if(confirmChoice == null) { newCondiment = null; return newCondiment; }
+                else if(confirmChoice.ToLower() == "y") { return newCondiment; }
+                else
+                {
+                    await MessageIfChoiceIsNotRight("Vänligen ange y för att bekräfta eller ESC för att gå tillbaka.");
+                    goto confirmation;
+                }
+
+            }
+
+        }
+        public static async Task<Condiment> UpdateCondimentMenu(Condiment condimentToUpdate)
+        {
+            start:
+            Console.WriteLine($"\nVad vill du ändra på i ingrediensen {condimentToUpdate.Type}?");
+            Console.WriteLine("1. Namn");
+            Console.WriteLine("2. Pris");
+            Console.Write("\nDitt val: "); string whatToUpdate = await ReadLineWithOptionToGoBack();
+            if(whatToUpdate == null) { condimentToUpdate = null; return condimentToUpdate; }
+            else
+            {
+                bool correctInput = int.TryParse(whatToUpdate, out int choice);
+                if(correctInput == true && choice == 1)
+                {
+                    updateName:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Klicka ESC för att gå tillbaka.");
+                        Console.Write("\nAnge ingrediensens nya namn: ");
+                        condimentToUpdate.Type = await ReadLineWithOptionToGoBack();
+                        if(condimentToUpdate.Type == null) { condimentToUpdate = null; return condimentToUpdate; }
+                        else if(condimentToUpdate.Type.Length < 1) { await MessageIfChoiceIsNotRight("Namnet måste innehålla tecken"); goto updateName; }
+                        else { return condimentToUpdate; }
+                    }
+                }
+                else if(correctInput == true && choice == 2)
+                {
+                    updatePrice:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Klicka ESC för att gå tillbaka.");
+                        Console.Write("\nAnge ingrediensens nya pris: ");
+                        string newCondimentPrice = await ReadLineWithOptionToGoBack();
+                        if(newCondimentPrice == null) { condimentToUpdate = null; return condimentToUpdate; }
+                        else
+                        {
+                            correctInput = int.TryParse(newCondimentPrice, out int price);
+                            if(correctInput == true && price > 0 && newCondimentPrice.Length < 3)
+                            {
+                                return condimentToUpdate;
+                            }
+                            else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto updatePrice; }
+                        }
+                    }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning"); goto start; }
+            }
+
+        }
+        public static async Task<Condiment> DeleteCondimentMenu(IDatabase database)
+        {
+            start:
+            Console.Clear();
+            Console.WriteLine("~~ TA BORT INGREDIENS ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+            Console.WriteLine();
+
+            Condiment condimentToDelete = new Condiment();
+
+            foreach (var condiment in await database.GetAllCondiments())
+            {
+                Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+            }
+
+            Console.Write("Ange ID för den ingrediens som du vill ta bort: ");
+            string IDOfCondimentToDelete = await ReadLineWithOptionToGoBack();
+            if(IDOfCondimentToDelete == null) { return condimentToDelete; }
+            else
+            {
+                bool correctInput = int.TryParse(IDOfCondimentToDelete, out int IDOfCondiment);
+                if(correctInput == true)
+                {
+                    bool checkIfIDExists = await database.CheckIfCondimentIDExists(IDOfCondiment);
+                    if(checkIfIDExists == true)
+                    {
+                    confirmationToDelete:
+                        {
+                            condimentToDelete = await database.GetSingleCondiment(IDOfCondiment);
+                            Console.Clear();
+                            Console.WriteLine($"Ange y om du vill ta bort ingrediensen {condimentToDelete.Type}");
+                            string choiceToDelete = await ReadLineWithOptionToGoBack();
+                            if (choiceToDelete == null) { condimentToDelete = null; return condimentToDelete; }
+                            else if(choiceToDelete.ToLower() == "y") { return condimentToDelete; }
+                            else { await MessageIfChoiceIsNotRight("Ange y för att bekräfta eller ESC för att gå tillbaka."); goto confirmationToDelete; }
+                         }
+                    }
+                    else { await MessageIfChoiceIsNotRight("Det angivna ID:t finns inte."); goto start; }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+            }
+
         }
         
         #endregion
