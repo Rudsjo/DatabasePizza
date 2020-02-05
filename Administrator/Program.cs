@@ -69,7 +69,7 @@ namespace Administrator
                         {
                             Console.Clear();
                             Console.WriteLine("~ VÄLKOMMEN TILL ADMINPANELEN ~");
-                            bool CorrectLogin = await Menus.PrintAndReturnStateOfLogin(rep, "admin");
+                            bool CorrectLogin = (await Menus.PrintAndReturnStateOfLogin(rep, "admin")).Item1;
                             if (CorrectLogin == true)
                             {
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;

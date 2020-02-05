@@ -164,6 +164,8 @@ namespace BackendHandler
         public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders");
         public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder");
         public Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus");
+        public Task UpdateOrderStatusWhenOrderIsServed(Employee emp, Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsServed");
+        public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked");
 
         //Denna kan tas bort då vi inte har transaction methods i våran kod.
         //public Task<IDbTransaction> Transaction();
@@ -480,6 +482,22 @@ namespace BackendHandler
                 return (await connection.QueryAsync<Order>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
             }
         }
+
+        public async Task UpdateOrderStatusWhenOrderIsServed(Employee emp, Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsServed")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { EmployeeID = emp.UserID, OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+            }
+        }
         #endregion
 
         /* TransactionMethod
@@ -653,6 +671,16 @@ namespace BackendHandler
         }
 
         public Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateOrderStatusWhenOrderIsServed(Employee emp, Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsServed")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked")
         {
             throw new NotImplementedException();
         }

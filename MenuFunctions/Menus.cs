@@ -72,7 +72,7 @@ namespace MenuFunctions
             }
             else { return (false, 0); }
         }
-        public static async Task<bool> PrintAndReturnStateOfLogin(IDatabase database, string roleToCheck)
+        public static async Task<(bool, Employee)> PrintAndReturnStateOfLogin(IDatabase database, string roleToCheck)
         {
             #region Variables
             int userID;
@@ -108,15 +108,15 @@ namespace MenuFunctions
             else
             {
                 await MessageIfChoiceIsNotRight("AnvändarID eller lösenord är felaktigt. Försök igen.");
-                return false;
+                return (false, null);
             }
 
             
-            if(GetRole.ToLower() == roleToCheck) { return true; }
+            if(GetRole.ToLower() == roleToCheck || GetRole.ToLower() == "admin") { Employee emp = await database.GetSingleEmployee(userID); return (true, emp); }
             else
             {
                 await MessageIfChoiceIsNotRight("Behörighet saknas.");
-                return false;
+                return (false, null);
             }
         }
 
