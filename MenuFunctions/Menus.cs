@@ -72,7 +72,7 @@ namespace MenuFunctions
             }
             else { return (false, 0); }
         }
-        public static async Task<bool> PrintAndReturnStateOfLogin(IDatabase database)
+        public static async Task<bool> PrintAndReturnStateOfLogin(IDatabase database, string roleToCheck)
         {
             #region Variables
             int userID;
@@ -80,8 +80,6 @@ namespace MenuFunctions
             #endregion
 
 
-            Console.Clear();
-            Console.WriteLine("~ VÄLKOMMEN TILL ADMINPANELEN ~");
             Console.WriteLine("Logga in genom att ange ditt ID och lösenord.\n");
 
             Console.Write("Ange ID: ");
@@ -96,7 +94,7 @@ namespace MenuFunctions
             else 
             { 
                 await MessageIfChoiceIsNotRight("ID är skrivet i fel format.");
-                await PrintAndReturnStateOfLogin(database);
+                await PrintAndReturnStateOfLogin(database, roleToCheck);
             }
 
             // Kontrollerar om angivet ID och lösenord finns matchat i databasen
@@ -114,7 +112,7 @@ namespace MenuFunctions
             }
 
             
-            if(GetRole.ToLower() == "admin") { return true; }
+            if(GetRole.ToLower() == roleToCheck) { return true; }
             else
             {
                 await MessageIfChoiceIsNotRight("Behörighet saknas.");

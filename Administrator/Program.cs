@@ -67,12 +67,14 @@ namespace Administrator
                     #region // Case: Login
                     case ProgramState.PROGRAM_MENUES.LOGIN_SCREEN:
                         {
-                            bool CorrectLogin = await Menus.PrintAndReturnStateOfLogin(rep);
+                            Console.Clear();
+                            Console.WriteLine("~ VÄLKOMMEN TILL ADMINPANELEN ~");
+                            bool CorrectLogin = await Menus.PrintAndReturnStateOfLogin(rep, "admin");
                             if (CorrectLogin == true)
                             {
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
                             }
-                            else await Menus.PrintAndReturnStateOfLogin(rep);
+                            else await Menus.PrintAndReturnStateOfLogin(rep, "admin");
                         }
                         break;
                     #endregion
