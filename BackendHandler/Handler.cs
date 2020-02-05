@@ -89,6 +89,8 @@ namespace BackendHandler
         public int OrderID { get; }
         public float Price { get; set; }
         public int Status { get; set; }
+        public string Pizzas { get; set; }
+        public string Extras { get; set; }
         public List<Extra> ExtraList { get; set; }
         public List<Pizza> PizzaList { get; set; }
         public override string ToString()
@@ -166,6 +168,8 @@ namespace BackendHandler
         public Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus");
         public Task UpdateOrderStatusWhenOrderIsServed(Employee emp, Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsServed");
         public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked");
+
+        public Task<Order> GetSingleOrder(int ID, string storedProcedure = "GetSingleOrder");
 
         //Denna kan tas bort då vi inte har transaction methods i våran kod.
         //public Task<IDbTransaction> Transaction();
@@ -498,6 +502,14 @@ namespace BackendHandler
                 await connection.QueryAsync<Order>(storedProcedure, new { OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public async Task<Order> GetSingleOrder(int ID, string storedProcedure = "GetSingleOrder")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                return (await connection.QueryAsync<Order>(storedProcedure, new { OrderID = ID }, commandType: CommandType.StoredProcedure)).First();
+            }
+        }
         #endregion
 
         /* TransactionMethod
@@ -681,6 +693,11 @@ namespace BackendHandler
         }
 
         public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Order> GetSingleOrder(int ID, string storedProcedure = "GetSingleOrder")
         {
             throw new NotImplementedException();
         }
