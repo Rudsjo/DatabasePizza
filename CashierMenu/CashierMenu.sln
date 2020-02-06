@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashierMenu", "CashierMenu.csproj", "{F331FA83-035A-4295-9F25-5CB57CAF4C65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashierMenu", "CashierMenu.csproj", "{F331FA83-035A-4295-9F25-5CB57CAF4C65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendHandler", "..\BackendHandler\BackendHandler.csproj", "{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F331FA83-035A-4295-9F25-5CB57CAF4C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F331FA83-035A-4295-9F25-5CB57CAF4C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F331FA83-035A-4295-9F25-5CB57CAF4C65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
