@@ -38,7 +38,10 @@ namespace BackendHandler
         {
             IEnumerable<Pizza> res = rep.GetAllPizzas().Result.ToList();
             foreach (Pizza p in res)
+            {
                 p.PizzaIngredients = rep.GetIngredientsFromSpecificPizza(p.PizzaID).Result.ToList();
+                p.StandardIngredientsDeffinition = p.PizzaIngredients.Select(p => p.CondimentID).AsList();
+            }
             return res.ToList();
         }
     }
@@ -89,8 +92,6 @@ namespace BackendHandler
         public int OrderID { get; }
         public float Price { get; set; }
         public int Status { get; set; }
-        public string Pizzas { get; set; }
-        public string Extras { get; set; }
         public List<Extra> ExtraList { get; set; }
         public List<Pizza> PizzaList { get; set; }
         public override string ToString()
@@ -105,6 +106,7 @@ namespace BackendHandler
         public string Type { get; set; }
         public float Price { get; set; }
         public int PizzabaseID { get; set; }
+        public List<int> StandardIngredientsDeffinition { get; set; }
         public List<Condiment> PizzaIngredients { get; set; }
 
 
@@ -137,6 +139,7 @@ namespace BackendHandler
         public Task DeletePizza(Pizza pizza, string storedProcedure = "DeletePizzaByID");
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
         public Task AddCondimentToPizza(Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza");
+        public Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases");
 
         //Condiment
         public Task AddCondiment(Condiment cond, string storedProcedure = "AddCondiment");
@@ -186,6 +189,7 @@ namespace BackendHandler
         /// </summary>
         /// 
 
+        //Vi är medvetna om att lösenordet ligger hårdkodat, men har val att inte åtgärda det i denna version. Nästa gång kommer lösenordet behövas skrivas in.
         private string ConnectionString = "Data Source = sql6009.site4now.net; Initial Catalog = DB_A53DDD_grupp5; User ID = DB_A53DDD_grupp5_admin; Password = grupp5pizza";
         
         /*private SqlConnection connection { get; }
@@ -300,6 +304,13 @@ namespace BackendHandler
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             { 
                 await connection.QueryAsync<Pizza>(storedProcedure, new { PizzaID = pizza.PizzaID, CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure);
+            }
+        }
+        public async Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                return ( await connection.QueryAsync<string>(storedProcedure, commandType: CommandType.StoredProcedure)); 
             }
         }
         #endregion
@@ -698,6 +709,11 @@ namespace BackendHandler
         }
 
         public Task<Order> GetSingleOrder(int ID, string storedProcedure = "GetSingleOrder")
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
         {
             throw new NotImplementedException();
         }
