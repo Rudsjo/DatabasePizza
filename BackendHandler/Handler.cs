@@ -41,6 +41,7 @@ namespace BackendHandler
             {
                 p.PizzaIngredients = rep.GetIngredientsFromSpecificPizza(p.PizzaID).Result.ToList();
                 p.StandardIngredientsDeffinition = p.PizzaIngredients.Select(p => p.CondimentID).AsList();
+                p.Pizzabase = rep.GetAllPizzabases().Result.First(P => P.Item2.Equals(p.PizzabaseID)).Item2;
             }
             return res.ToList();
         }
@@ -141,7 +142,7 @@ namespace BackendHandler
         public Task DeletePizza(Pizza pizza, string storedProcedure = "DeletePizzaByID");
         public Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int ID, string storedProcedure = "GetIngredientsFromSpecificPizza");
         public Task AddCondimentToPizza(Pizza pizza, string storedProcedureToAddCondimentToPizza = "AddStandardCondimentToPizza");
-        public Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases");
+        public Task<IEnumerable<(int, string)>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases");
 
         //Condiment
         public Task AddCondiment(Condiment cond, string storedProcedure = "AddCondiment");
@@ -308,11 +309,11 @@ namespace BackendHandler
                 await connection.QueryAsync<Pizza>(storedProcedure, new { PizzaID = pizza.PizzaID, CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure);
             }
         }
-        public async Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
+        public async Task<IEnumerable<(int,string)>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                return ( await connection.QueryAsync<string>(storedProcedure, commandType: CommandType.StoredProcedure)); 
+                return ( await connection.QueryAsync<(int, string)>(storedProcedure, commandType: CommandType.StoredProcedure)); 
             }
         }
         #endregion
@@ -730,7 +731,7 @@ namespace BackendHandler
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<string>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
+        public Task<IEnumerable<(int, string)>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
         {
             throw new NotImplementedException();
         }
