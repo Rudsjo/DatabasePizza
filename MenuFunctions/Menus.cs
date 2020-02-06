@@ -721,7 +721,7 @@ namespace MenuFunctions
 
             Console.Write("Ange ID för den ingrediens som du vill ta bort: ");
             string IDOfCondimentToDelete = await ReadLineWithOptionToGoBack();
-            if(IDOfCondimentToDelete == null) { return condimentToDelete; }
+            if(IDOfCondimentToDelete == null) { condimentToDelete = null;  return condimentToDelete; }
             else
             {
                 bool correctInput = int.TryParse(IDOfCondimentToDelete, out int IDOfCondiment);
