@@ -11,13 +11,4 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="BackendHandler">
-      <HintPath>..\..\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="MenuFunctions">
-      <HintPath>..\..\DatabasePizza\MenuFunctions\obj\Debug\netcoreapp3.1\MenuFunctions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

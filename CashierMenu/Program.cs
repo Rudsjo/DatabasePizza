@@ -10,7 +10,7 @@ using System.IO;
 using MenuFunctions;
 using System.Data;
 
-namespace CashierMenuNotGit
+namespace CashierMenu
 {
     public static class ProgramState
     {
@@ -25,15 +25,13 @@ namespace CashierMenuNotGit
         public static PROGRAM_MENUES CURRENT_MENU { get; set; } =
         PROGRAM_MENUES.LOGIN_SCREEN;
     }
-
     public class Program
     {
         public static IDatabase rep { get; set; }
 
-        public static int IDOfOrderToServe {get; set;}
+        public static int IDOfOrderToServe { get; set; }
 
         public static Employee servingEmployee { get; set; }
-
         static async Task Main(string[] args)
         {
             #region Read configfile and populate lists
@@ -47,13 +45,13 @@ namespace CashierMenuNotGit
                 {
                     case ProgramState.PROGRAM_MENUES.LOGIN_SCREEN:
                         {
-                            start:
+                        start:
                             Console.Clear();
                             Console.WriteLine("~ VÄLKOMMEN ATT LOGGA IN FÖR DELA UT FÄRDIGA ORDRAR ~");
                             var loginInItems = await Menus.PrintAndReturnStateOfLogin(rep, "kassör");
                             bool correctLogin = loginInItems.Item1;
                             servingEmployee = loginInItems.Item2;
-                            if(correctLogin == true) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ORDERS_SCREEN; }
+                            if (correctLogin == true) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ORDERS_SCREEN; }
 
                         }
                         break;
@@ -87,7 +85,7 @@ namespace CashierMenuNotGit
 
                                     foreach (var order in ordersReadyToServe)
                                     {
-                                        if(ID == order.ID)
+                                        if (ID == order.ID)
                                         {
                                             IDOfOrderToServe = ID;
                                             ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.CONFIRMATION_SCREEN;
