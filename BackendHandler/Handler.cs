@@ -44,6 +44,14 @@ namespace BackendHandler
             }
             return res.ToList();
         }
+
+        internal static (string Pizzas, string Extras, float price) ConvertOrder(Order order)
+        {
+            return (JsonConvert.SerializeObject(order.PizzaList),
+                    JsonConvert.SerializeObject(order.ExtraList), 
+                    order.Price);
+        }
+
     }
 
     #region BackendClasses
@@ -486,16 +494,18 @@ namespace BackendHandler
         }
         public async Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
+            var obj = Helpers.ConvertOrder(order);
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { pizzas = order.PizzaList, extras = order.ExtraList, price = order.Price }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { pizzas = obj.Pizzas, extras = obj.Extras, price = obj.price }, commandType: CommandType.StoredProcedure); 
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Order>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
+                var obj =  (await connection.QueryAsync<dynamic>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
+                return null;
             }
         }
 
