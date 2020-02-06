@@ -497,7 +497,7 @@ namespace BackendHandler
             var obj = Helpers.ConvertOrder(order);
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { pizzas = obj.Pizzas, extras = obj.Extras, price = obj.price }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { PizzasJSON = obj.Pizzas, ExtrasJSON = obj.Extras, OrderPrice = obj.price }, commandType: CommandType.StoredProcedure); 
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
