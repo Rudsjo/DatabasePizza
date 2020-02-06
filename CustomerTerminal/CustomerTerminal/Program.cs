@@ -32,12 +32,12 @@ namespace CustomerTerminal
     class Program
     {
         // Internal variables >>
-        private static Order CurrentOrder          { get; set; }
-        private static List<Pizza> Pizzas          { get; set; }
-        private static List<Extra> Products        { get; set; }
-        private static List<Condiment> Ingredients { get; set; }
-        private static List<string> PizzaBases     { get; set; }
-        private static Pizza CurrentPizza          { get; set; }
+        private static Order CurrentOrder             { get; set; }
+        private static List<Pizza> Pizzas             { get; set; }
+        private static List<Extra> Products           { get; set; }
+        private static List<Condiment> Ingredients    { get; set; }
+        private static List<(int, string)> PizzaBases { get; set; }
+        private static Pizza CurrentPizza             { get; set; }
 
         private static IDatabase Rep = BackendHandler.Helpers.GetSelectedBackend("MSSQL");
 
@@ -49,7 +49,7 @@ namespace CustomerTerminal
             Products    = (await Rep.GetAllExtras()).ToList();
             Ingredients = (await Rep.GetAllCondiments()).ToList();
             Pizzas      =  BackendHandler.Helpers.LoadPizzasAsList(Rep);
-            PizzaBases =  (await Rep.GetAllPizzabases()).ToList();
+            PizzaBases  = (await Rep.GetAllPizzabases()).ToList();
         }
 
         static async Task Main(string[] args)
@@ -394,13 +394,13 @@ namespace CustomerTerminal
 
             }
         }
-        public static void Edit_Pizza_Change_Base(Pizza CurrentPizza, List<string> AvailablePizzaBases)
+        public static void Edit_Pizza_Change_Base(Pizza CurrentPizza, List<(int, string)> AvailablePizzaBases)
         {
             while (true)
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine(" Välj vilken botten du viil ha på pizzan"); Console.ForegroundColor = ConsoleColor.White;
-                for (int i = 0; i < AvailablePizzaBases.Count; i++) Console.WriteLine($" {i + 1}: {AvailablePizzaBases[i]}");
+                for (int i = 0; i < AvailablePizzaBases.Count; i++) Console.WriteLine($" {i + 1}: {AvailablePizzaBases[i].Item2}");
                 Console.ForegroundColor = ConsoleColor.DarkRed; Console.WriteLine($" {AvailablePizzaBases.Count + 1}: Gå tillbaka"); Console.ForegroundColor = ConsoleColor.White;
                 Console.Write(" ~ "); string Opt = Console.ReadLine();
                 if (int.TryParse(Opt, out int Choice) && Choice > 0 && Choice <= AvailablePizzaBases.Count + 1)
@@ -408,13 +408,14 @@ namespace CustomerTerminal
                     if (Choice.Equals(AvailablePizzaBases.Count + 1)) break;
                     else
                     {
-                        CurrentPizza.Pizzabase = AvailablePizzaBases[Choice - 1];
+                        CurrentPizza.Pizzabase = AvailablePizzaBases[Choice - 1].Item2;
+                        CurrentPizza.PizzabaseID = AvailablePizzaBases[Choice - 1].Item1;
                         break;
                     }
                 }
             }
         }
-        public static void EditOrder(Order o, List<string> AvailableBases, List<Condiment> AvailableIngredients)
+        public static void EditOrder(Order o, List<(int, string)> AvailableBases, List<Condiment> AvailableIngredients)
         {
             while (true)
             {
