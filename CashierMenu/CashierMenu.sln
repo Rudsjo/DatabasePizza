@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashierMenu", "CashierMenu.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendHandler", "..\BackendHandler\BackendHandler.csproj", "{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MenuFunctions", "..\MenuFunctions\MenuFunctions.csproj", "{E6D8B6F8-C59F-442D-B74D-B760234CC12C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27282D3A-3CED-4F0C-AD93-A50BFF8EC851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6D8B6F8-C59F-442D-B74D-B760234CC12C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6D8B6F8-C59F-442D-B74D-B760234CC12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6D8B6F8-C59F-442D-B74D-B760234CC12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6D8B6F8-C59F-442D-B74D-B760234CC12C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
