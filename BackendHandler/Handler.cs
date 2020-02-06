@@ -489,11 +489,11 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new {
-                    PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
-                    ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
-                    Price      = order.Price }, 
-                    commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync(storedProcedureToAddOrder, new { PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
+                                                                             ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
+                                                                             OrderPrice  = order.Price
+                }, 
+                      commandType: CommandType.StoredProcedure); 
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
