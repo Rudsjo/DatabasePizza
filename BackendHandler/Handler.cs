@@ -18,7 +18,7 @@ namespace BackendHandler
         ///  : MSSQL
         ///  : PostgreSQL
         /// </summary>
-        /// <param name="BackendName"></param>
+        /// <param name="BackendName"></param>M
         /// <returns>if Interface wa not found, return MSSQL as standard</returns>
         public static IDatabase GetSelectedBackend(string BackendName)
         {
@@ -43,13 +43,6 @@ namespace BackendHandler
                 p.StandardIngredientsDeffinition = p.PizzaIngredients.Select(p => p.CondimentID).AsList();
             }
             return res.ToList();
-        }
-
-        internal static (string Pizzas, string Extras, float price) ConvertOrder(Order order)
-        {
-            return (JsonConvert.SerializeObject(order.PizzaList),
-                    JsonConvert.SerializeObject(order.ExtraList), 
-                    order.Price);
         }
 
     }
@@ -494,10 +487,13 @@ namespace BackendHandler
         }
         public async Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
-            var obj = Helpers.ConvertOrder(order);
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new { PizzasJSON = obj.Pizzas, ExtrasJSON = obj.Extras, OrderPrice = obj.price }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Order>(storedProcedureToAddOrder, new {
+                    PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
+                    ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
+                    Price      = order.Price }, 
+                    commandType: CommandType.StoredProcedure); 
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
