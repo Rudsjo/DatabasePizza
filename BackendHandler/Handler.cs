@@ -169,7 +169,7 @@ namespace BackendHandler
         
         //Orders
         public Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders");
-        public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder");
+        public Task<int> AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder");
         public Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus");
         public Task UpdateOrderStatusWhenOrderIsServed(Employee emp, Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsServed");
         public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked");
@@ -485,15 +485,14 @@ namespace BackendHandler
                 return (await connection.QueryAsync<Order>(storedProcedureToShowOrders, commandType: CommandType.StoredProcedure)); 
             }
         }
-        public async Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
+        public async Task<int> AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync(storedProcedureToAddOrder, new { PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
-                                                                             ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
-                                                                             OrderPrice  = order.Price
-                }, 
-                      commandType: CommandType.StoredProcedure); 
+                return (await connection.QueryAsync<int>(storedProcedureToAddOrder, new { PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
+                                                                                          ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
+                                                                                          OrderPrice  = order.Price }, 
+                      commandType: CommandType.StoredProcedure)).First(); 
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
@@ -696,7 +695,7 @@ namespace BackendHandler
             throw new NotImplementedException();
         }
 
-        public Task AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
+        public Task<int> AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
             throw new NotImplementedException();
         }
