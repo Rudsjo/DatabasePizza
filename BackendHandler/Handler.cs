@@ -106,6 +106,7 @@ namespace BackendHandler
         public string Type { get; set; }
         public float Price { get; set; }
         public int PizzabaseID { get; set; }
+        public string Pizzabase { get; set; }
         public List<int> StandardIngredientsDeffinition { get; set; }
         public List<Condiment> PizzaIngredients { get; set; }
 
