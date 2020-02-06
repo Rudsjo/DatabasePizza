@@ -33,7 +33,6 @@ namespace BackendHandler
                 }
             return new MSSQL();
         }
-
         public static List<Pizza> LoadPizzasAsList(IDatabase rep)
         {
             IEnumerable<Pizza> res = rep.GetAllPizzas().Result.ToList();
@@ -41,7 +40,6 @@ namespace BackendHandler
             {
                 p.PizzaIngredients = rep.GetIngredientsFromSpecificPizza(p.PizzaID).Result.ToList();
                 p.StandardIngredientsDeffinition = p.PizzaIngredients.Select(p => p.CondimentID).AsList();
-                p.Pizzabase = rep.GetAllPizzabases().Result.First(P => P.Item2.Equals(p.PizzabaseID)).Item2;
             }
             return res.ToList();
         }
