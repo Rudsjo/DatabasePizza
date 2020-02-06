@@ -90,7 +90,7 @@ namespace BackendHandler
     public class Order    
     {
         //Överensstämmer med databasen
-        public int OrderID { get; }
+        public int OrderID { get; set; }
         public float Price { get; set; }
         public int Status { get; set; }
         public List<Extra> ExtraList { get; set; }
@@ -500,8 +500,19 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                var obj =  (await connection.QueryAsync<dynamic>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
-                return null;
+                List<Order> Result = new List<Order>();
+                IEnumerable<(int, string, string, float, int)> SerializedOrders = (await connection.QueryAsync<(int, string, string, float, int)>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
+                foreach(var o in SerializedOrders) 
+                {
+                    Order CurrentOrder     = new Order();
+                    CurrentOrder.OrderID   = o.Item1;
+                    CurrentOrder.PizzaList = JsonConvert.DeserializeObject<List<Pizza>>(o.Item2);
+                    CurrentOrder.ExtraList = JsonConvert.DeserializeObject<List<Extra>>(o.Item3);
+                    CurrentOrder.Price     = o.Item4;
+                    CurrentOrder.Status    = o.Item5;
+                    Result.Add(CurrentOrder);
+                }
+                return Result;
             }
         }
 
