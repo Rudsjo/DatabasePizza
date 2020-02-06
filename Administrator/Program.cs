@@ -59,7 +59,7 @@ namespace Administrator
             rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => ! s.StartsWith("#")));
             #endregion
 
-            await rep.GetOrderByStatus(2);
+            await rep.GetOrderByStatus(1);
 
             while (ProgramState.Running)
             {
