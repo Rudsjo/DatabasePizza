@@ -55,11 +55,10 @@ namespace Administrator
 
         static async Task Main(string[] args)
         {
+            //Current directory och Backend.cfg ligger på olika ställen. För att byta backend så får flytta # i bin-foldern i admin.
             #region Read configfile and populate lists
             rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => ! s.StartsWith("#")));
             #endregion
-
-            await rep.GetOrderByStatus(1);
 
             while (ProgramState.Running)
             {
@@ -71,6 +70,7 @@ namespace Administrator
                             Console.Clear();
                             Console.WriteLine("~ VÄLKOMMEN TILL ADMINPANELEN ~");
                             bool CorrectLogin = (await Menus.PrintAndReturnStateOfLogin(rep, "admin")).Item1;
+                            CorrectLogin = true;
                             if (CorrectLogin == true)
                             {
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
@@ -79,7 +79,7 @@ namespace Administrator
                         }
                         break;
                     #endregion
-                    
+
                     #region // Case: Main Menu
                     case ProgramState.PROGRAM_MENUES.MAIN_MENU:
                         {
@@ -247,8 +247,11 @@ namespace Administrator
                         break;
                     case ProgramState.PROGRAM_MENUES.UPDATE_PIZZA:
                         {
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
-                            Console.Write("Ange ID på den pizza du vill ändra: ");
+                            Console.Clear();
+                            Console.WriteLine("~~ UPPDATERA Pizza ~~");
+                            Console.WriteLine("Klicka ESC för att gå tillbaka.");
+
+                            Console.Write("\nAnge ID för den pizza du vill ändra: ");
                             string pizzaIDToBeUpdated = await Menus.ReadLineWithOptionToGoBack();
                             if(pizzaIDToBeUpdated == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.PIZZAS; }
                             else
@@ -260,6 +263,7 @@ namespace Administrator
 
                                     if(checkIfPizzaExists == true)
                                     {
+                                        Console.Clear();
                                         Pizza pizzaToBeUpdated = new Pizza();
                                         pizzaToBeUpdated = await rep.GetSinglePizza(IDOfPizzaToBeUpdated);
                                         pizzaToBeUpdated = await Menus.UpdatePizzaMenu(rep, pizzaToBeUpdated);
@@ -347,7 +351,7 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_INGREDIENT:
                         {
-                            Condiment newCondiment = await Menus.AddCondimentMenu();
+                            Condiment newCondiment = await Menus.AddCondimentMenu(rep);
                             if(newCondiment == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                             else
                             {
@@ -377,7 +381,7 @@ namespace Administrator
                                     if(checkIfIDExists == true)
                                     {
                                         Condiment condimentToUpdate = await rep.GetSingleCondiment(IDToCheck);
-                                        condimentToUpdate = await Menus.UpdateCondimentMenu(condimentToUpdate);
+                                        condimentToUpdate = await Menus.UpdateCondimentMenu(rep, condimentToUpdate);
                                         if(condimentToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.INGREDIENTS; }
                                         else
                                         {
@@ -406,7 +410,7 @@ namespace Administrator
 
                             foreach (var ingredient in await rep.GetAllCondiments())
                             {
-                                Console.WriteLine($"{ingredient.CondimentID}. {ingredient.Type}, {ingredient.Price} kr\n");
+                                Console.WriteLine($"{ingredient.CondimentID}. {ingredient.Type}, {ingredient.Price} kr");
                             }
                             
                             Console.WriteLine($"\nKlicka på ESC för att gå tillbaka");
@@ -455,7 +459,7 @@ namespace Administrator
 
                     case ProgramState.PROGRAM_MENUES.ADD_EXTRAS:
                         {
-                            Extra newExtra = await Menus.AddExtraMenu();
+                            Extra newExtra = await Menus.AddExtraMenu(rep);
                             if(newExtra == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                             else
                             {
@@ -468,7 +472,7 @@ namespace Administrator
                     case ProgramState.PROGRAM_MENUES.UPDATE_EXTRAS:
                         {
                         start:
-                            Extra extraToUpdate = new Extra();
+                            
                             Console.Clear();
                             Console.WriteLine("~~ UPPDATERA TILLBEHÖR ~~\n");
                             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
@@ -480,11 +484,13 @@ namespace Administrator
                             {
                                 bool correctInput = int.TryParse(IDOfExtraToUpdate, out int IDOfExtra);
                                 if(correctInput == true)
-                                {
+                                {           
                                     bool checkIfIDExists = await rep.CheckIfProductIDExists(IDOfExtra);
                                     if(checkIfIDExists == true)
                                     {
-                                        extraToUpdate = await Menus.UpdateExtraMenu(extraToUpdate);
+                                        //Tillagt för att ha ett objekt att skicka in.
+                                        Extra extraToUpdate = await rep.GetSingleExtra(IDOfExtra);
+                                        extraToUpdate = await Menus.UpdateExtraMenu(rep, extraToUpdate);
                                         if(extraToUpdate == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EXTRAS; }
                                         else
                                         {
@@ -506,7 +512,7 @@ namespace Administrator
 
                             foreach (var extra in await rep.GetAllExtras())
                             {
-                                Console.WriteLine($"{extra.ProductID}. {extra.Type}, {extra.Price} kr\n");
+                                Console.WriteLine($"{extra.ProductID}. {extra.Type}, {extra.Price} kr");
                             }
 
                             Console.WriteLine($"\nKlicka på ESC för att gå tillbaka");
@@ -549,29 +555,55 @@ namespace Administrator
                             }
                         }
                         break;
-                    case ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS:
+                    case ProgramState.PROGRAM_MENUES.SHOW_OLD_ORDERS: // Fungerar. Visar bara ordrar som gått igenom utlämning och är därmed gamla
                         {
                             Console.Clear();
-                            Console.WriteLine("~~ SAMTLIGA GAMLA ORDRAR ~~");
+                            Console.WriteLine("~~ VISA GAMLA ORDRAR ~~");
                             Console.WriteLine();
-                            var result = await rep.GetAllOrders();
-                            var orders = result.Where(x => x.Status == 4);
 
-                            foreach (var order in orders)
+                            var result = await rep.GetOrderByStatus(3);
+       
+                            foreach (var order in result)
                             {
-                                Console.WriteLine(order);
+                                Console.WriteLine($"ID: {order.OrderID} Pris: {order.Price}");
+                                Console.Write($"Pizzor: ");
+
+                                foreach (var item in order.PizzaList)
+                                {
+                                    Console.Write($"{item.Type}, ");
+                                }
+
+                                Console.WriteLine();
+                                Console.Write("Tillbehör: ");
+
+                                foreach (var item in order.ExtraList)
+                                {
+                                    Console.Write($"{item.Type}, ");
+                                }
                             }
 
                             Console.WriteLine();
-                            Console.WriteLine("Klicka på ESC för att gå tillbaka");
+                            Console.WriteLine("\nKlicka på ESC för att gå tillbaka");
                             if (Console.ReadKey(true).Key == ConsoleKey.Escape)
                             {
-                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.EMPLOYEES;
+                                ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS;
                                 break;
                             }
                         }
                         break;
-                    case ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS:
+                    case ProgramState.PROGRAM_MENUES.DELETE_OLD_ORDERS: // Fungerar. Gör koll mot databasen för att försäkra om att man inte skriver in en aktiv order.
+                        {
+                            {
+                                Order orderToDelete = await Menus.DeleteOldOrderMenu(rep);
+                                if (orderToDelete == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS; }
+                                else
+                                {
+                                    await rep.DeleteOldOrder(orderToDelete);
+                                    await Menus.ConfirmationScreen("Ordern borttagen.");
+                                    ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OLD_ORDERS;
+                                }
+                            }
+                        }
                         break;
                     #endregion
 

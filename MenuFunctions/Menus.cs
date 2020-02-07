@@ -332,7 +332,7 @@ namespace MenuFunctions
             {
                 foreach(var pizza in await database.GetAllPizzas())
                 {
-                    if(newPizza.Type == pizza.Type)
+                    if(newPizza.Type.ToLower() == pizza.Type.ToLower()) // lagt till för att undvika att två likadana med olika case läggs in.
                     {
                         await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
                         goto chooseName;
@@ -423,6 +423,7 @@ namespace MenuFunctions
         {
             Pizza pizzaToUpdate = pizza;
 
+            Console.Clear();
             Console.Clear();
             Console.WriteLine("Klicka ESC för att gå tillbaka.");
             Console.WriteLine("Ange vad du vill ändra i pizzan:");
@@ -567,12 +568,12 @@ namespace MenuFunctions
 
             foreach (var pizza in await database.GetAllPizzas())
             {
-                Console.WriteLine($"ID - {pizza.PizzaID}, {pizza.Type}\n");
+                Console.WriteLine($"{pizza.PizzaID}. {pizza.Type}");
             }
 
-            Console.Write("Ange ID för den pizza som du vill ta bort: ");
+            Console.Write("\nAnge ID för den pizza som du vill ta bort: ");
             string IDOfPizzaToRemove = await Menus.ReadLineWithOptionToGoBack();
-            if(IDOfPizzaToRemove == null) { return pizzaToDelete; }
+            if(IDOfPizzaToRemove == null) { pizzaToDelete = null; return pizzaToDelete; }
             else
             {
                 bool correctInput = int.TryParse(IDOfPizzaToRemove, out int IDOfPizza);
@@ -599,7 +600,7 @@ namespace MenuFunctions
                 else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
             }
         }
-        public static async Task<Condiment> AddCondimentMenu()
+        public static async Task<Condiment> AddCondimentMenu(IDatabase database)
         {
             start:
             Condiment newCondiment = new Condiment();
@@ -610,14 +611,23 @@ namespace MenuFunctions
             Console.WriteLine();
             Console.Write("Ange namnet på ingrediensen: ");
             string newCondimentName = await Menus.ReadLineWithOptionToGoBack();
-            if(newCondimentName == null) { return newCondiment; }
+            if(newCondimentName == null) { return newCondiment = null; } // Satt värdet till null för att inte programmet ska krasha vid esc
             else if(newCondimentName.Length < 1 || !Regex.IsMatch(newCondimentName, @"^[a-öA-Ö]+$"))
             {
                 await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning.");
                 goto start;
-            }
+            }                     
             else
             {
+                //Tillagt för att kolla namn mot databasen.
+                foreach (var cond in await database.GetAllCondiments())
+                {
+                    if (newCondimentName.ToLower() == cond.Type.ToLower())
+                    {
+                        await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
+                        goto start;
+                    }
+                }
                 newCondiment.Type = newCondimentName;
                 goto addPrice;
             }
@@ -656,7 +666,7 @@ namespace MenuFunctions
             }
 
         }
-        public static async Task<Condiment> UpdateCondimentMenu(Condiment condimentToUpdate)
+        public static async Task<Condiment> UpdateCondimentMenu(IDatabase database, Condiment condimentToUpdate)
         {
             start:
             Console.WriteLine($"\nVad vill du ändra på i ingrediensen {condimentToUpdate.Type}?");
@@ -677,7 +687,19 @@ namespace MenuFunctions
                         condimentToUpdate.Type = await ReadLineWithOptionToGoBack();
                         if(condimentToUpdate.Type == null) { condimentToUpdate = null; return condimentToUpdate; }
                         else if(condimentToUpdate.Type.Length < 1) { await MessageIfChoiceIsNotRight("Namnet måste innehålla tecken"); goto updateName; }
-                        else { return condimentToUpdate; }
+                        else 
+                        {
+                            //Tillagt för att kolla namn mot databasen.
+                            foreach (var cond in await database.GetAllCondiments())
+                            {
+                                if (condimentToUpdate.Type.ToLower() == cond.Type.ToLower())
+                                {
+                                    await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
+                                    goto start;
+                                }
+                            }
+                            return condimentToUpdate; 
+                        }
                     }
                 }
                 else if(correctInput == true && choice == 2)
@@ -694,6 +716,8 @@ namespace MenuFunctions
                             correctInput = int.TryParse(newCondimentPrice, out int price);
                             if(correctInput == true && price > 0 && newCondimentPrice.Length < 3)
                             {
+                                //Tillagt för att sätta det nya priset.
+                                condimentToUpdate.Price = price;
                                 return condimentToUpdate;
                             }
                             else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto updatePrice; }
@@ -719,7 +743,7 @@ namespace MenuFunctions
                 Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
             }
 
-            Console.Write("Ange ID för den ingrediens som du vill ta bort: ");
+            Console.Write("\nAnge ID för den ingrediens som du vill ta bort: ");
             string IDOfCondimentToDelete = await ReadLineWithOptionToGoBack();
             if(IDOfCondimentToDelete == null) { condimentToDelete = null;  return condimentToDelete; }
             else
@@ -747,7 +771,7 @@ namespace MenuFunctions
             }
 
         }
-        public static async Task<Extra> AddExtraMenu()
+        public static async Task<Extra> AddExtraMenu(IDatabase database)
         {
         start:
             Extra newExtra = new Extra();
@@ -765,7 +789,19 @@ namespace MenuFunctions
                 await MessageIfChoiceIsNotRight("Namnet kan endast innehålla bokstäver och det måste vara minst ett tecken.");
                 goto start;
             }
-            else { goto setPrice; }
+            else 
+            {
+                //Tillagt för att kolla namn mot databasen.
+                foreach (var extra in await database.GetAllExtras())
+                {
+                    if (newExtra.Type.ToLower() == extra.Type.ToLower())
+                    {
+                        await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
+                        goto start;
+                    }
+                }
+                goto setPrice; 
+            }
 
             setPrice:
             {
@@ -777,15 +813,17 @@ namespace MenuFunctions
                     bool correctInput = int.TryParse(priceOfNewExtra, out int price);
                     if(correctInput == true && price > 0 && priceOfNewExtra.Length < 3)
                     {
+                        //Tillagt för att sätta priset.
+                        newExtra.Price = price;
                         return newExtra;
                     }
                     else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto setPrice; }
                 }
             }
         }
-        public static async Task<Extra> UpdateExtraMenu(Extra extraToUpdate)
+        public static async Task<Extra> UpdateExtraMenu(IDatabase database, Extra extraToUpdate)
         {
-            start:
+        start:
             Console.WriteLine($"Ange vad du vill uppdatera med tillbehöret {extraToUpdate.Type}");
             Console.WriteLine("1. Namn");
             Console.WriteLine("2. Pris");
@@ -807,7 +845,19 @@ namespace MenuFunctions
                             await MessageIfChoiceIsNotRight("Namnet kan endast innehålla bokstäver och måste vara minst ett tecken.");
                             goto changeType;
                         }
-                        else { return extraToUpdate; }
+                        else 
+                        {
+                            //Tillagt för att kolla namn mot databasen.
+                            foreach (var extra in await database.GetAllExtras())
+                            {
+                                if (extraToUpdate.Type.ToLower() == extra.Type.ToLower())
+                                {
+                                    await MessageIfChoiceIsNotRight("Namnet finns redan. Välj ett annat.");
+                                    goto start;
+                                }
+                            }
+                            return extraToUpdate;
+                        }
                     }
                 }
                 else if(correctInput == true && choice == 2)
@@ -823,6 +873,8 @@ namespace MenuFunctions
                             correctInput = int.TryParse(newPriceOfExtra, out int price);
                             if(correctInput == true && price > 0 && newPriceOfExtra.Length < 3)
                             {
+                                //Tillagt för att sätta priset
+                                extraToUpdate.Price = price;
                                 return extraToUpdate;
                             }
                             else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto changePrice; }
@@ -839,8 +891,14 @@ namespace MenuFunctions
             Console.Clear();
             Console.WriteLine("~~ TA BORT TILLBEHÖR ~~");
             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+            Console.WriteLine();
 
-            Console.Write("\n\nAnge ID för det tillbehör som ska tas bort: ");
+            foreach (var condiment in await database.GetAllCondiments())
+            {
+                Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+            }
+
+            Console.Write("\nAnge ID för det tillbehör som ska tas bort: ");
             string IDOfExtraToDelete = await ReadLineWithOptionToGoBack();
             if(IDOfExtraToDelete == null) { extraToDelete = null; return extraToDelete; }
             else
@@ -871,7 +929,53 @@ namespace MenuFunctions
             }
 
         }
-        
+        public static async Task<Order> DeleteOldOrderMenu(IDatabase database)
+        {
+        start:
+            Order orderToDelete = new Order();
+            Console.Clear();
+            Console.WriteLine("~~ TA BORT GAMMAL ORDER ~~");
+            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+            Console.WriteLine();
+
+            foreach (var oldOrder in await database.GetOrderByStatus(3))
+            {
+                Console.WriteLine($"ID. {oldOrder.OrderID} Pris. {oldOrder.Price}\n");
+            }
+
+            Console.Write("\nAnge ID för ordern som ska tas bort: ");
+            string IDOfOrderToDelete = await ReadLineWithOptionToGoBack();
+            if (IDOfOrderToDelete == null) { orderToDelete = null; return orderToDelete; }
+            else
+            {
+                bool correctInput = int.TryParse(IDOfOrderToDelete, out int IDOfOrder);
+                if (correctInput == true)
+                {
+
+                    if (!(await database.GetSingleOrder(IDOfOrder) == null))
+                    {
+                        orderToDelete = await database.GetSingleOrder(IDOfOrder);
+                        if(orderToDelete.Status == 3)
+                        {
+                        confirmationToDelete:
+                            Console.Clear();
+                            Console.WriteLine($"Ange y för att bekräfta borttagningen av ordern med ID: {orderToDelete.OrderID}");
+                            Console.WriteLine("Klicka på ESC för att gå tillbaka.");
+                            Console.Write("\nDitt val: ");
+                            string choiceToDelete = await ReadLineWithOptionToGoBack();
+                            if (choiceToDelete == null) { orderToDelete = null; return orderToDelete; }
+                            else if (choiceToDelete.ToLower() == "y") { return orderToDelete; }
+                            else { await MessageIfChoiceIsNotRight("Ange y för att bekräfta eller ESC för att gå tillbaka."); goto confirmationToDelete; }
+                        }
+                        else { await MessageIfChoiceIsNotRight("Det ID:t du angett är fortfarande en aktiv order"); goto start; }                        
+                    }
+                    else { await MessageIfChoiceIsNotRight("Det angivna ID:t finns inte."); goto start; }
+                }
+                else { await MessageIfChoiceIsNotRight("Felaktig inmatning."); goto start; }
+            }
+
+        }
+
         #endregion
 
 
