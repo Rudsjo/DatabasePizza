@@ -30,12 +30,7 @@ namespace BagarTerminal
 
     class Program
     {
-        public enum PIZZABASE
-        {
-
-            Standard = 1,
-            Amerikansk = 2
-        }
+       
         public static IDatabase rep { get; set; }
 
         public static async Task Main(string[] args)
@@ -238,11 +233,9 @@ namespace BagarTerminal
                 Console.Write($"-{listOfOrders[i].PizzaList[index].Type}");
                 if (listOfOrders[i].PizzaList[index].PizzabaseID > 0)
                 {
-                    var pizzaBaseState = (PIZZABASE)listOfOrders[i].PizzaList[index].PizzabaseID;
-                    Console.Write($", Botten: {pizzaBaseState},");
+                Console.Write($", Botten: {listOfOrders[i].PizzaList[index].Pizzabase}, med (");  
                 }
                 int x = 0;
-                Console.Write(" med (");
                 foreach (var text in listOfOrders[i].PizzaList[index].PizzaIngredients)
                 {
                     x++;
