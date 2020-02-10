@@ -169,7 +169,8 @@ namespace Administrator
                                 Console.Clear();
                                 Console.WriteLine("~~ SAMTLIGA ANSTÄLLDA ~~");
                                 Console.WriteLine();
-                                foreach (var employees in await rep.GetAllEmployees())
+                                //var employees = await rep.GetAllEmployees().Result.OrderBy
+                                foreach (var employees in (await rep.GetAllEmployees()).ToList().OrderBy(e => e.UserID))
                                 {
                                     Console.WriteLine(employees);
                                 }
@@ -410,7 +411,7 @@ namespace Administrator
                             Console.Clear();
                             Console.WriteLine($"~~ SAMTLIGA INGREDIENSER ~~\n");
 
-                            foreach (var ingredient in await rep.GetAllCondiments())
+                            foreach (var ingredient in (await rep.GetAllCondiments()).ToList().OrderBy(c => c.CondimentID))
                             {
                                 Console.WriteLine($"{ingredient.CondimentID}. {ingredient.Type}, {ingredient.Price} kr");
                             }
@@ -512,7 +513,7 @@ namespace Administrator
                             Console.Clear();
                             Console.WriteLine($"~~ SAMTLIGA TILLBEHÖR ~~\n");
 
-                            foreach (var extra in await rep.GetAllExtras())
+                            foreach (var extra in (await rep.GetAllExtras()).ToList().OrderBy(e => e.ProductID))
                             {
                                 Console.WriteLine($"{extra.ProductID}. {extra.Type}, {extra.Price} kr");
                             }
@@ -563,8 +564,8 @@ namespace Administrator
                             Console.WriteLine("~~ VISA GAMLA ORDRAR ~~");
                             Console.WriteLine();
 
-                            var result = await rep.GetOrderByStatus(3);
-       
+                            var result = (await rep.GetOrderByStatus(3)).ToList().OrderBy(o => o.OrderID);
+
                             foreach (var order in result)
                             {
                                 Console.WriteLine($"ID: {order.OrderID} Pris: {order.Price}");

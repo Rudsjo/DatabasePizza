@@ -506,6 +506,7 @@ namespace MenuFunctions
 
         changeCondiments:
             {
+                start:
                 Console.WriteLine("Ange vilken typ av ändring du vill göra:");
                 Console.WriteLine("1. Lägga till ingredienser");
                 Console.WriteLine("2. Ta bort ingredienser");
@@ -518,46 +519,53 @@ namespace MenuFunctions
                     bool correctInput = int.TryParse(choiceOfChange, out int choice);
                     if (correctInput == true && choice == 1) // lägga till
                     {
-                        pizzaToUpdate.PizzaIngredients = await AddCondimentToPizzaMenu(database, pizzaToUpdate);
-
-                        if(pizzaToUpdate.PizzaIngredients != null)
+                    addcondiment:
                         {
-                            await database.AddCondimentToPizza(pizzaToUpdate);
-                        }
+                            pizzaToUpdate.PizzaIngredients = await AddCondimentToPizzaMenu(database, pizzaToUpdate);
 
-                        return pizzaToUpdate;
+                            if (pizzaToUpdate.PizzaIngredients != null)
+                            {
+                                await database.AddCondimentToPizza(pizzaToUpdate);
+                            }
+                            else { goto addcondiment; }
+
+                            return pizzaToUpdate;
+                        }
                     }
                     else if (correctInput == true && choice == 2) // ta bort
                     {
-                        Console.WriteLine("Ange numret på den ingrediens som du önskar att ta bort");
-
-                        foreach (var condiment in pizzaToUpdate.PizzaIngredients)
+                    removecondiment:
                         {
-                            Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
-                        }
+                            Console.WriteLine("Ange numret på den ingrediens som du önskar att ta bort");
 
-                        Console.Write("Ditt val: "); string userChoice = await ReadLineWithOptionToGoBack();
-
-                        bool correctRemovalInput = int.TryParse(userChoice, out int removalChoice);
-                        if (correctRemovalInput == true)
-                        {
                             foreach (var condiment in pizzaToUpdate.PizzaIngredients)
                             {
-                                if (removalChoice == condiment.CondimentID)
+                                Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+                            }
+
+                            Console.Write("Ditt val: "); string userChoice = await ReadLineWithOptionToGoBack();
+
+                            bool correctRemovalInput = int.TryParse(userChoice, out int removalChoice);
+                            if (correctRemovalInput == true)
+                            {
+                                foreach (var condiment in pizzaToUpdate.PizzaIngredients)
                                 {
-                                    await database.DeleteCondimentFromPizza(pizzaToUpdate, condiment);
-                                    pizzaToUpdate.PizzaIngredients = (await database.GetIngredientsFromSpecificPizza(pizzaToUpdate.PizzaID)).ToList();
-                                    return pizzaToUpdate;
+                                    if (removalChoice == condiment.CondimentID)
+                                    {
+                                        await database.DeleteCondimentFromPizza(pizzaToUpdate, condiment);
+                                        pizzaToUpdate.PizzaIngredients = (await database.GetIngredientsFromSpecificPizza(pizzaToUpdate.PizzaID)).ToList();
+                                        return pizzaToUpdate;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                await MessageIfChoiceIsNotRight("Felaktig inmatning.");
+                                goto removecondiment;
+                            }
                         }
-                        else
-                        {
-                            await MessageIfChoiceIsNotRight("Felaktig inmatning.");
-                        }
-
                     }
-                    else { await MessageIfChoiceIsNotRight("Felaktig inamtning."); }
+                    else { await MessageIfChoiceIsNotRight("Felaktig inamtning."); goto start; }
                 }
 
             }
@@ -900,9 +908,9 @@ namespace MenuFunctions
             Console.WriteLine("Klicka på ESC för att gå tillbaka.");
             Console.WriteLine();
 
-            foreach (var condiment in await database.GetAllCondiments())
+            foreach (var extra in await database.GetAllExtras())
             {
-                Console.WriteLine($"{condiment.CondimentID}. {condiment.Type}");
+                Console.WriteLine($"{extra.ProductID}. {extra.Type}");
             }
 
             Console.Write("\nAnge ID för det tillbehör som ska tas bort: ");

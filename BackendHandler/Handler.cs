@@ -37,7 +37,7 @@ namespace BackendHandler
         }
         public static List<Pizza> LoadPizzasAsList(IDatabase rep)
         {
-            IEnumerable<Pizza> res = rep.GetAllPizzas().Result.ToList();
+            IEnumerable<Pizza> res = rep.GetAllPizzas().Result.ToList().OrderBy(p => p.PizzaID);
             foreach (Pizza p in res)
             {
                 p.PizzaIngredients = rep.GetIngredientsFromSpecificPizza(p.PizzaID).Result.ToList();
