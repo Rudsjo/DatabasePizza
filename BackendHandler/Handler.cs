@@ -560,7 +560,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = cond.Type, Price = cond.Price }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { _Type = cond.Type, _Price = cond.Price }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -568,7 +568,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { _Password = emp.Password, _Role = emp.Role }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -576,7 +576,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = extra.Type, Price = extra.Price }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { _Type = extra.Type, _Price = extra.Price }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -584,7 +584,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { _Type = pizza.Type, _Price = pizza.Price, _PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -592,7 +592,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingCondimentID, new { CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingCondimentID, new { _CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
                 if (IDExists == true)
                     return true;
                 else
@@ -604,7 +604,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingPizzaID, new { PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingPizzaID, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
                 if (IDExists == true)
                     return true;
                 else
@@ -616,7 +616,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingProductID, new { ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingProductID, new { _ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
                 if (IDExists == true)
                     return true;
                 else
@@ -628,7 +628,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingID, new { UserID = ID }, commandType: CommandType.StoredProcedure)).First();
+                bool IDExists = (await connection.QueryAsync<bool>(storedProcedureToCheckForExistingID, new { _UserID = ID }, commandType: CommandType.StoredProcedure)).First();
                 if (IDExists == true)
                     return true;
                 else
@@ -640,14 +640,14 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { id = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
+                string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { _UserID = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
                 bool correctLogInCredentials = false;
                 string role = "";
 
                 if (passCheck == "true")
                 {
                     correctLogInCredentials = true;
-                    var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { id = ID }, commandType: CommandType.StoredProcedure);
+                    var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { _UserID = ID }, commandType: CommandType.StoredProcedure);
                     role = checkRole.First().Role;
                 }
 
@@ -659,7 +659,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { CondimentID = cond.CondimentID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Condiment>(storedProcedureToDeleteCondiment, new { _CondimentID = cond.CondimentID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -667,7 +667,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { _UserID = emp.UserID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -675,7 +675,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { _ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -683,7 +683,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { _PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -691,7 +691,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Condiment>(storedProcedureToGetIngredientFromSpecifikPizza, new { PizzaID = ID }, commandType: CommandType.StoredProcedure));
+                return (await connection.QueryAsync<Condiment>(storedProcedureToGetIngredientFromSpecifikPizza, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure));
             }
         }
 
@@ -731,7 +731,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { _CondimentID = ID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -739,7 +739,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = ID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { _UserID = ID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -747,7 +747,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { _ProductID = ID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -755,7 +755,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -763,7 +763,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { _CondimentID = cond.CondimentID, _Type = cond.Type, _Price = cond.Price, }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -771,7 +771,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { UserID = emp.UserID, Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Employee>(storedProcedureToUpdateEmployee, new { _UserID = emp.UserID, _Password = emp.Password, _Role = emp.Role }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -779,7 +779,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { _ProductID = extra.ProductID, _Type = extra.Type, _Price = extra.Price, }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -787,7 +787,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { _PizzaID = pizza.PizzaID, _Type = pizza.Type, _Price = pizza.Price, _PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -797,7 +797,7 @@ namespace BackendHandler
             {
                 foreach (var item in pizza.PizzaIngredients)
                 {
-                    await connection.QueryAsync(storedProcedureToAddCondimentToPizza, new { CondimentID = item.CondimentID, PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
+                    await connection.QueryAsync(storedProcedureToAddCondimentToPizza, new { _CondimentID = item.CondimentID, _PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
                 }
             }
         }
@@ -816,9 +816,9 @@ namespace BackendHandler
             {
                 return (await connection.QueryAsync<int>(storedProcedureToAddOrder, new
                 {
-                    PizzasJSON = JsonConvert.SerializeObject(order.PizzaList),
-                    ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList),
-                    OrderPrice = order.Price
+                    _PizzasJSON = JsonConvert.SerializeObject(order.PizzaList),
+                    _ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList),
+                    _OrderPrice = order.Price
                 },
                       commandType: CommandType.StoredProcedure)).First();
             }
@@ -828,7 +828,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Pizza>(storedProcedure, new { PizzaID = pizza.PizzaID, CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Pizza>(storedProcedure, new { _PizzaID = pizza.PizzaID, _CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -837,7 +837,7 @@ namespace BackendHandler
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
                 List<Order> Result = new List<Order>();
-                IEnumerable<(int, string, string, float, int)> SerializedOrders = (await connection.QueryAsync<(int, string, string, float, int)>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
+                IEnumerable<(int, string, string, float, int)> SerializedOrders = (await connection.QueryAsync<(int, string, string, float, int)>(storedProcedureToGetOrderByStatus, new { _Status = statusID }, commandType: CommandType.StoredProcedure));
                 foreach (var o in SerializedOrders)
                 {
                     Order CurrentOrder = new Order();
@@ -856,7 +856,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedure, new { EmployeeID = emp.UserID, OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Order>(storedProcedure, new { _EmployeeID = emp.UserID, _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -864,7 +864,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedure, new { OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Order>(storedProcedure, new { _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -872,7 +872,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Order>(storedProcedure, new { OrderID = ID }, commandType: CommandType.StoredProcedure)).First();
+                return (await connection.QueryAsync<Order>(storedProcedure, new { _OrderID = ID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -888,7 +888,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToDeleteOldOrder, new { OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Order>(storedProcedureToDeleteOldOrder, new { _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
     }
