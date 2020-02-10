@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using Dapper;
 using System.Threading.Tasks;
 using System.Threading;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CustomerTerminal
 {
@@ -44,7 +45,7 @@ namespace CustomerTerminal
         /// <summary>
         /// Load all items from database
         /// </summary>
-        public async static void PreloadAllLists()
+        public async static Task PreloadAllLists()
         {
             Products    = (await Rep.GetAllExtras()).ToList();
             Ingredients = (await Rep.GetAllCondiments()).ToList();
@@ -54,7 +55,8 @@ namespace CustomerTerminal
 
         static async Task Main(string[] args)
         {
-            PreloadAllLists(); // Populate lists from database before program loads
+            Console.WriteLine("Hämtar produkter. . .");
+            await PreloadAllLists();
 
             while (ProgramState.Running)
             {
@@ -185,11 +187,29 @@ namespace CustomerTerminal
                         break;
                     case ProgramState.PROGRAM_MENUES.PAYMENT_MENU:
                         {
+                            Console.Clear();
+                            int ID = await Rep.AddOrder(CurrentOrder);
+                            Random r = new Random();
+                            string Bar = "[                              ]\nBetalningen kontrolleras. . .";
+                            Console.WriteLine(Bar); Console.ForegroundColor = ConsoleColor.Yellow;
+                            for (int i = 1; i <= 30; i++)
+                            {
+                                Console.SetCursorPosition(i, 0);
+                                Console.Write("#");
+                                Thread.Sleep(r.Next(25, 250));
+                                Console.SetCursorPosition(33, 0);
+                                Console.Write(((((float)i + 1) / 31) * 100F).ToString("0.0") + "%");
+                            }
+                            Console.SetCursorPosition(0, 1);                   Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            Console.Write("Betalningen godkänd             "); Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write("\n\nTryck på valfri knapp för att se ditt kvitto");
+                            Console.ReadKey();
 
-                            int v = await Rep.AddOrder(CurrentOrder);
+                            CurrentOrder.OrderID = ID;
+                            Menus.DrawBeautifulReceipt(CurrentOrder);
                             Console.ReadKey();
                         }
-                        break;
+                        return;
                     default: ProgramState.Running = false; break;
                 }
             }
@@ -300,9 +320,10 @@ namespace CustomerTerminal
         /// Show all objects in a order
         /// </summary>
         /// <param name="o"></param>
-        public static void ShowOrder(Order o)
+        public static void ShowOrder(Order o, bool ShowOptions = true)
         {
             Console.Clear();
+            Console.WriteLine("Order ID: " + o.OrderID);
             float TotalPrice = 0;
             foreach (Pizza p in o.PizzaList)
             {
@@ -315,15 +336,53 @@ namespace CustomerTerminal
                 Console.WriteLine(" ~ " + ep.Type + " + " + ep.Price + " SEK");
             }
             o.Price = TotalPrice;
-            Console.WriteLine(" Summa ~ " + TotalPrice);
+            Console.WriteLine("\n Summa ~ " + TotalPrice);
 
-            Console.WriteLine();
-            Console.WriteLine(" 1: Ändra din order");
-            Console.WriteLine(" 2: Gå till betalning");
-            Console.ForegroundColor = ConsoleColor.DarkRed; Console.WriteLine(" 3: Gå tillbaka"); Console.ForegroundColor = ConsoleColor.White;
+            if (ShowOptions)
+            {
+                Console.WriteLine();
+                Console.WriteLine(" 1: Ändra din order");
+                Console.WriteLine(" 2: Gå till betalning");
+                Console.ForegroundColor = ConsoleColor.DarkRed; Console.WriteLine(" 3: Gå tillbaka"); Console.ForegroundColor = ConsoleColor.White;
+            }
         }
 
-        /* Menues for editing specific pizzas, products and orders
+        /// <summary>
+        /// Useless function that only takes up space
+        /// </summary>
+        /// <param name="o"></param>
+        public static void DrawBeautifulReceipt(Order o)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\tTony's pizzeria");
+            Console.WriteLine("     13454 Silkroad valley");
+            Console.WriteLine("\t  034-6839985");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine("\t  Ordernummer");
+            Console.WriteLine("\t      #" + o.OrderID);
+            Console.WriteLine("-------------------------------");
+            foreach (Pizza p in o.PizzaList) ShowPizza(p, false);
+            List<string> ToFormat = new List<string>();
+            foreach (Extra e in o.ExtraList) ToFormat.Add(e.Type + ":" + e.Price + " SEK");
+            Console.WriteLine();
+            Console.WriteLine();
+            foreach (string str in Helpers.Format(ToFormat.ToArray(), ':', ' ')) Console.WriteLine(str);
+            Console.WriteLine();
+            Console.WriteLine("Moms:  " + ((o.Price / 100F) * 12).ToString("0.00") + " SEK");
+            Console.WriteLine("Total: " + o.Price + " SEK");
+            Console.WriteLine();
+            Console.WriteLine("-------------------------------");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("     Tack för att du valde");
+            Console.WriteLine("        tony's pizzeria");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.ReadKey();
+        }
+
+        /* Menus for editing specific pizzas, products and orders
          * ref pizza to be changed
          * provide ingredients-list from wich to choose ingredients from
          * Also handles input
