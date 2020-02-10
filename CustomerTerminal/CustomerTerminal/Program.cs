@@ -96,6 +96,7 @@ namespace CustomerTerminal
                                     CurrentPizza = new Pizza()
                                     {
                                         PizzabaseID = Pizzas[Choice - 1].PizzabaseID,
+                                        Pizzabase = Pizzas[Choice - 1].Pizzabase,
                                         PizzaIngredients = new List<Condiment>(Pizzas[Choice - 1].PizzaIngredients),
                                         StandardIngredientsDeffinition = new List<int>(Pizzas[Choice - 1].StandardIngredientsDeffinition),
                                         Type = Pizzas[Choice - 1].Type,
