@@ -1,8 +1,0 @@
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.deps.json
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.dll
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.pdb
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.csprojAssemblyReference.cache
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.AssemblyInfoInputs.cache
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.AssemblyInfo.cs
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.dll
-C:\Users\jutsu\source\repos\BagarTerminal\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.pdb
