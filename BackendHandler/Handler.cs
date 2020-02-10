@@ -275,8 +275,11 @@ namespace BackendHandler
         public async Task<Pizza> GetSinglePizza(int id, string storedProcedureToShowSinglePizza = "GetSpecificPizza")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First(); 
+            {
+                Pizza newPizza = new Pizza();
+                newPizza = (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure)).First();
+                newPizza.PizzaIngredients = (await connection.QueryAsync<Condiment>("GetIngredientsFromSpecificPizza", new { PizzaID = id }, commandType: CommandType.StoredProcedure)).ToList();
+                return newPizza;
             }
         }
 
@@ -636,19 +639,18 @@ namespace BackendHandler
             }
         }
 
-        public async Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedureToCheckLogin = "CheckPassword", string storedProcedureToCheckRole = "CheckRole")
+        public async Task<(bool, string)> CheckUserIdAndPassword(int ID, string password, string storedProcedureToCheckLogin = "checkpassword", string storedProcedureToCheckRole = "checkrole")
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                string passCheck = (await connection.QueryAsync<string>(storedProcedureToCheckLogin, new { _UserID = ID, pass = password }, commandType: CommandType.StoredProcedure)).First();
+                bool passCheck = (await connection.QueryAsync<bool>(storedProcedureToCheckLogin, new { _UserID = ID, _Password = password }, commandType: CommandType.StoredProcedure)).First();
                 bool correctLogInCredentials = false;
                 string role = "";
 
-                if (passCheck == "true")
+                if (passCheck == true)
                 {
                     correctLogInCredentials = true;
-                    var checkRole = await connection.QueryAsync<Employee>(storedProcedureToCheckRole, new { _UserID = ID }, commandType: CommandType.StoredProcedure);
-                    role = checkRole.First().Role;
+                    role = (await connection.QueryAsync<string>(storedProcedureToCheckRole, new { _UserID = ID }, commandType: CommandType.StoredProcedure)).First();                  
                 }
 
                 return (correctLogInCredentials, role);
@@ -755,7 +757,10 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+                Pizza newPizza = new Pizza();           
+                newPizza = (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
+                newPizza.PizzaIngredients = (await connection.QueryAsync<Condiment>("getingredientsfromspecificpizza", new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).ToList();
+                return newPizza;
             }
         }
 

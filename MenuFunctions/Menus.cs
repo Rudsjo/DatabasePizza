@@ -74,6 +74,7 @@ namespace MenuFunctions
         }
         public static async Task<(bool, Employee)> PrintAndReturnStateOfLogin(IDatabase database, string roleToCheck)
         {
+            start:
             #region Variables
             int userID;
             string password = "", GetRole = "";
@@ -98,17 +99,17 @@ namespace MenuFunctions
             }
 
             // Kontrollerar om angivet ID och lösenord finns matchat i databasen
-            bool CheckForCorrectCredentials = (await database.CheckUserIdAndPassword(userID, password, "CheckPassword")).Item1;
+            bool CheckForCorrectCredentials = (await database.CheckUserIdAndPassword(userID, password)).Item1;
 
             if (CheckForCorrectCredentials == true)
             {
                 // Om inloggning lyckas så kontrolleras den anställdes roll för att se om denne är admin och således har access
-                GetRole = (await database.CheckUserIdAndPassword(userID, password, "CheckPassword")).Item2;
+                GetRole = (await database.CheckUserIdAndPassword(userID, password)).Item2;
             }
             else
             {
                 await MessageIfChoiceIsNotRight("AnvändarID eller lösenord är felaktigt. Försök igen.");
-                return (false, null);
+                goto start;             
             }
 
             
@@ -400,11 +401,17 @@ namespace MenuFunctions
             }
 
             string chosenCondiment = await Menus.ReadLineWithOptionToGoBack();
-            if(chosenCondiment == null) { return condimentsToNewPizza; }
+            if(chosenCondiment == null) { return condimentsToNewPizza; }           
             else
             {
                 bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
-                if(correctInput == true && confirmedChosenCondiment == 0 && condimentsToNewPizza.Count > 0)
+                bool checkIfIDExists = await database.CheckIfCondimentIDExists(confirmedChosenCondiment);
+                if(checkIfIDExists == false)
+                {
+                    await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning");
+                    goto start;
+                }
+                if (correctInput == true && confirmedChosenCondiment == 0 && condimentsToNewPizza.Count > 0)
                 {
                     return condimentsToNewPizza;
                 }
@@ -612,7 +619,7 @@ namespace MenuFunctions
             Console.Write("Ange namnet på ingrediensen: ");
             string newCondimentName = await Menus.ReadLineWithOptionToGoBack();
             if(newCondimentName == null) { return newCondiment = null; } // Satt värdet till null för att inte programmet ska krasha vid esc
-            else if(newCondimentName.Length < 1 || !Regex.IsMatch(newCondimentName, @"^[a-öA-Ö]+$"))
+            else if(newCondimentName.Length < 1 || !Regex.IsMatch(newCondimentName, @"^[a-öA-Ö\s]+$"))
             {
                 await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning.");
                 goto start;

@@ -67,10 +67,11 @@ namespace Administrator
                     #region // Case: Login
                     case ProgramState.PROGRAM_MENUES.LOGIN_SCREEN:
                         {
+                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
                             Console.Clear();
                             Console.WriteLine("~ VÄLKOMMEN TILL ADMINPANELEN ~");
                             bool CorrectLogin = (await Menus.PrintAndReturnStateOfLogin(rep, "admin")).Item1;
-                            CorrectLogin = true;
+                            
                             if (CorrectLogin == true)
                             {
                                 ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.MAIN_MENU;
@@ -266,6 +267,7 @@ namespace Administrator
                                         Console.Clear();
                                         Pizza pizzaToBeUpdated = new Pizza();
                                         pizzaToBeUpdated = await rep.GetSinglePizza(IDOfPizzaToBeUpdated);
+                                        
                                         pizzaToBeUpdated = await Menus.UpdatePizzaMenu(rep, pizzaToBeUpdated);
 
                                         if(pizzaToBeUpdated.PizzabaseID == 0 || pizzaToBeUpdated.PizzaIngredients == null || pizzaToBeUpdated.Type == null || pizzaToBeUpdated.Price == 0)
