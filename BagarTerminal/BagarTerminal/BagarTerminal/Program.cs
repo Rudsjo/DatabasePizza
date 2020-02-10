@@ -76,7 +76,11 @@ namespace BagarTerminal
                         listOfOrders = new List<Order>();
                         foreach (Order order in await rep.GetOrderByStatus(0)) //Lägger in alla betalda men ej tillagade ordrar i en lista.   
                         {
-                            listOfOrders.Add(order);
+                            if (order.PizzaList.Count >= 1)
+                            { 
+                                listOfOrders.Add(order);
+                            }
+                            
                         }
 
                         //Skriver ut Huvudmenyn och alla ordrar
