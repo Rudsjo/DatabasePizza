@@ -586,23 +586,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\pette\\.nuget\\packages\\": {},
+    "C:\\Users\\joxca\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pette\\Desktop\\GitTest\\LibraryOnGit\\DatabasePizza\\BackendHandler\\BackendHandler.csproj",
+      "projectUniqueName": "C:\\Users\\joxca\\OneDrive\\Skrivbord\\DatabasePizza\\BackendHandler\\BackendHandler.csproj",
       "projectName": "BackendHandler",
-      "projectPath": "C:\\Users\\pette\\Desktop\\GitTest\\LibraryOnGit\\DatabasePizza\\BackendHandler\\BackendHandler.csproj",
-      "packagesPath": "C:\\Users\\pette\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pette\\Desktop\\GitTest\\LibraryOnGit\\DatabasePizza\\BackendHandler\\obj\\",
+      "projectPath": "C:\\Users\\joxca\\OneDrive\\Skrivbord\\DatabasePizza\\BackendHandler\\BackendHandler.csproj",
+      "packagesPath": "C:\\Users\\joxca\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\joxca\\OneDrive\\Skrivbord\\DatabasePizza\\BackendHandler\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\pette\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\joxca\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -610,8 +610,8 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://www.myget.org/F/avalonia-ci/api/v2": {}
+        "http://myget.org/F/avalonia-ci/api/v2": {},
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {

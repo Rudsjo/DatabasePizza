@@ -6,3 +6,11 @@ C:\Users\pette\Desktop\GitTest\LibraryOnGit\DatabasePizza\BackendHandler\obj\Deb
 C:\Users\pette\Desktop\GitTest\LibraryOnGit\DatabasePizza\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.pdb
 C:\Users\pette\Desktop\GitTest\LibraryOnGit\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.dll
 C:\Users\pette\Desktop\GitTest\LibraryOnGit\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.pdb
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.deps.json
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.pdb
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.csprojAssemblyReference.cache
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.AssemblyInfoInputs.cache
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.AssemblyInfo.cs
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\BackendHandler\obj\Debug\netcoreapp3.1\BackendHandler.pdb

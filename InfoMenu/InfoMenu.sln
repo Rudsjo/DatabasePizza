@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfoMenu", "InfoMenu\InfoMe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendHandler", "..\BackendHandler\BackendHandler.csproj", "{AE0D7079-A7EA-4DEC-A28E-34DCDCA20640}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5D9538DA-BCCD-4A37-86B3-D1C45D7B44FA}"
+	ProjectSection(SolutionItems) = preProject
+		InfoMenu\bin\Debug\netcoreapp3.1\Backend.cfg = InfoMenu\bin\Debug\netcoreapp3.1\Backend.cfg
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
