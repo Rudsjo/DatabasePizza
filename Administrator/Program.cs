@@ -568,6 +568,8 @@ namespace Administrator
 
                             foreach (var order in result)
                             {
+                                Console.WriteLine();
+                                Console.WriteLine();
                                 Console.WriteLine($"ID: {order.OrderID} Pris: {order.Price}");
                                 Console.Write($"Pizzor: ");
 
