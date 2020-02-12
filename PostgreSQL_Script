@@ -1,0 +1,1368 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.1 (Debian 12.1-1.pgdg100+1)
+-- Dumped by pg_dump version 12.0
+
+-- Started on 2020-02-12 20:35:02
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 3032 (class 1262 OID 16394)
+-- Name: grupp5; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE grupp5 WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+
+
+ALTER DATABASE grupp5 OWNER TO postgres;
+
+\connect grupp5
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 236 (class 1255 OID 17322)
+-- Name: addcondiment(character varying, double precision); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addcondiment("_Type" character varying, "_Price" double precision) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+            INSERT INTO "Condiments"("Type", "Price")
+            VALUES("_Type", "_Price");
+          END;
+      $$;
+
+
+ALTER FUNCTION public.addcondiment("_Type" character varying, "_Price" double precision) OWNER TO grupp5;
+
+--
+-- TOC entry 237 (class 1255 OID 17323)
+-- Name: addemployee(character varying, character varying); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addemployee("_Role" character varying, "_Password" character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+            INSERT INTO "Employees"("Role", "Password")
+            VALUES("_Role", "_Password");
+          END;
+      $$;
+
+
+ALTER FUNCTION public.addemployee("_Role" character varying, "_Password" character varying) OWNER TO grupp5;
+
+--
+-- TOC entry 220 (class 1255 OID 17324)
+-- Name: addextra(character varying, double precision); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addextra("_Type" character varying, "_Price" double precision) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+            INSERT INTO "Extra"("Type", "Price")
+            VALUES("_Type", "_Price");
+          END;
+      $$;
+
+
+ALTER FUNCTION public.addextra("_Type" character varying, "_Price" double precision) OWNER TO grupp5;
+
+--
+-- TOC entry 270 (class 1255 OID 18238)
+-- Name: addorder(text, text, double precision); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addorder("_PizzasJSON" text, "_ExtrasJSON" text, "_OrderPrice" double precision) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+DECLARE neworderid integer;
+          BEGIN
+            INSERT INTO "Orders"("Pizzas", "Extras", "Price", "Status")
+            VALUES("_PizzasJSON", "_ExtrasJSON", "_OrderPrice", 0)
+			RETURNING "OrderID" INTO neworderid;
+			RETURN neworderid;
+          END;
+      $$;
+
+
+ALTER FUNCTION public.addorder("_PizzasJSON" text, "_ExtrasJSON" text, "_OrderPrice" double precision) OWNER TO grupp5;
+
+--
+-- TOC entry 243 (class 1255 OID 17408)
+-- Name: addpizza(text, double precision, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addpizza("_Type" text, "_Price" double precision, "_PizzabaseID" integer) RETURNS TABLE("PizzaID" integer, "Type" text, "Price" double precision, "PizzabaseID" integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+INSERT INTO "Pizzas" ("Type", "Price", "PizzabaseID")
+VALUES ("_Type", "_Price", "_PizzabaseID");
+RETURN QUERY SELECT "Pizzas"."PizzaID", "Pizzas"."Type",
+					 "Pizzas"."Price", "Pizzas"."PizzabaseID" FROM "Pizzas"
+					 WHERE "Pizzas"."Type" = "_Type";
+END;
+$$;
+
+
+ALTER FUNCTION public.addpizza("_Type" text, "_Price" double precision, "_PizzabaseID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 250 (class 1255 OID 17613)
+-- Name: addstandardcondimenttopizza(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.addstandardcondimenttopizza("_PizzaID" integer, "_CondimentID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+	INSERT INTO "StandardIngredientsRelationships"("PizzaID", "CondimentID")
+	VALUES ("_PizzaID", "_CondimentID");
+END;
+$$;
+
+
+ALTER FUNCTION public.addstandardcondimenttopizza("_PizzaID" integer, "_CondimentID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 248 (class 1255 OID 17617)
+-- Name: bakercancellingcooking(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.bakercancellingcooking("_UserID" integer, "_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+		DELETE FROM "BakerOrdersRelationship" 
+		WHERE "Employees"."UserID" = "_UserID" AND "Orders"."OrderID" = "_OrderID";
+
+		UPDATE "Orders"
+		SET "Status" = 0
+		WHERE "OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.bakercancellingcooking("_UserID" integer, "_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 253 (class 1255 OID 17621)
+-- Name: bakerchoosingordertocook(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.bakerchoosingordertocook("_UserID" integer, "_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+	INSERT INTO "BakerOrdersRelationship" ("UserID", "OrderID")
+	SELECT "Employees"."UserID", "Orders"."OrderID"
+	FROM "Employees", "Orders"
+	WHERE "Orders"."OrderID" = "_OrderID" 
+	and "Orders"."Status" = 0 
+	and "Employees"."UserID" = "_UserID" 
+	and ("Employees"."Role" = 'bagare' 
+		 or "Employees"."Role" = 'admin');
+
+	UPDATE "Orders" 
+	SET "Status" = 1
+	WHERE "OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.bakerchoosingordertocook("_UserID" integer, "_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 251 (class 1255 OID 17638)
+-- Name: cashiercancellingorder(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.cashiercancellingorder("_UserID" integer, "_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+		DELETE FROM "CashierOrdersRelationship" 
+		WHERE "Employees"."UserID" = "_UserID" 
+			AND "Orders"."OrderID" = "_OrderID";
+
+		UPDATE "Orders"
+		SET "Orders"."Status" = 0
+		WHERE "Orders"."OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.cashiercancellingorder("_UserID" integer, "_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 244 (class 1255 OID 17469)
+-- Name: checkforexistingcondimentid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkforexistingcondimentid("_CondimentID" integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF EXISTS(SELECT "Condiments"."CondimentID" FROM "Condiments" WHERE "Condiments"."CondimentID" = "_CondimentID")
+		THEN RETURN 'true' AS IDExists;
+	ELSE
+		RETURN 'false' AS IDExists;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.checkforexistingcondimentid("_CondimentID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 245 (class 1255 OID 17483)
+-- Name: checkforexistingid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkforexistingid("_UserID" integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF EXISTS(SELECT "Employees"."UserID" FROM "Employees" WHERE "Employees"."UserID" = "_UserID")
+		THEN RETURN 'true' AS IDExists;
+	ELSE
+		RETURN 'false' AS IDExists;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.checkforexistingid("_UserID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 246 (class 1255 OID 17485)
+-- Name: checkforexistingpizzaid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkforexistingpizzaid("_PizzaID" integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF EXISTS(SELECT "Pizzas"."PizzaID" FROM "Pizzas" WHERE "Pizzas"."PizzaID" = "_PizzaID")
+		THEN RETURN 'true' AS IDExists;
+	ELSE
+		RETURN 'false' AS IDExists;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.checkforexistingpizzaid("_PizzaID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 247 (class 1255 OID 17494)
+-- Name: checkforexistingproductid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkforexistingproductid("_ProductID" integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF EXISTS(SELECT "Extra"."ProductID" FROM "Extra" WHERE "Extra"."ProductID" = "_ProductID")
+		THEN RETURN 'true' AS IDExists;
+	ELSE
+		RETURN 'false' AS IDExists;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.checkforexistingproductid("_ProductID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 267 (class 1255 OID 17903)
+-- Name: checkpassword(integer, text); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkpassword("_UserID" integer, "_Password" text) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF (EXISTS(SELECT * FROM "Employees" 
+			  WHERE "UserID" = "_UserID" AND "Password" = "_Password"))
+		THEN RETURN true;
+	ELSE
+		RETURN false;
+	END IF;
+END;
+$$;
+
+
+ALTER FUNCTION public.checkpassword("_UserID" integer, "_Password" text) OWNER TO grupp5;
+
+--
+-- TOC entry 268 (class 1255 OID 17910)
+-- Name: checkrole(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.checkrole("_UserID" integer) RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	RETURN "Role"
+	FROM "Employees"
+	WHERE "UserID" = "_UserID";
+END;
+$$;
+
+
+ALTER FUNCTION public.checkrole("_UserID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 238 (class 1255 OID 17327)
+-- Name: deletecondimentbyid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deletecondimentbyid("_CondimentID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM "Condiments" 
+	WHERE "Condiments"."CondimentID" = "_CondimentID";
+	
+END;
+$$;
+
+
+ALTER FUNCTION public.deletecondimentbyid("_CondimentID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 261 (class 1255 OID 17615)
+-- Name: deletecondimentfrompizza(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deletecondimentfrompizza("_PizzaID" integer, "_CondimentID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+DELETE FROM "StandardIngredientsRelationships"
+WHERE "StandardIngredientsRelationships"."PizzaID" = "_PizzaID" 
+AND "StandardIngredientsRelationships"."CondimentID" = "_CondimentID";
+END;
+$$;
+
+
+ALTER FUNCTION public.deletecondimentfrompizza("_PizzaID" integer, "_CondimentID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 239 (class 1255 OID 17328)
+-- Name: deleteemployeebyid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deleteemployeebyid("_UserID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM "Employees" 
+	WHERE "Employees"."UserID" = "_UserID";
+	
+END;
+$$;
+
+
+ALTER FUNCTION public.deleteemployeebyid("_UserID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 240 (class 1255 OID 17329)
+-- Name: deleteextrabyid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deleteextrabyid("_ProductID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM "Extra" 
+	WHERE "Extra"."ProductID" = "_ProductID";
+	
+END;
+$$;
+
+
+ALTER FUNCTION public.deleteextrabyid("_ProductID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 241 (class 1255 OID 17330)
+-- Name: deleteoldorderbyid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deleteoldorderbyid("_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM "Orders" 
+	WHERE "Orders"."OrderID" = "_OrderID" AND "Orders"."Status" = 3;
+	
+END;
+$$;
+
+
+ALTER FUNCTION public.deleteoldorderbyid("_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 242 (class 1255 OID 17357)
+-- Name: deletepizzabyid(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.deletepizzabyid("_PizzaID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	DELETE FROM "Pizzas" 
+	WHERE "Pizzas"."PizzaID" = "_PizzaID";
+	
+END;
+$$;
+
+
+ALTER FUNCTION public.deletepizzabyid("_PizzaID" integer) OWNER TO grupp5;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 205 (class 1259 OID 17031)
+-- Name: Condiments; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Condiments" (
+    "CondimentID" integer NOT NULL,
+    "Type" text NOT NULL,
+    "Price" double precision NOT NULL
+);
+
+
+ALTER TABLE public."Condiments" OWNER TO grupp5;
+
+--
+-- TOC entry 221 (class 1255 OID 17222)
+-- Name: getallcondiments(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallcondiments() RETURNS SETOF public."Condiments"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Condiments";
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallcondiments() OWNER TO grupp5;
+
+--
+-- TOC entry 203 (class 1259 OID 17020)
+-- Name: Employees; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Employees" (
+    "UserID" integer NOT NULL,
+    "Password" text NOT NULL,
+    "Role" text NOT NULL
+);
+
+
+ALTER TABLE public."Employees" OWNER TO grupp5;
+
+--
+-- TOC entry 222 (class 1255 OID 17241)
+-- Name: getallemployees(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallemployees() RETURNS SETOF public."Employees"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Employees";
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallemployees() OWNER TO grupp5;
+
+--
+-- TOC entry 211 (class 1259 OID 17064)
+-- Name: Extra; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Extra" (
+    "ProductID" integer NOT NULL,
+    "Type" text NOT NULL,
+    "Price" double precision NOT NULL
+);
+
+
+ALTER TABLE public."Extra" OWNER TO grupp5;
+
+--
+-- TOC entry 223 (class 1255 OID 17224)
+-- Name: getallextras(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallextras() RETURNS SETOF public."Extra"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Extra";
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallextras() OWNER TO grupp5;
+
+--
+-- TOC entry 213 (class 1259 OID 17075)
+-- Name: Orders; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Orders" (
+    "OrderID" integer NOT NULL,
+    "Pizzas" text NOT NULL,
+    "Extras" text NOT NULL,
+    "Price" double precision NOT NULL,
+    "Status" integer NOT NULL
+);
+
+
+ALTER TABLE public."Orders" OWNER TO grupp5;
+
+--
+-- TOC entry 217 (class 1255 OID 17262)
+-- Name: getallorders(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallorders() RETURNS SETOF public."Orders"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Orders";
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallorders() OWNER TO grupp5;
+
+--
+-- TOC entry 218 (class 1255 OID 17263)
+-- Name: getallpendingorders(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallpendingorders() RETURNS SETOF public."Orders"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Orders" WHERE "Status" = 0;
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallpendingorders() OWNER TO grupp5;
+
+--
+-- TOC entry 209 (class 1259 OID 17053)
+-- Name: Pizzabase; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Pizzabase" (
+    "PizzabaseID" integer NOT NULL,
+    "Type" text NOT NULL
+);
+
+
+ALTER TABLE public."Pizzabase" OWNER TO grupp5;
+
+--
+-- TOC entry 219 (class 1255 OID 17264)
+-- Name: getallpizzabases(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallpizzabases() RETURNS SETOF public."Pizzabase"
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT * FROM "Pizzabase";
+          END;
+      $$;
+
+
+ALTER FUNCTION public.getallpizzabases() OWNER TO grupp5;
+
+--
+-- TOC entry 269 (class 1255 OID 18228)
+-- Name: getallpizzas(); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getallpizzas() RETURNS TABLE("PizzaID" integer, "Type" text, "Price" double precision, "PizzabaseID" integer, "Pizzabase" text)
+    LANGUAGE plpgsql
+    AS $$
+          BEGIN
+		  RETURN QUERY
+		  SELECT "Pizzas"."PizzaID", "Pizzas"."Type", "Pizzas"."Price", "Pizzas"."PizzabaseID","Pizzabase"."Type" 
+		  AS "Pizzabase"
+		  FROM "Pizzas", "Pizzabase"
+		  WHERE "Pizzas"."PizzabaseID" = "Pizzabase"."PizzabaseID";
+      END;
+      $$;
+
+
+ALTER FUNCTION public.getallpizzas() OWNER TO grupp5;
+
+--
+-- TOC entry 249 (class 1255 OID 17612)
+-- Name: getingredientsfromspecificpizza(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getingredientsfromspecificpizza("_PizzaID" integer) RETURNS TABLE("CondimentID" integer, "Type" text, "Price" double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	RETURN QUERY
+	SELECT "Condiments"."CondimentID", "Condiments"."Type", "Condiments"."Price"
+	FROM "Condiments", "StandardIngredientsRelationships"
+	WHERE "Condiments"."CondimentID" = "StandardIngredientsRelationships"."CondimentID" 
+	AND "StandardIngredientsRelationships"."PizzaID" = "_PizzaID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getingredientsfromspecificpizza("_PizzaID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 271 (class 1255 OID 18279)
+-- Name: getorderbystatus(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getorderbystatus("_Status" integer) RETURNS TABLE("OrderID" integer, "Pizzas" text, "Extras" text, "Price" double precision, "Status" integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Orders"
+WHERE "Orders"."Status" = "_Status";
+END;
+$$;
+
+
+ALTER FUNCTION public.getorderbystatus("_Status" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 262 (class 1255 OID 17630)
+-- Name: getsinglecondiment(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsinglecondiment("_CondimentID" integer) RETURNS TABLE("CondimentID" integer, "Type" text, "Price" double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Condiments"
+WHERE "Condiments"."CondimentID" = "_CondimentID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsinglecondiment("_CondimentID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 257 (class 1255 OID 17503)
+-- Name: getsingleemployee(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsingleemployee("_UserID" integer) RETURNS TABLE("UserID" integer, "Password" text, "Role" text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Employees"
+WHERE "Employees"."UserID" = "_UserID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsingleemployee("_UserID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 258 (class 1255 OID 17504)
+-- Name: getsingleextra(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsingleextra("_ProductID" integer) RETURNS TABLE("ProductID" integer, "Type" text, "Price" double precision)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Extra"
+WHERE "Extra"."ProductID" = "_ProductID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsingleextra("_ProductID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 256 (class 1255 OID 17502)
+-- Name: getsinglemployee(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsinglemployee("_UserID" integer) RETURNS TABLE("UserID" integer, "Role" text, "Password" text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Employees"
+WHERE "Employees"."UserID" = "_UserID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsinglemployee("_UserID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 259 (class 1255 OID 17507)
+-- Name: getsingleorder(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsingleorder("_OrderID" integer) RETURNS TABLE("OrderID" integer, "Pizzas" json, "Extras" json, "Price" double precision, "Status" integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Orders"
+WHERE "Orders"."OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsingleorder("_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 260 (class 1255 OID 17508)
+-- Name: getsinglepizza(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getsinglepizza("_PizzaID" integer) RETURNS TABLE("PizzaID" integer, "Type" text, "Price" double precision, "PizzabaseID" integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+RETURN QUERY
+SELECT * FROM "Pizzas"
+WHERE "Pizzas"."PizzaID" = "_PizzaID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getsinglepizza("_PizzaID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 252 (class 1255 OID 17662)
+-- Name: getspecificpizza(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.getspecificpizza("_PizzaID" integer) RETURNS TABLE("PizzaID" integer, "Type" text, "Price" double precision, "PizzabaseID" integer, "PizzabaseType" text)
+    LANGUAGE plpgsql
+    AS $$ 
+BEGIN
+		RETURN QUERY
+		SELECT "Pizzas"."PizzaID",
+				"Pizzas"."Type",
+				"Pizzas"."Price",
+				"Pizzas"."PizzabaseID",
+				"Pizzabase"."Type" AS "Pizzabase"
+		FROM "Pizzas", "Pizzabase"
+		WHERE "Pizzabase"."PizzabaseID" = "Pizzas"."PizzabaseID"
+			AND "Pizzas"."PizzaID" = "_PizzaID";
+END;
+$$;
+
+
+ALTER FUNCTION public.getspecificpizza("_PizzaID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 266 (class 1255 OID 17845)
+-- Name: updatecondimentbyid(integer, text, double precision); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updatecondimentbyid("_CondimentID" integer, "_Type" text, "_Price" double precision) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE "Condiments"
+	SET 
+	"Type" = "_Type",
+	"Price" = "_Price"
+	WHERE "Condiments"."CondimentID" = "_CondimentID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updatecondimentbyid("_CondimentID" integer, "_Type" text, "_Price" double precision) OWNER TO grupp5;
+
+--
+-- TOC entry 265 (class 1255 OID 17844)
+-- Name: updateemployeebyid(integer, text, text); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updateemployeebyid("_UserID" integer, "_Password" text, "_Role" text) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE "Employees"
+	SET 
+	"Password" = "_Password",
+	"Role" = "_Role"
+	WHERE "Employees"."UserID" = "_UserID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updateemployeebyid("_UserID" integer, "_Password" text, "_Role" text) OWNER TO grupp5;
+
+--
+-- TOC entry 264 (class 1255 OID 17843)
+-- Name: updateextrabyid(integer, text, double precision); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updateextrabyid("_ProductID" integer, "_Type" text, "_Price" double precision) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE "Extra"
+	SET 
+	"Type" = "_Type",
+	"Price" = "_Price"
+	WHERE "Extra"."ProductID" = "_ProductID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updateextrabyid("_ProductID" integer, "_Type" text, "_Price" double precision) OWNER TO grupp5;
+
+--
+-- TOC entry 255 (class 1255 OID 17544)
+-- Name: updateorderstatuswhenorderiscooked(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updateorderstatuswhenorderiscooked("_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE "Orders"
+	SET "Status" = 2
+	WHERE "OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updateorderstatuswhenorderiscooked("_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 254 (class 1255 OID 17545)
+-- Name: updateorderstatuswhenorderisserved(integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updateorderstatuswhenorderisserved("_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE Orders
+	SET "Status" = 3
+	WHERE "OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updateorderstatuswhenorderisserved("_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 272 (class 1255 OID 18288)
+-- Name: updateorderstatuswhenorderisserved(integer, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updateorderstatuswhenorderisserved("_EmployeeID" integer, "_OrderID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+		INSERT INTO "CashierOrdersRelationship"("UserID", "OrderID")
+		SELECT "Employees"."UserID", "Orders"."OrderID"
+		FROM "Employees", "Orders"
+		WHERE "Orders"."OrderID" = "_OrderID" and "Orders"."Status" = 2 
+		and "Employees"."UserID" = "_EmployeeID" and ("Employees"."Role" = 'kassör' 
+													  or "Employees"."Role" = 'admin');
+
+		UPDATE "Orders"
+		SET "Status" = 3
+		WHERE "OrderID" = "_OrderID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updateorderstatuswhenorderisserved("_EmployeeID" integer, "_OrderID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 263 (class 1255 OID 17762)
+-- Name: updatepizzabyid(integer, text, double precision, integer); Type: FUNCTION; Schema: public; Owner: grupp5
+--
+
+CREATE FUNCTION public.updatepizzabyid("_PizzaID" integer, "_Type" text, "_Price" double precision, "_PizzabaseID" integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE "Pizzas"
+	SET 
+	"Type" = "_Type",
+	"Price" = "_Price",
+	"PizzabaseID" = "_PizzabaseID"
+	WHERE "Pizzas"."PizzaID" = "_PizzaID";
+END;
+$$;
+
+
+ALTER FUNCTION public.updatepizzabyid("_PizzaID" integer, "_Type" text, "_Price" double precision, "_PizzabaseID" integer) OWNER TO grupp5;
+
+--
+-- TOC entry 216 (class 1259 OID 17395)
+-- Name: BakerOrdersRelationship; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."BakerOrdersRelationship" (
+    "UserID" integer,
+    "OrderID" integer
+);
+
+
+ALTER TABLE public."BakerOrdersRelationship" OWNER TO grupp5;
+
+--
+-- TOC entry 215 (class 1259 OID 17376)
+-- Name: CashierOrdersRelationship; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."CashierOrdersRelationship" (
+    "UserID" integer,
+    "OrderID" integer
+);
+
+
+ALTER TABLE public."CashierOrdersRelationship" OWNER TO grupp5;
+
+--
+-- TOC entry 204 (class 1259 OID 17029)
+-- Name: Condiments_CondimentID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Condiments_CondimentID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Condiments_CondimentID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3034 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: Condiments_CondimentID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Condiments_CondimentID_seq" OWNED BY public."Condiments"."CondimentID";
+
+
+--
+-- TOC entry 202 (class 1259 OID 17018)
+-- Name: Employees_UserID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Employees_UserID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Employees_UserID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3035 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: Employees_UserID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Employees_UserID_seq" OWNED BY public."Employees"."UserID";
+
+
+--
+-- TOC entry 210 (class 1259 OID 17062)
+-- Name: Extra_ProductID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Extra_ProductID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Extra_ProductID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3036 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: Extra_ProductID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Extra_ProductID_seq" OWNED BY public."Extra"."ProductID";
+
+
+--
+-- TOC entry 212 (class 1259 OID 17073)
+-- Name: Orders_OrderID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Orders_OrderID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Orders_OrderID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3037 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: Orders_OrderID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Orders_OrderID_seq" OWNED BY public."Orders"."OrderID";
+
+
+--
+-- TOC entry 208 (class 1259 OID 17051)
+-- Name: Pizzabase_PizzabaseID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Pizzabase_PizzabaseID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Pizzabase_PizzabaseID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3038 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: Pizzabase_PizzabaseID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Pizzabase_PizzabaseID_seq" OWNED BY public."Pizzabase"."PizzabaseID";
+
+
+--
+-- TOC entry 207 (class 1259 OID 17042)
+-- Name: Pizzas; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."Pizzas" (
+    "PizzaID" integer NOT NULL,
+    "Type" text NOT NULL,
+    "Price" double precision NOT NULL,
+    "PizzabaseID" integer NOT NULL
+);
+
+
+ALTER TABLE public."Pizzas" OWNER TO grupp5;
+
+--
+-- TOC entry 206 (class 1259 OID 17040)
+-- Name: Pizzas_PizzaID_seq; Type: SEQUENCE; Schema: public; Owner: grupp5
+--
+
+CREATE SEQUENCE public."Pizzas_PizzaID_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Pizzas_PizzaID_seq" OWNER TO grupp5;
+
+--
+-- TOC entry 3039 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: Pizzas_PizzaID_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: grupp5
+--
+
+ALTER SEQUENCE public."Pizzas_PizzaID_seq" OWNED BY public."Pizzas"."PizzaID";
+
+
+--
+-- TOC entry 214 (class 1259 OID 17344)
+-- Name: StandardIngredientsRelationships; Type: TABLE; Schema: public; Owner: grupp5
+--
+
+CREATE TABLE public."StandardIngredientsRelationships" (
+    "PizzaID" integer,
+    "CondimentID" integer
+);
+
+
+ALTER TABLE public."StandardIngredientsRelationships" OWNER TO grupp5;
+
+--
+-- TOC entry 2870 (class 2604 OID 17034)
+-- Name: Condiments CondimentID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Condiments" ALTER COLUMN "CondimentID" SET DEFAULT nextval('public."Condiments_CondimentID_seq"'::regclass);
+
+
+--
+-- TOC entry 2869 (class 2604 OID 17023)
+-- Name: Employees UserID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Employees" ALTER COLUMN "UserID" SET DEFAULT nextval('public."Employees_UserID_seq"'::regclass);
+
+
+--
+-- TOC entry 2873 (class 2604 OID 17067)
+-- Name: Extra ProductID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Extra" ALTER COLUMN "ProductID" SET DEFAULT nextval('public."Extra_ProductID_seq"'::regclass);
+
+
+--
+-- TOC entry 2874 (class 2604 OID 17078)
+-- Name: Orders OrderID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Orders" ALTER COLUMN "OrderID" SET DEFAULT nextval('public."Orders_OrderID_seq"'::regclass);
+
+
+--
+-- TOC entry 2872 (class 2604 OID 17056)
+-- Name: Pizzabase PizzabaseID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzabase" ALTER COLUMN "PizzabaseID" SET DEFAULT nextval('public."Pizzabase_PizzabaseID_seq"'::regclass);
+
+
+--
+-- TOC entry 2871 (class 2604 OID 17045)
+-- Name: Pizzas PizzaID; Type: DEFAULT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzas" ALTER COLUMN "PizzaID" SET DEFAULT nextval('public."Pizzas_PizzaID_seq"'::regclass);
+
+
+--
+-- TOC entry 2878 (class 2606 OID 17282)
+-- Name: Condiments Condiments_Type_key; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Condiments"
+    ADD CONSTRAINT "Condiments_Type_key" UNIQUE ("Type");
+
+
+--
+-- TOC entry 2880 (class 2606 OID 17039)
+-- Name: Condiments Condiments_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Condiments"
+    ADD CONSTRAINT "Condiments_pkey" PRIMARY KEY ("CondimentID");
+
+
+--
+-- TOC entry 2876 (class 2606 OID 17028)
+-- Name: Employees Employees_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Employees"
+    ADD CONSTRAINT "Employees_pkey" PRIMARY KEY ("UserID");
+
+
+--
+-- TOC entry 2890 (class 2606 OID 17284)
+-- Name: Extra Extra_Type_key; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Extra"
+    ADD CONSTRAINT "Extra_Type_key" UNIQUE ("Type");
+
+
+--
+-- TOC entry 2892 (class 2606 OID 17072)
+-- Name: Extra Extra_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Extra"
+    ADD CONSTRAINT "Extra_pkey" PRIMARY KEY ("ProductID");
+
+
+--
+-- TOC entry 2894 (class 2606 OID 17083)
+-- Name: Orders Orders_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Orders"
+    ADD CONSTRAINT "Orders_pkey" PRIMARY KEY ("OrderID");
+
+
+--
+-- TOC entry 2886 (class 2606 OID 17286)
+-- Name: Pizzabase Pizzabase_Type_key; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzabase"
+    ADD CONSTRAINT "Pizzabase_Type_key" UNIQUE ("Type");
+
+
+--
+-- TOC entry 2888 (class 2606 OID 17061)
+-- Name: Pizzabase Pizzabase_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzabase"
+    ADD CONSTRAINT "Pizzabase_pkey" PRIMARY KEY ("PizzabaseID");
+
+
+--
+-- TOC entry 2882 (class 2606 OID 17280)
+-- Name: Pizzas Pizzas_Type_key; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzas"
+    ADD CONSTRAINT "Pizzas_Type_key" UNIQUE ("Type");
+
+
+--
+-- TOC entry 2884 (class 2606 OID 17050)
+-- Name: Pizzas Pizzas_pkey; Type: CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."Pizzas"
+    ADD CONSTRAINT "Pizzas_pkey" PRIMARY KEY ("PizzaID");
+
+
+--
+-- TOC entry 2900 (class 2606 OID 17403)
+-- Name: BakerOrdersRelationship BakerOrdersRelationship_OrderID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."BakerOrdersRelationship"
+    ADD CONSTRAINT "BakerOrdersRelationship_OrderID_fkey" FOREIGN KEY ("OrderID") REFERENCES public."Orders"("OrderID");
+
+
+--
+-- TOC entry 2899 (class 2606 OID 17398)
+-- Name: BakerOrdersRelationship BakerOrdersRelationship_UserID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."BakerOrdersRelationship"
+    ADD CONSTRAINT "BakerOrdersRelationship_UserID_fkey" FOREIGN KEY ("UserID") REFERENCES public."Employees"("UserID");
+
+
+--
+-- TOC entry 2898 (class 2606 OID 17384)
+-- Name: CashierOrdersRelationship CashierOrdersRelationship_OrderID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."CashierOrdersRelationship"
+    ADD CONSTRAINT "CashierOrdersRelationship_OrderID_fkey" FOREIGN KEY ("OrderID") REFERENCES public."Orders"("OrderID");
+
+
+--
+-- TOC entry 2897 (class 2606 OID 17379)
+-- Name: CashierOrdersRelationship CashierOrdersRelationship_UserID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."CashierOrdersRelationship"
+    ADD CONSTRAINT "CashierOrdersRelationship_UserID_fkey" FOREIGN KEY ("UserID") REFERENCES public."Employees"("UserID");
+
+
+--
+-- TOC entry 2896 (class 2606 OID 17352)
+-- Name: StandardIngredientsRelationships StandardIngredientsRelationships_CondimentID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."StandardIngredientsRelationships"
+    ADD CONSTRAINT "StandardIngredientsRelationships_CondimentID_fkey" FOREIGN KEY ("CondimentID") REFERENCES public."Condiments"("CondimentID") ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2895 (class 2606 OID 17347)
+-- Name: StandardIngredientsRelationships StandardIngredientsRelationships_PizzaID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: grupp5
+--
+
+ALTER TABLE ONLY public."StandardIngredientsRelationships"
+    ADD CONSTRAINT "StandardIngredientsRelationships_PizzaID_fkey" FOREIGN KEY ("PizzaID") REFERENCES public."Pizzas"("PizzaID") ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3033 (class 0 OID 0)
+-- Dependencies: 3032
+-- Name: DATABASE grupp5; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON DATABASE grupp5 TO grupp5;
+
+
+-- Completed on 2020-02-12 20:35:05
+
+--
+-- PostgreSQL database dump complete
+--
+
