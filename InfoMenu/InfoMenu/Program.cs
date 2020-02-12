@@ -5,6 +5,7 @@ using BackendHandler;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
+using MenuFunctions;
 
 namespace InfoMenu
 {
@@ -15,7 +16,7 @@ namespace InfoMenu
 
         static async Task Main(string[] args)
         {
-            rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => !s.StartsWith("#")));
+            rep = Helpers.GetSelectedBackend();
 
             await ShowMenuWithStatusCheck();
         }

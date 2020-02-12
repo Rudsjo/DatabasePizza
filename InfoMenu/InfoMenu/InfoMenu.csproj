@@ -7,11 +7,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BackendHandler\BackendHandler.csproj" />
+    <ProjectReference Include="..\..\MenuFunctions\MenuFunctions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="BackendHandler">
       <HintPath>..\..\BackendHandler\bin\Debug\netcoreapp3.1\BackendHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="MenuFunctions">
+      <HintPath>..\..\MenuFunctions\bin\Debug\netcoreapp3.1\MenuFunctions.dll</HintPath>
     </Reference>
   </ItemGroup>
 
