@@ -17,12 +17,8 @@ namespace InfoMenu
         {
             rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => !s.StartsWith("#")));
 
-
-            //await ShowMenu();
             await ShowMenuWithStatusCheck();
         }
-        
-
         public static async Task ShowMenuWithStatusCheck()
         {
             GetStatus paid = GetStatus.Paid;
