@@ -9,7 +9,6 @@ using System.Data.SqlClient;
 using Dapper;
 using System.Threading.Tasks;
 using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CustomerTerminal
 {
