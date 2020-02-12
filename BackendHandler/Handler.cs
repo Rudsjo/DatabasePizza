@@ -179,11 +179,13 @@ namespace BackendHandler
         public Task UpdateOrderStatusWhenOrderIsCooked(Order order, string storedProcedure = "UpdateOrderStatusWhenOrderIsCooked");
         public Task<Order> GetSingleOrder(int ID, string storedProcedure = "GetSingleOrder");
         public Task DeleteOldOrder(Order order, string storedProcedure = "DeleteOldOrderByID");
+        public Task BakerChoosingOrderToCook(Employee employee, Order order, string storedProcedure = "BakerChoosingOrderToCook");
+        public Task BakerCancellingCooking(Employee employee, Order order, string storedProcedure = "BakerCancellingCooking");
         #endregion
     }
 
     #region Backends
-    public class MSSQL      : IDatabase
+    public class MSSQL : IDatabase
     {
         /// <summary>
         /// Vi sätter connectionstring till fast värde och implementerar bara en tom constructor.
@@ -195,7 +197,7 @@ namespace BackendHandler
 
         //Vi är medvetna om att lösenordet ligger hårdkodat, men har val att inte åtgärda det i denna version. Nästa gång kommer lösenordet behövas skrivas in.
         private string ConnectionString = "Data Source = sql6009.site4now.net; Initial Catalog = DB_A53DDD_grupp5; User ID = DB_A53DDD_grupp5_admin; Password = grupp5pizza";
-        
+
         /*private SqlConnection connection { get; }
 
         public MSSQL()
@@ -210,22 +212,22 @@ namespace BackendHandler
         public async Task AddEmployee(Employee emp, string storedProcedureToAddEmployee = "AddEmployee")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure); 
+            {
+                await connection.QueryAsync<Employee>(storedProcedureToAddEmployee, new { Password = emp.Password, Role = emp.Role }, commandType: CommandType.StoredProcedure);
             }
         }
         public async Task<IEnumerable<Employee>> GetAllEmployees(string storedProcedureToShowEmployees = "GetAllEmployees")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
+            {
                 return (await connection.QueryAsync<Employee>(storedProcedureToShowEmployees, commandType: CommandType.StoredProcedure));
             }
         }
         public async Task<Employee> GetSingleEmployee(int id, string storedProcedureToShowSingleEmployee = "GetSingleEmployee")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First(); 
+            {
+                return (await connection.QueryAsync<Employee>(storedProcedureToShowSingleEmployee, new { UserID = id }, commandType: CommandType.StoredProcedure)).First();
             }
         }
         public async Task UpdateEmployee(Employee emp, string storedProcedureToUpdateEmployee = "UpdateEmployeeByID")
@@ -238,8 +240,8 @@ namespace BackendHandler
         public async Task DeleteEmployee(Employee emp, string storedProcedureToDeleteEmployee = "DeleteEmployeeByID")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure); 
+            {
+                await connection.QueryAsync<Employee>(storedProcedureToDeleteEmployee, new { UserID = emp.UserID }, commandType: CommandType.StoredProcedure);
             }
         }
         #endregion
@@ -248,8 +250,8 @@ namespace BackendHandler
         public async Task<Pizza> AddPizza(Pizza pizza, string storedProcedureToAddPizza = "AddPizza")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First(); 
+            {
+                return (await connection.QueryAsync<Pizza>(storedProcedureToAddPizza, new { Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -263,11 +265,11 @@ namespace BackendHandler
                 }
             }
         }
-        
+
         public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "GetAllPizzas")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
+            {
                 return (await connection.QueryAsync<Pizza>(storedProcedureToShowPizzas, commandType: CommandType.StoredProcedure));
             }
         }
@@ -287,37 +289,37 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Pizza>(storedProcedureToUpdatePizza, new { PizzaID = pizza.PizzaID, Type = pizza.Type, Price = pizza.Price, PizzabaseID = pizza.PizzabaseID }, commandType: CommandType.StoredProcedure);
             }
-        } 
+        }
 
         public async Task DeletePizza(Pizza pizza, string storedProcedureToDeletePizza = "DeletePizzaByID")
         {
 
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Pizza>(storedProcedureToDeletePizza, new { PizzaID = pizza.PizzaID }, commandType: CommandType.StoredProcedure);
             }
         }
         public async Task<IEnumerable<Condiment>> GetIngredientsFromSpecificPizza(int id, string storedProcedureToGetIngredientFromSpecifikPizza = "GetIngredientsFromSpecificPizza")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
+            {
                 return (await connection.QueryAsync<Condiment>(storedProcedureToGetIngredientFromSpecifikPizza, new { PizzaID = id }, commandType: CommandType.StoredProcedure));
             }
         }
         public async Task DeleteCondimentFromPizza(Pizza pizza, Condiment condiment, string storedProcedure = "DeleteCondimentFromPizza")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
+            {
                 await connection.QueryAsync<Pizza>(storedProcedure, new { PizzaID = pizza.PizzaID, CondimentID = condiment.CondimentID }, commandType: CommandType.StoredProcedure);
             }
         }
-        public async Task<IEnumerable<(int,string)>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
+        public async Task<IEnumerable<(int, string)>> GetAllPizzabases(string storedProcedure = "GetAllPizzabases")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                return ( await connection.QueryAsync<(int, string)>(storedProcedure, commandType: CommandType.StoredProcedure)); 
+                return (await connection.QueryAsync<(int, string)>(storedProcedure, commandType: CommandType.StoredProcedure));
             }
         }
         #endregion
@@ -329,12 +331,12 @@ namespace BackendHandler
             {
                 await connection.QueryAsync<Condiment>(storedProcedureToAddCondiment, new { Type = cond.Type, Price = cond.Price }, commandType: CommandType.StoredProcedure);
             }
-        } 
+        }
 
         public async Task<IEnumerable<Condiment>> GetAllCondiments(string storedProcedureToShowCondiment = "GetAllCondiments")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
+            {
                 return (await connection.QueryAsync<Condiment>(storedProcedureToShowCondiment, commandType: CommandType.StoredProcedure));
             }
         }
@@ -343,7 +345,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First(); 
+                return (await connection.QueryAsync<Condiment>(storedProcedureToShowSingleCondiment, new { CondimentID = id }, commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -351,7 +353,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure); 
+                await connection.QueryAsync<Condiment>(storedProcedureToUpdateCondiment, new { CondimentID = cond.CondimentID, Type = cond.Type, Price = cond.Price, }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -367,27 +369,27 @@ namespace BackendHandler
         #region Extras
         public async Task AddExtra(Extra extra, string storedProcedureToAddExtra = "AddExtra")
         {
-            using (IDbConnection connection = new SqlConnection(ConnectionString)) 
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
                 await connection.QueryAsync<Extra>(storedProcedureToAddExtra, new { Type = extra.Type, Price = extra.Price }, commandType: CommandType.StoredProcedure);
             }
-        } 
+        }
 
         public async Task<IEnumerable<Extra>> GetAllExtras(string storedProcedureToShowExtra = "GetAllExtras")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure)); 
+            {
+                return (await connection.QueryAsync<Extra>(storedProcedureToShowExtra, commandType: CommandType.StoredProcedure));
             }
         }
 
         public async Task<Extra> GetSingleExtra(int id, string storedProcedureToShowSingleExtra = "GetSingleExtra")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First(); 
+            {
+                return (await connection.QueryAsync<Extra>(storedProcedureToShowSingleExtra, new { ProductID = id }, commandType: CommandType.StoredProcedure)).First();
             }
-        } 
+        }
 
         public async Task UpdateExtra(Extra extra, string storedProcedureToUpdateExtra = "UpdateExtraByID")
         {
@@ -396,14 +398,14 @@ namespace BackendHandler
             {
                 await connection.QueryAsync<Extra>(storedProcedureToUpdateExtra, new { ProductID = extra.ProductID, Type = extra.Type, Price = extra.Price, }, commandType: CommandType.StoredProcedure);
             }
-        } 
+        }
 
         public async Task DeleteExtra(Extra extra, string storedProcedureToDeleteExtra = "DeleteExtraByID")
         {
 
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure); 
+            {
+                await connection.QueryAsync<Extra>(storedProcedureToDeleteExtra, new { ProductID = extra.ProductID }, commandType: CommandType.StoredProcedure);
             }
         }
         #endregion
@@ -486,18 +488,21 @@ namespace BackendHandler
         public async Task<IEnumerable<Order>> GetAllOrders(string storedProcedureToShowOrders = "GetAllOrders")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
-            { 
-                return (await connection.QueryAsync<Order>(storedProcedureToShowOrders, commandType: CommandType.StoredProcedure)); 
+            {
+                return (await connection.QueryAsync<Order>(storedProcedureToShowOrders, commandType: CommandType.StoredProcedure));
             }
         }
         public async Task<int> AddOrder(Order order, string storedProcedureToAddOrder = "AddOrder")
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                return (await connection.QueryAsync<int>(storedProcedureToAddOrder, new { PizzasJSON = JsonConvert.SerializeObject(order.PizzaList), 
-                                                                                          ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList), 
-                                                                                          OrderPrice  = order.Price }, 
-                      commandType: CommandType.StoredProcedure)).First(); 
+                return (await connection.QueryAsync<int>(storedProcedureToAddOrder, new
+                {
+                    PizzasJSON = JsonConvert.SerializeObject(order.PizzaList),
+                    ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList),
+                    OrderPrice = order.Price
+                },
+                      commandType: CommandType.StoredProcedure)).First();
             }
         }
         public async Task<IEnumerable<Order>> GetOrderByStatus(int statusID, string storedProcedureToGetOrderByStatus = "GetOrderByStatus")
@@ -506,14 +511,14 @@ namespace BackendHandler
             {
                 List<Order> Result = new List<Order>();
                 IEnumerable<(int, string, string, float, int)> SerializedOrders = (await connection.QueryAsync<(int, string, string, float, int)>(storedProcedureToGetOrderByStatus, new { Status = statusID }, commandType: CommandType.StoredProcedure));
-                foreach(var o in SerializedOrders) 
+                foreach (var o in SerializedOrders)
                 {
-                    Order CurrentOrder     = new Order();
-                    CurrentOrder.OrderID   = o.Item1;
+                    Order CurrentOrder = new Order();
+                    CurrentOrder.OrderID = o.Item1;
                     CurrentOrder.PizzaList = JsonConvert.DeserializeObject<List<Pizza>>(o.Item2);
                     CurrentOrder.ExtraList = JsonConvert.DeserializeObject<List<Extra>>(o.Item3);
-                    CurrentOrder.Price     = o.Item4;
-                    CurrentOrder.Status    = o.Item5;
+                    CurrentOrder.Price = o.Item4;
+                    CurrentOrder.Status = o.Item5;
                     Result.Add(CurrentOrder);
                 }
                 return Result;
@@ -548,15 +553,35 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new SqlConnection(ConnectionString))
             {
-                await connection.QueryAsync<Order>(storedProcedureToDeleteOldOrder, new { OrderID = order.OrderID}, commandType: CommandType.StoredProcedure);
+                await connection.QueryAsync<Order>(storedProcedureToDeleteOldOrder, new { OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task BakerChoosingOrderToCook(Employee employee, Order order, string storedProcedure = "BakerChoosingOrderToCook")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { EmployeeID = employee.UserID, OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task BakerCancellingCooking(Employee employee, Order order, string storedProcedure = "BakerCancellingCooking")
+        {
+            using (IDbConnection connection = new SqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { EmployeeID = employee.UserID, OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
         #endregion
     }
 
-
     public class PostgreSQL : IDatabase
     {
+        /// <summary>
+        /// Samma gäller här som för MSSQL Repository
+        /// Vi är medvetna om att detta kan skötas på ett snyggare och säkrare sätt 
+        /// men har valt detta för att spara tid och få allt att funka
+        /// </summary>
         private string ConnectionString = "Host=weboholics-demo.dyndns-ip.com;Port=5433;Username=grupp5;Password=grupp5;Database=grupp5";
 
         public async Task AddCondiment(Condiment cond, string storedProcedureToAddCondiment = "\"AddCondiment\"")
@@ -650,7 +675,7 @@ namespace BackendHandler
                 if (passCheck == true)
                 {
                     correctLogInCredentials = true;
-                    role = (await connection.QueryAsync<string>(storedProcedureToCheckRole, new { _UserID = ID }, commandType: CommandType.StoredProcedure)).First();                  
+                    role = (await connection.QueryAsync<string>(storedProcedureToCheckRole, new { _UserID = ID }, commandType: CommandType.StoredProcedure)).First();
                 }
 
                 return (correctLogInCredentials, role);
@@ -721,7 +746,7 @@ namespace BackendHandler
             }
         }
 
-        public async  Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "\"GetAllPizzas\"")
+        public async Task<IEnumerable<Pizza>> GetAllPizzas(string storedProcedureToShowPizzas = "\"GetAllPizzas\"")
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
@@ -757,7 +782,7 @@ namespace BackendHandler
         {
             using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
             {
-                Pizza newPizza = new Pizza();           
+                Pizza newPizza = new Pizza();
                 newPizza = (await connection.QueryAsync<Pizza>(storedProcedureToShowSinglePizza, new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).First();
                 newPizza.PizzaIngredients = (await connection.QueryAsync<Condiment>("getingredientsfromspecificpizza", new { _PizzaID = ID }, commandType: CommandType.StoredProcedure)).ToList();
                 return newPizza;
@@ -825,7 +850,7 @@ namespace BackendHandler
                     _ExtrasJSON = JsonConvert.SerializeObject(order.ExtraList),
                     _OrderPrice = order.Price
                 },
-                      commandType: CommandType.StoredProcedure)).First();
+                        commandType: CommandType.StoredProcedure)).First();
             }
         }
 
@@ -896,8 +921,27 @@ namespace BackendHandler
                 await connection.QueryAsync<Order>(storedProcedureToDeleteOldOrder, new { _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
             }
         }
-    }
-    #endregion
 
+        public async Task BakerChoosingOrderToCook(Employee employee, Order order, string storedProcedure = "BakerChoosingOrderToCook")
+        {
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { _EmployeeID = employee.UserID, _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+
+            }
+        }
+
+        public async Task BakerCancellingCooking(Employee employee, Order order, string storedProcedure = "BakerCancellingCooking")
+        {
+            using (IDbConnection connection = new NpgsqlConnection(ConnectionString))
+            {
+                await connection.QueryAsync<Order>(storedProcedure, new { _EmployeeID = employee.UserID, _OrderID = order.OrderID }, commandType: CommandType.StoredProcedure);
+
+            }
+        }
+        #endregion
+        }
+    
+    
 }
 
