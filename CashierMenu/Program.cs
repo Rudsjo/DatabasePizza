@@ -97,6 +97,7 @@ namespace CashierMenu
                                     {
                                         IDOfOrderToServe = ID;
                                         ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.CONFIRMATION_SCREEN;
+                                        break;
                                     }
                                     else if(order.ID == ordersReadyToServe.Last().ID && ID != order.ID)
                                     {
