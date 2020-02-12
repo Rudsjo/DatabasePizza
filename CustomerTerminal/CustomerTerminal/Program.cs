@@ -9,6 +9,8 @@ using System.Data.SqlClient;
 using Dapper;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
+using System.Reflection;
 
 namespace CustomerTerminal
 {
@@ -54,6 +56,8 @@ namespace CustomerTerminal
 
         static async Task Main(string[] args)
         {
+            ConfigfileProcessor.ValidateConfigFile();
+            return;
             Console.WriteLine("Hämtar produkter. . .");
             await PreloadAllLists();
 
@@ -604,6 +608,34 @@ namespace CustomerTerminal
                 else return true;
             }
             else return true;
+        }
+    }
+
+    public static class ConfigfileProcessor
+    {
+        /// <summary>
+        /// Readonly property that gets the configfile path
+        /// </summary>
+        public static string   ConfigfilePath   { get; } = "Configfile.cfg";
+        public static string[] Existingbackends { get; } = { "MSSQL", "PostgreSQL" };
+        public static string   StandardBackend  { get; } = "MSSQL";
+
+        /// <summary>
+        /// Check if config-file exist and constains valid data
+        /// </summary>
+        public static void ValidateConfigFile()
+        {
+            if (!File.Exists(ConfigfilePath)) { using (File.Create(ConfigfilePath)) { } }
+
+            if(File.ReadAllLines(ConfigfilePath).Where(s => !s.StartsWith("#") && !String.IsNullOrEmpty(s)).Count() == 0 ||
+               File.ReadAllLines(ConfigfilePath).Where(s => !s.StartsWith("#") && !String.IsNullOrEmpty(s)).Count() > 1  ||
+               File.ReadAllLines(ConfigfilePath).Count() != Existingbackends.Count())
+            {
+                string[] Commented = new string[Existingbackends.Length];
+                for (int i = 0; i < Existingbackends.Count(); i++) Commented[i] = (Existingbackends[i].Equals(StandardBackend)) ? Existingbackends[i] : "#" + Existingbackends[i];
+                File.WriteAllLines(ConfigfilePath, Commented);
+            }
+
         }
     }
 }
