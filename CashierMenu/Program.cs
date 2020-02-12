@@ -45,7 +45,6 @@ namespace CashierMenu
                 {
                     case ProgramState.PROGRAM_MENUES.LOGIN_SCREEN:
                         {
-                        start:
                             Console.Clear();
                             Console.WriteLine("~ VÄLKOMMEN ATT LOGGA IN FÖR DELA UT FÄRDIGA ORDRAR ~");
                             var loginInItems = await Menus.PrintAndReturnStateOfLogin(rep, "kassör");
@@ -57,10 +56,12 @@ namespace CashierMenu
                         break;
                     case ProgramState.PROGRAM_MENUES.ORDERS_SCREEN:
                         {
+                            start:
                             Console.Clear();
-                            Console.WriteLine("Följande ordrar är redo för servering:");
+                            Console.WriteLine("Följande ordrar är redo för servering:\n");
 
                             var allOrders = await rep.GetAllOrders();    // hämtar alla order i databasen
+                            int rowCounter = 1;
 
 
                             // går igenom alla ordrar och kontrollerar dess status. Om status är 2 (redo att servera) så läggs den in i en IEnumerable kallad ordersReadyToServe
@@ -69,34 +70,42 @@ namespace CashierMenu
                             //sedan skrivs dessa ordrar ut
                             foreach (var readyOrders in ordersReadyToServe)
                             {
-                                Console.WriteLine(readyOrders.ID);
+                                if(rowCounter < 5)
+                                {
+                                    Console.Write($"{readyOrders.ID}, ");
+                                    rowCounter++;
+                                }
+                                else
+                                {
+                                    Console.Write($"{readyOrders.ID}, \n");
+                                    rowCounter = 0;
+                                }
+                                
                             }
 
-                            Console.WriteLine("\nKlicka på ESC för att logga ut.");
-                            Console.Write("\n\nAnge numret på den order som är redo att serveras: ");
+                            Console.WriteLine("\n\nKlicka på ESC för att logga ut.");
+                            Console.Write("\nAnge numret på den order som är redo att serveras: ");
                             string OrderToServe = await Menus.ReadLineWithOptionToGoBack();
 
                             if (OrderToServe == null) { ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.LOGIN_SCREEN; }
                             else
                             {
                                 bool correctInput = int.TryParse(OrderToServe, out int ID);
-                                if (correctInput == true)
+                                foreach (var order in ordersReadyToServe)
                                 {
-
-                                    foreach (var order in ordersReadyToServe)
+                                    if (correctInput == true && ID == order.ID)
                                     {
-                                        if (ID == order.ID)
-                                        {
-                                            IDOfOrderToServe = ID;
-                                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.CONFIRMATION_SCREEN;
-                                        }
-                                        else
-                                        {
-                                            await Menus.MessageIfChoiceIsNotRight("Den angivna ordern finns inte redo att serveras.");
-                                        }
+                                        IDOfOrderToServe = ID;
+                                        ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.CONFIRMATION_SCREEN;
                                     }
+                                    else if(order.ID == ordersReadyToServe.Last().ID && ID != order.ID)
+                                    {
+                                        await Menus.MessageIfChoiceIsNotRight("Den angivna ordern finns inte redo att serveras.");
+                                        goto start;
+                                    } 
                                 }
-                                else
+
+                                if(correctInput == false)
                                 {
                                     await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning.");
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.ORDERS_SCREEN;
