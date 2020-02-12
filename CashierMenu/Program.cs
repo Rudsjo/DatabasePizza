@@ -35,7 +35,7 @@ namespace CashierMenu
         static async Task Main(string[] args)
         {
             #region Read configfile and populate lists
-            rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => !s.StartsWith("#")));
+            rep = Helpers.GetSelectedBackend();
             #endregion
 
 
