@@ -401,19 +401,20 @@ namespace MenuFunctions
             }
 
             string chosenCondiment = await Menus.ReadLineWithOptionToGoBack();
-            if(chosenCondiment == null) { return condimentsToNewPizza; }           
+            if(chosenCondiment == null) { condimentsToNewPizza = null;  return condimentsToNewPizza; }           
             else
             {
                 bool correctInput = int.TryParse(chosenCondiment, out int confirmedChosenCondiment);
                 bool checkIfIDExists = await database.CheckIfCondimentIDExists(confirmedChosenCondiment);
-                if(checkIfIDExists == false)
-                {
-                    await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning");
-                    goto start;
-                }
+
                 if (correctInput == true && confirmedChosenCondiment == 0 && condimentsToNewPizza.Count > 0)
                 {
                     return condimentsToNewPizza;
+                }
+                else if(checkIfIDExists == false)
+                {
+                    await Menus.MessageIfChoiceIsNotRight("Felaktig inmatning");
+                    goto start;
                 }
                 else
                 {
