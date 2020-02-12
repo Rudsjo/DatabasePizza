@@ -1,0 +1,66 @@
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.exe
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.deps.json
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.json
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.dev.json
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.pdb
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.pdb
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csprojAssemblyReference.cache
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfoInputs.cache
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfo.cs
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csproj.CopyComplete
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.pdb
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Marcus\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.exe
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.deps.json
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.json
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.dev.json
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.pdb
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.pdb
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csprojAssemblyReference.cache
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfoInputs.cache
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfo.cs
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csproj.CopyComplete
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\pette\Desktop\Newton\Databasteknik\Projekt\Infoterminal\Egna VS projekt\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.pdb
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.exe
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.deps.json
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.json
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.runtimeconfig.dev.json
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\InfoMenu.pdb
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\System.Data.SqlClient.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-arm64\native\sni.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\sni.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\sni.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\bin\Debug\netcoreapp3.1\BackendHandler.pdb
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csprojAssemblyReference.cache
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfoInputs.cache
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.AssemblyInfo.cs
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.csproj.CopyComplete
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.dll
+C:\Users\joxca\OneDrive\Skrivbord\DatabasePizza\InfoMenu\InfoMenu\obj\Debug\netcoreapp3.1\InfoMenu.pdb
