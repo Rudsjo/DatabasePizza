@@ -33,12 +33,12 @@ namespace CustomerTerminal
     class Program
     {
         // Internal variables >>
-        private static Order CurrentOrder             { get; set; }
-        private static List<Pizza> Pizzas             { get; set; }
-        private static List<Extra> Products           { get; set; }
-        private static List<Condiment> Ingredients    { get; set; }
-        private static List<(int, string)> PizzaBases { get; set; }
-        private static Pizza CurrentPizza             { get; set; }
+        private static Order                CurrentOrder  { get; set; }
+        private static List<Pizza>          Pizzas        { get; set; }
+        private static List<Extra>          Products      { get; set; }
+        private static List<Condiment>      Ingredients   { get; set; }
+        private static List<(int, string)>  PizzaBases    { get; set; }
+        private static Pizza                CurrentPizza  { get; set; }
 
         private static IDatabase Rep = BackendHandler.Helpers.GetSelectedBackend("MSSQL");
 
@@ -125,7 +125,7 @@ namespace CustomerTerminal
                                 if (PizzaOptionI == 1)
                                 {
                                     CurrentOrder.PizzaList.Add(CurrentPizza);
-                                    Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Du har lagt till pizzan i din beställning"); Console.ForegroundColor = ConsoleColor.White;
+                                    Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Du har lagt till pizzan i din beställning, tryck på valfri knapp för att forstätta"); Console.ForegroundColor = ConsoleColor.White;
                                     Console.ReadKey();
                                     ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.OPTIONS_MENU;
                                 }
@@ -156,7 +156,7 @@ namespace CustomerTerminal
                                         Price = Products[Choice - 1].Price
                                     });
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"{Products[Choice - 1].Type} gar lagt till i din beställning");
+                                    Console.WriteLine($"{Products[Choice - 1].Type} har lagt till i din beställning, tryck på valfri knapp för att fortsätta");
                                     Console.ForegroundColor = ConsoleColor.White;
                                     Console.ReadKey();
                                 }
@@ -208,8 +208,9 @@ namespace CustomerTerminal
                             CurrentOrder.OrderID = ID;
                             Menus.DrawBeautifulReceipt(CurrentOrder);
                             Console.ReadKey();
+                            ProgramState.CURRENT_MENU = ProgramState.PROGRAM_MENUES.WELLCOME_SCREEN;
                         }
-                        return;
+                        break;
                     default: ProgramState.Running = false; break;
                 }
             }
