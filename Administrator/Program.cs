@@ -57,7 +57,7 @@ namespace Administrator
         {
             //Current directory och Backend.cfg ligger på olika ställen. För att byta backend så får flytta # i bin-foldern i admin.
             #region Read configfile and populate lists
-            rep = Helpers.GetSelectedBackend(File.ReadAllLines(Environment.CurrentDirectory + "\\Backend.cfg").First(s => ! s.StartsWith("#")));
+            rep = Helpers.GetSelectedBackend();
             #endregion
 
             while (ProgramState.Running)

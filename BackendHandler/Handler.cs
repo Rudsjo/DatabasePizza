@@ -9,11 +9,20 @@ using System;
 using System.Dynamic;
 using System.Reflection;
 using Npgsql;
+using System.IO;
 
 namespace BackendHandler
 {
     public static class Helpers
     {
+        /// <summary>
+        /// Readonly property that gets the configfile path
+        /// </summary>
+        public static string ConfigfilePath { get; } = "Configfile.cfg";
+        public static string[] Existingbackends { get; } = { "MSSQL", "PostgreSQL" };
+        public static string StandardBackend { get; } = "MSSQL";
+
+
         /// <summary>
         /// Supported backends
         ///  : MSSQL
@@ -21,15 +30,15 @@ namespace BackendHandler
         /// </summary>
         /// <param name="BackendName"></param>M
         /// <returns>if Interface wa not found, return MSSQL as standard</returns>
-        public static IDatabase GetSelectedBackend(string BackendName)
+        public static IDatabase GetSelectedBackend()
         {
             dynamic result = null;
-            foreach(Type type in Assembly.LoadFrom(Assembly.GetExecutingAssembly().GetName().Name).GetTypes())
-                if(type.IsClass && type.Name.Equals(BackendName))
+            foreach (Type type in Assembly.LoadFrom(Assembly.GetExecutingAssembly().GetName().Name).GetTypes())
+                if (type.IsClass && !type.Name.Contains("<>") && type.Name.Equals(GetSelctedBackend()))
                 {
                     result = Activator.CreateInstance(type); // Create new instance on the fly
                     IDatabase test = result as IDatabase;    // Used to check if class implements interface
-                    if(test != null)                         // Convertsion was successful
+                    if (test != null)                         // Convertsion was successful
                         return result;
                 }
             return new PostgreSQL();
@@ -44,6 +53,30 @@ namespace BackendHandler
                 p.StandardIngredientsDeffinition = p.PizzaIngredients.Select(p => p.CondimentID).AsList();
             }
             return res.ToList();
+        }
+
+        private static void ValidateConfigFile()
+        {
+            if (!File.Exists(ConfigfilePath)) { using (File.Create(ConfigfilePath)) { } }
+
+            if (File.ReadAllLines(ConfigfilePath).Where(s => !s.StartsWith("#") && !String.IsNullOrEmpty(s)).Count() == 0 ||
+               File.ReadAllLines(ConfigfilePath).Where(s => !s.StartsWith("#") && !String.IsNullOrEmpty(s)).Count() > 1 ||
+               File.ReadAllLines(ConfigfilePath).Where(s => !string.IsNullOrEmpty(s)).Count() != Existingbackends.Count())
+            {
+                string[] Commented = new string[Existingbackends.Length];
+                for (int i = 0; i < Existingbackends.Count(); i++) Commented[i] = (Existingbackends[i].Equals(StandardBackend)) ? Existingbackends[i] : "#" + Existingbackends[i];
+                File.WriteAllLines(ConfigfilePath, Commented);
+            }
+        }
+
+        /// <summary>
+        /// Get selected backend
+        /// </summary>
+        /// <returns>returns backendname</returns>
+        private static string GetSelctedBackend()
+        {
+            ValidateConfigFile();
+            return File.ReadAllLines(ConfigfilePath).First(s => !s.StartsWith("#"));
         }
 
     }
@@ -63,7 +96,7 @@ namespace BackendHandler
             return $"{this.CondimentID} {this.Type} {this.Price}";
         }
     }
-    public class Employee 
+    public class Employee
     {
         //Överensstämmer med databasen
         public int UserID { get; }
@@ -75,7 +108,7 @@ namespace BackendHandler
             return $"{this.UserID} {this.Role}";
         }
     }
-    public class Extra    
+    public class Extra
     {
         //Överensstämmer med databasen
         public int ProductID { get; }
@@ -88,7 +121,7 @@ namespace BackendHandler
             return $"{this.ProductID} {this.Type} {this.Price}";
         }
     }
-    public class Order    
+    public class Order
     {
         //Överensstämmer med databasen
         public int OrderID { get; set; }
@@ -101,7 +134,7 @@ namespace BackendHandler
             return $"ID: {this.OrderID}\nTillbehör: {this.ExtraList}\nPizzor: {this.PizzaList}\nPris: {this.Price}";
         }
     }
-    public class Pizza    
+    public class Pizza
     {
         //Överensstämmer med databasen
         public int PizzaID { get; }
@@ -124,7 +157,7 @@ namespace BackendHandler
     /// <summary>
     /// Backend interface
     /// </summary>
-    public interface IDatabase 
+    public interface IDatabase
     {
         //De funktioner som bara skall visa innehåll har en ToString() override som stringar ex. type,role,price,id
         #region//Employee
@@ -940,8 +973,8 @@ namespace BackendHandler
             }
         }
         #endregion
-        }
-    
-    
+    }
+
+
 }
 
