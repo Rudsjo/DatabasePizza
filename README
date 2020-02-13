@@ -7,5 +7,5 @@ to the backend you don´t want running. The Configfile is created when you run t
 application and defaults to MSSQL database.
 
 Folders Backendhandler and menufunctions are the dll:s for the applications, and holds all the necessary 
-functions, classes, interface and repositorys. A dependency is already set so you should only
+functions, classes, interface and repositorys. A dependency should already be set so you should only
 need to pull all folders and run whichever program you want. 
